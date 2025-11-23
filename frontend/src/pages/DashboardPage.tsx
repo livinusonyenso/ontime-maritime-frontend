@@ -2,8 +2,6 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -27,7 +25,7 @@ import {
 import { Link } from "react-router-dom"
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, loading, logout } = useAuth()
   const { trackingData } = useTracking()
   const { documents } = useDocument()
   const { notifications, unreadCount } = useNotification()
@@ -65,8 +63,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 bg-muted/30">
         {/* Welcome Section */}
         <section className="bg-background border-b">
@@ -76,11 +72,16 @@ export default function DashboardPage() {
                 <h1 className="text-3xl font-bold">Welcome back, {user?.email?.split('@')[0]}!</h1>
                 <p className="text-muted-foreground mt-1">Here's what's happening with your shipments</p>
               </div>
-              <Link to="/tracking">
-                <Button size="lg">
-                  Track New Shipment <ArrowRight className="ml-2 h-5 w-5" />
+              <div className="flex gap-2">
+                <Link to="/tracking">
+                  <Button size="lg">
+                    Track New Shipment <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Button size="lg" variant="outline" onClick={logout}>
+                  Logout
                 </Button>
-              </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -286,8 +287,6 @@ export default function DashboardPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }
