@@ -31,7 +31,8 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
 
   const createDocument = async (data: {
     type: DocumentType
-    file_url: string
+    file_url?: string
+    file?: File
     transaction_id?: string
     listing_id?: string
   }): Promise<Document> => {
@@ -39,7 +40,31 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
       setLoading(true)
       setError(null)
 
-      const response = await api.post('/documents', data)
+      let response;
+      
+      if (data.file) {
+        const formData = new FormData()
+        formData.append('type', data.type)
+        formData.append('file', data.file)
+        if (data.transaction_id) formData.append('transaction_id', data.transaction_id)
+        if (data.listing_id) formData.append('listing_id', data.listing_id)
+        
+        response = await api.post('/documents/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+      } else if (data.file_url) {
+        response = await api.post('/documents', {
+          type: data.type,
+          file_url: data.file_url,
+          transaction_id: data.transaction_id,
+          listing_id: data.listing_id
+        })
+      } else {
+        throw new Error('Either file or file_url is required')
+      }
+
       const newDocument = response.data
 
       setDocuments((prev) => [newDocument, ...prev])

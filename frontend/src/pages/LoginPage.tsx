@@ -30,7 +30,25 @@ export default function LoginPage() {
         title: "Welcome back!",
         description: "You've successfully logged in.",
       })
-      navigate("/dashboard")
+      
+      // Check role from localStorage since state update might be async
+      const storedUser = localStorage.getItem('ontime_user')
+      if (storedUser) {
+        const user = JSON.parse(storedUser)
+        if (user.role === 'buyer') {
+          navigate("/dashboard/buyer")
+        } else if (user.role === 'seller') {
+          navigate("/dashboard/seller")
+        } else if (user.role === 'executive') {
+          navigate("/dashboard/executive")
+        } else if (user.role === 'admin') {
+          navigate("/admin")
+        } else {
+          navigate("/dashboard")
+        }
+      } else {
+        navigate("/dashboard")
+      }
     } catch (error) {
       toast({
         title: "Login failed",

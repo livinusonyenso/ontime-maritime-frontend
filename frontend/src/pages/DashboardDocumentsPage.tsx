@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 
@@ -19,12 +18,16 @@ import {
 } from "@/components/ui/dialog"
 import { FileText, Upload, Download, Eye, Search, Filter, ArrowLeft } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { DocumentType } from "@/types"
 
-export default function DocumentsPage() {
+export default function DashboardDocumentsPage() {
   const { isAuthenticated, loading } = useAuth()
-  const { documents } = useDocument()
+  const { documents, createDocument } = useDocument()
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [documentType, setDocumentType] = useState<DocumentType>("bill_of_lading")
+  const [transactionId, setTransactionId] = useState("")
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -47,6 +50,39 @@ export default function DocumentsPage() {
 
   if (!isAuthenticated) {
     return null
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast({
+        title: "Missing File",
+        description: "Please select a file to upload",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createDocument({
+        type: documentType,
+        file: selectedFile,
+        transaction_id: transactionId || undefined,
+      })
+      
+      toast({
+        title: "Document Uploaded",
+        description: "Your document has been successfully uploaded",
+      })
+      setUploadDialogOpen(false)
+      setSelectedFile(null)
+      setTransactionId("")
+    } catch (error) {
+      toast({
+        title: "Upload Failed",
+        description: "Could not upload document. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   const filteredDocs = documents.filter(
@@ -192,7 +228,11 @@ export default function DocumentsPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Document Type</Label>
-              <select className="w-full p-2 border rounded-lg bg-background">
+              <select 
+                className="w-full p-2 border rounded-lg bg-background"
+                value={documentType}
+                onChange={(e) => setDocumentType(e.target.value as DocumentType)}
+              >
                 <option value="bill_of_lading">Bill of Lading</option>
                 <option value="invoice">Commercial Invoice</option>
                 <option value="certificate">Certificate</option>
@@ -203,12 +243,28 @@ export default function DocumentsPage() {
 
             <div className="space-y-2">
               <Label>Transaction ID (Optional)</Label>
-              <Input placeholder="Enter transaction ID" />
+              <Input 
+                placeholder="Enter transaction ID" 
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
-              <Label>File URL</Label>
-              <Input placeholder="Enter document URL" />
+              <Label>Select File</Label>
+              <Input 
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setSelectedFile(e.target.files[0])
+                  }
+                }}
+              />
+              {selectedFile && (
+                <p className="text-sm text-muted-foreground">
+                  Selected: {selectedFile.name}
+                </p>
+              )}
             </div>
           </div>
 
@@ -216,17 +272,7 @@ export default function DocumentsPage() {
             <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={() => {
-                toast({
-                  title: "Document uploaded",
-                  description: "Your document has been uploaded successfully.",
-                })
-                setUploadDialogOpen(false)
-              }}
-            >
-              Upload
-            </Button>
+            <Button onClick={handleUpload}>Upload</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { Providers } from './components/providers'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -23,6 +24,9 @@ import AdminInsurancePage from './pages/AdminInsurancePage'
 import DashboardTrackingPage from './pages/dashboard/DashboardTrackingPage'
 import DashboardAuctionsPage from './pages/dashboard/DashboardAuctionsPage'
 import DashboardInsurancePage from './pages/dashboard/DashboardInsurancePage'
+import BuyerDashboardPage from './pages/dashboard/BuyerDashboardPage'
+import SellerDashboardPage from './pages/dashboard/SellerDashboardPage'
+import ExecutiveDashboardPage from './pages/dashboard/ExecutiveDashboardPage'
 
 function App() {
   return (
@@ -38,20 +42,46 @@ function App() {
         <Route path="/auctions" element={<AuctionsPage />} />
         <Route path="/insurance" element={<InsurancePage />} />
         
-        {/* Dashboard routes (no header/footer) */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/dashboard/tracking" element={<DashboardTrackingPage />} />
-        <Route path="/dashboard/auctions" element={<DashboardAuctionsPage />} />
-        <Route path="/dashboard/insurance" element={<DashboardInsurancePage />} />
-        <Route path="/dashboard/documents" element={<DashboardDocumentsPage />} />
-        <Route path="/dashboard/payments" element={<DashboardPaymentsPage />} />
+        {/* Role-based Dashboard Routes */}
+        <Route 
+          path="/dashboard/buyer" 
+          element={
+            <ProtectedRoute allowedRoles={['buyer']}>
+              <BuyerDashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/seller" 
+          element={
+            <ProtectedRoute allowedRoles={['seller']}>
+              <SellerDashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/executive" 
+          element={
+            <ProtectedRoute allowedRoles={['executive'] as any}>
+              <ExecutiveDashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* General Dashboard routes (no header/footer) */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/dashboard/tracking" element={<ProtectedRoute><DashboardTrackingPage /></ProtectedRoute>} />
+        <Route path="/dashboard/auctions" element={<ProtectedRoute><DashboardAuctionsPage /></ProtectedRoute>} />
+        <Route path="/dashboard/insurance" element={<ProtectedRoute><DashboardInsurancePage /></ProtectedRoute>} />
+        <Route path="/dashboard/documents" element={<ProtectedRoute><DashboardDocumentsPage /></ProtectedRoute>} />
+        <Route path="/dashboard/payments" element={<ProtectedRoute><DashboardPaymentsPage /></ProtectedRoute>} />
         
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
-        <Route path="/admin/auctions" element={<AdminAuctionsPage />} />
-        <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-        <Route path="/admin/insurance" element={<AdminInsurancePage />} />
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminPage /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsersPage /></ProtectedRoute>} />
+        <Route path="/admin/auctions" element={<ProtectedRoute allowedRoles={['admin']}><AdminAuctionsPage /></ProtectedRoute>} />
+        <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={['admin']}><AdminDocumentsPage /></ProtectedRoute>} />
+        <Route path="/admin/insurance" element={<ProtectedRoute allowedRoles={['admin']}><AdminInsurancePage /></ProtectedRoute>} />
       </Routes>
     </Providers>
   )
