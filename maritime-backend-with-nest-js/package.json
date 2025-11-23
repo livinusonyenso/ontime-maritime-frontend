@@ -7,7 +7,7 @@
   "author": "OnTime Maritime Team",
   "scripts": {
     "prebuild": "prisma generate",
-    "build": "nest build",
+   "build": "npx nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
