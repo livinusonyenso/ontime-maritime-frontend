@@ -27,17 +27,30 @@ import {
 import { Link } from "react-router-dom"
 
 export default function DashboardPage() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, loading } = useAuth()
   const { trackingData } = useTracking()
   const { documents } = useDocument()
   const { notifications, unreadCount } = useNotification()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Wait for auth to finish loading before checking authentication
+    if (!loading && !isAuthenticated) {
       navigate("/login")
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, loading, navigate])
+
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
     return null
