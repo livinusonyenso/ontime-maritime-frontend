@@ -5,30 +5,29 @@
   "description": "OnTime Maritime Backend - NestJS API with PostgreSQL (Production Ready)",
   "license": "UNLICENSED",
   "author": "OnTime Maritime Team",
- "scripts": {
-  "prebuild": "prisma generate",
-  "build": "node node_modules/@nestjs/cli/bin/nest.js build",
-  "start": "node dist/main.js",
-  "start:dev": "nest start --watch",
-  "start:prod": "node dist/main.js",
-  "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-  "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-  "prisma:generate": "prisma generate",
-  "prisma:migrate:deploy": "prisma migrate deploy",
-  "prisma:migrate:dev": "prisma migrate dev",
-  "prisma:seed": "ts-node prisma/seed.ts",
-  "prisma:studio": "prisma studio",
-  "test": "jest",
-  "test:watch": "jest --watch",
-  "test:e2e": "jest --config ./test/jest-e2e.json",
-  "test:cov": "jest --coverage",
-  "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
-},
-"engines": {
-  "node": "20.x",
-  "npm": "9.x"
-}
-,
+  "scripts": {
+    "prebuild": "prisma generate",
+    "build": "node node_modules/@nestjs/cli/bin/nest.js build",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main.js",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "9.x"
+  },
   "jest": {
     "collectCoverageFrom": [
       "**/*.(t|j)s"
@@ -47,6 +46,7 @@
     }
   },
   "dependencies": {
+    "@nestjs/cli": "^10.3.0",
     "@nestjs/common": "latest",
     "@nestjs/config": "latest",
     "@nestjs/core": "latest",
@@ -95,5 +95,4 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5"
   }
-
 }
