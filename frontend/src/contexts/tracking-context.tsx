@@ -1,75 +1,187 @@
-
-import { createContext, useContext, useState, type ReactNode } from "react"
-
-export interface Shipment {
-  id: string
-  trackingNumber: string
-  origin: string
-  destination: string
-  status: "in-transit" | "delivered" | "pending" | "customs"
-  vessel: string
-  departureDate: string
-  estimatedArrival: string
-  currentLocation: string
-  progress: number
-}
+import { createContext, useContext, useState, type ReactNode } from 'react'
+import api from '../lib/api'
+import type { TrackingLog } from '../types'
 
 interface TrackingContextType {
-  shipments: Shipment[]
-  searchShipment: (trackingNumber: string) => Shipment | undefined
-  addShipment: (shipment: Shipment) => void
+  trackingData: TrackingLog[]
+  loading: boolean
+  error: string | null
+  logTracking: (data: {
+    container_number?: string
+    vessel_imo?: string
+    lat: number
+    lng: number
+    speed?: number
+    heading?: string
+    timestamp: string
+  }) => Promise<TrackingLog>
+  getContainerHistory: (containerNumber: string, limit?: number) => Promise<TrackingLog[]>
+  getVesselHistory: (vesselImo: string, limit?: number) => Promise<TrackingLog[]>
+  getLatestContainerPosition: (containerNumber: string) => Promise<TrackingLog>
+  getLatestVesselPosition: (vesselImo: string) => Promise<TrackingLog>
+  getMovementHistory: (identifier: string, startDate: string, endDate: string) => Promise<TrackingLog[]>
 }
 
 const TrackingContext = createContext<TrackingContextType | undefined>(undefined)
 
-// Dummy shipment data
-const dummyShipments: Shipment[] = [
-  {
-    id: "1",
-    trackingNumber: "OM-2024-001",
-    origin: "Shanghai, China",
-    destination: "Los Angeles, USA",
-    status: "in-transit",
-    vessel: "MSC Gulsun",
-    departureDate: "2024-01-15",
-    estimatedArrival: "2024-02-05",
-    currentLocation: "Pacific Ocean",
-    progress: 65,
-  },
-  {
-    id: "2",
-    trackingNumber: "OM-2024-002",
-    origin: "Rotterdam, Netherlands",
-    destination: "Lagos, Nigeria",
-    status: "customs",
-    vessel: "Ever Given",
-    departureDate: "2024-01-20",
-    estimatedArrival: "2024-02-10",
-    currentLocation: "Lagos Port",
-    progress: 95,
-  },
-]
-
 export function TrackingProvider({ children }: { children: ReactNode }) {
-  const [shipments, setShipments] = useState<Shipment[]>(dummyShipments)
+  const [trackingData, setTrackingData] = useState<TrackingLog[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const searchShipment = (trackingNumber: string) => {
-    return shipments.find((s) => s.trackingNumber.toLowerCase().includes(trackingNumber.toLowerCase()))
+  const logTracking = async (data: {
+    container_number?: string
+    vessel_imo?: string
+    lat: number
+    lng: number
+    speed?: number
+    heading?: string
+    timestamp: string
+  }): Promise<TrackingLog> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.post('/tracking', data)
+      const newLog = response.data
+
+      setTrackingData((prev) => [newLog, ...prev])
+      return newLog
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to log tracking data'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const addShipment = (shipment: Shipment) => {
-    setShipments((prev) => [...prev, shipment])
+  const getContainerHistory = async (containerNumber: string, limit = 100): Promise<TrackingLog[]> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.get(`/tracking/container/${containerNumber}`, {
+        params: { limit },
+      })
+      const data = response.data
+
+      setTrackingData(data)
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch container history'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getVesselHistory = async (vesselImo: string, limit = 100): Promise<TrackingLog[]> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.get(`/tracking/vessel/${vesselImo}`, {
+        params: { limit },
+      })
+      const data = response.data
+
+      setTrackingData(data)
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch vessel history'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getLatestContainerPosition = async (containerNumber: string): Promise<TrackingLog> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.get(`/tracking/latest/container/${containerNumber}`)
+      const data = response.data
+
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch latest container position'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getLatestVesselPosition = async (vesselImo: string): Promise<TrackingLog> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.get(`/tracking/latest/vessel/${vesselImo}`)
+      const data = response.data
+
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch latest vessel position'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getMovementHistory = async (
+    identifier: string,
+    startDate: string,
+    endDate: string
+  ): Promise<TrackingLog[]> => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.get(`/tracking/history/${identifier}`, {
+        params: { startDate, endDate },
+      })
+      const data = response.data
+
+      setTrackingData(data)
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch movement history'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <TrackingContext.Provider value={{ shipments, searchShipment, addShipment }}>{children}</TrackingContext.Provider>
+    <TrackingContext.Provider
+      value={{
+        trackingData,
+        loading,
+        error,
+        logTracking,
+        getContainerHistory,
+        getVesselHistory,
+        getLatestContainerPosition,
+        getLatestVesselPosition,
+        getMovementHistory,
+      }}
+    >
+      {children}
+    </TrackingContext.Provider>
   )
 }
 
 export function useTracking() {
   const context = useContext(TrackingContext)
   if (context === undefined) {
-    throw new Error("useTracking must be used within a TrackingProvider")
+    throw new Error('useTracking must be used within a TrackingProvider')
   }
   return context
 }

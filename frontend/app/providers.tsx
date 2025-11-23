@@ -1,8 +1,50 @@
-"use client"
+'use client'
 
-import { Providers as ContextProviders } from "@/components/providers"
-import type { ReactNode } from "react"
+import type { ReactNode } from 'react'
+import {
+  AuthProvider,
+  UsersProvider,
+  ListingsProvider,
+  TransactionsProvider,
+  AuctionProvider,
+  ExecutiveCornerProvider,
+  TrackingProvider,
+  DocumentProvider,
+  NotificationProvider,
+  AdminProvider,
+  RatingsProvider,
+  ArbitrationProvider,
+  InsuranceProvider,
+} from '@/contexts'
 
 export function AppProviders({ children }: { children: ReactNode }) {
-  return <ContextProviders>{children}</ContextProviders>
+  return (
+    <AuthProvider>
+      <UsersProvider>
+        <ListingsProvider>
+          <TransactionsProvider>
+            <AuctionProvider>
+              <ExecutiveCornerProvider>
+                <TrackingProvider>
+                  <DocumentProvider>
+                    <NotificationProvider>
+                      <AdminProvider>
+                        <RatingsProvider>
+                          <ArbitrationProvider>
+                            <InsuranceProvider>
+                              {children}
+                            </InsuranceProvider>
+                          </ArbitrationProvider>
+                        </RatingsProvider>
+                      </AdminProvider>
+                    </NotificationProvider>
+                  </DocumentProvider>
+                </TrackingProvider>
+              </ExecutiveCornerProvider>
+            </AuctionProvider>
+          </TransactionsProvider>
+        </ListingsProvider>
+      </UsersProvider>
+    </AuthProvider>
+  )
 }

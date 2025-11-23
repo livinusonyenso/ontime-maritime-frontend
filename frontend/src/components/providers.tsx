@@ -1,21 +1,48 @@
-
-import { AuthProvider } from "@/contexts/auth-context"
-import { TrackingProvider } from "@/contexts/tracking-context"
-import { AuctionProvider } from "@/contexts/auction-context"
-import { DocumentProvider } from "@/contexts/document-context"
-import { NotificationProvider } from "@/contexts/notification-context"
-import type { ReactNode } from "react"
+import type { ReactNode } from 'react'
+import {
+  AuthProvider,
+  UsersProvider,
+  ListingsProvider,
+  TransactionsProvider,
+  AuctionProvider,
+  ExecutiveCornerProvider,
+  TrackingProvider,
+  DocumentProvider,
+  NotificationProvider,
+  AdminProvider,
+  RatingsProvider,
+  ArbitrationProvider,
+  InsuranceProvider,
+} from '@/contexts'
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
-      <TrackingProvider>
-        <AuctionProvider>
-          <DocumentProvider>
-            <NotificationProvider>{children}</NotificationProvider>
-          </DocumentProvider>
-        </AuctionProvider>
-      </TrackingProvider>
+      <UsersProvider>
+        <ListingsProvider>
+          <TransactionsProvider>
+            <AuctionProvider>
+              <ExecutiveCornerProvider>
+                <TrackingProvider>
+                  <DocumentProvider>
+                    <NotificationProvider>
+                      <AdminProvider>
+                        <RatingsProvider>
+                          <ArbitrationProvider>
+                            <InsuranceProvider>
+                              {children}
+                            </InsuranceProvider>
+                          </ArbitrationProvider>
+                        </RatingsProvider>
+                      </AdminProvider>
+                    </NotificationProvider>
+                  </DocumentProvider>
+                </TrackingProvider>
+              </ExecutiveCornerProvider>
+            </AuctionProvider>
+          </TransactionsProvider>
+        </ListingsProvider>
+      </UsersProvider>
     </AuthProvider>
   )
 }
