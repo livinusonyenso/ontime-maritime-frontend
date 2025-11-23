@@ -73,7 +73,7 @@ export default function DashboardPage() {
                 <p className="text-muted-foreground mt-1">Here's what's happening with your shipments</p>
               </div>
               <div className="flex gap-2">
-                <Link to="/tracking">
+                <Link to="/dashboard/tracking">
                   <Button size="lg">
                     Track New Shipment <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -257,13 +257,13 @@ export default function DashboardPage() {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Link to="/tracking">
+                  <Link to="/dashboard/tracking">
                     <Button variant="outline" className="w-full justify-start bg-transparent">
                       <Ship className="mr-2 h-4 w-4" />
                       Track Shipment
                     </Button>
                   </Link>
-                  <Link to="/auctions">
+                  <Link to="/dashboard/auctions">
                     <Button variant="outline" className="w-full justify-start bg-transparent">
                       <TrendingUp className="mr-2 h-4 w-4" />
                       Browse Auctions
@@ -275,7 +275,7 @@ export default function DashboardPage() {
                       Upload Document
                     </Button>
                   </Link>
-                  <Link to="/insurance">
+                  <Link to="/dashboard/insurance">
                     <Button variant="outline" className="w-full justify-start bg-transparent">
                       <Package className="mr-2 h-4 w-4" />
                       Get Insurance

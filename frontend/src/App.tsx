@@ -19,10 +19,16 @@ import AdminAuctionsPage from './pages/AdminAuctionsPage'
 import AdminDocumentsPage from './pages/AdminDocumentsPage'
 import AdminInsurancePage from './pages/AdminInsurancePage'
 
+// Dashboard-specific pages
+import DashboardTrackingPage from './pages/dashboard/DashboardTrackingPage'
+import DashboardAuctionsPage from './pages/dashboard/DashboardAuctionsPage'
+import DashboardInsurancePage from './pages/dashboard/DashboardInsurancePage'
+
 function App() {
   return (
     <Providers>
       <Routes>
+        {/* Public routes (with header/footer) */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -31,9 +37,16 @@ function App() {
         <Route path="/tracking" element={<TrackingPage />} />
         <Route path="/auctions" element={<AuctionsPage />} />
         <Route path="/insurance" element={<InsurancePage />} />
+        
+        {/* Dashboard routes (no header/footer) */}
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/tracking" element={<DashboardTrackingPage />} />
+        <Route path="/dashboard/auctions" element={<DashboardAuctionsPage />} />
+        <Route path="/dashboard/insurance" element={<DashboardInsurancePage />} />
         <Route path="/dashboard/documents" element={<DashboardDocumentsPage />} />
         <Route path="/dashboard/payments" element={<DashboardPaymentsPage />} />
+        
+        {/* Admin routes */}
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
         <Route path="/admin/auctions" element={<AdminAuctionsPage />} />
