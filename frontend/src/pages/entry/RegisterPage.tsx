@@ -14,6 +14,8 @@ import { Ship, Mail, Lock, Phone, ArrowRight, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -66,160 +68,164 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="bg-primary p-2 rounded-lg">
-              <Ship className="h-6 w-6 text-primary-foreground" />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1 flex">
+        {/* Left Side - Form */}
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="w-full max-w-md space-y-8">
+            {/* Logo */}
+            <div className="flex items-center gap-2">
+              <div className="bg-primary p-2 rounded-lg">
+                <Ship className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-lg leading-none">ONTIME MARITIME</span>
+                <span className="text-xs text-muted-foreground">Tech Meet Cargo</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg leading-none">ONTIME</span>
-              <span className="text-xs text-muted-foreground">Tech Meet Cargo</span>
+
+            <div>
+              <h1 className="text-3xl font-bold">Create your account</h1>
+              <p className="text-muted-foreground mt-2">Start managing your maritime operations today</p>
             </div>
-          </div>
 
-          <div>
-            <h1 className="text-3xl font-bold">Create your account</h1>
-            <p className="text-muted-foreground mt-2">Start managing your maritime operations today</p>
-          </div>
+            <Card className="glass border-2">
+              <CardContent className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {error && (
+                    <Alert variant="destructive" className="py-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
 
-          <Card className="glass border-2">
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                  <Alert variant="destructive" className="py-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@company.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+234801234567"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+234801234567"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="role">I am a</Label>
-                  <Select value={role} onValueChange={(value) => setRole(value as "buyer" | "seller")}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="buyer">Buyer</SelectItem>
-                      <SelectItem value="seller">Seller</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="role">I am a</Label>
+                    <Select value={role} onValueChange={(value) => setRole(value as "buyer" | "seller")}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="buyer">Buyer</SelectItem>
+                        <SelectItem value="seller">Seller</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="text-sm">
-                  <label className="flex items-start gap-2">
-                    <input type="checkbox" className="rounded mt-0.5" required />
-                    <span className="text-muted-foreground">
-                      I agree to the{" "}
-                      <Link to="#" className="text-primary hover:underline">
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link to="#" className="text-primary hover:underline">
-                        Privacy Policy
-                      </Link>
-                    </span>
-                  </label>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
 
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading ? "Creating account..." : "Create account"}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  <div className="text-sm">
+                    <label className="flex items-start gap-2">
+                      <input type="checkbox" className="rounded mt-0.5" required />
+                      <span className="text-muted-foreground">
+                        I agree to the{" "}
+                        <Link to="#" className="text-primary hover:underline">
+                          Terms of Service
+                        </Link>{" "}
+                        and{" "}
+                        <Link to="#" className="text-primary hover:underline">
+                          Privacy Policy
+                        </Link>
+                      </span>
+                    </label>
+                  </div>
 
-          <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary font-semibold hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </div>
+                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                    {loading ? "Creating account..." : "Create account"}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
 
-      {/* Right Side - Image */}
-      <div className="hidden lg:block flex-1 relative bg-slate-950">
-        <div className="absolute inset-0 bg-[url(/bulk-cargo-ship.jpg)] bg-cover bg-center opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-accent/20" />
-        <div className="relative h-full flex items-center justify-center p-12">
-          <div className="max-w-md space-y-6 text-white">
-            <h2 className="text-4xl font-bold text-balance">Join Thousands of Maritime Professionals</h2>
-            <p className="text-lg leading-relaxed text-slate-200">
-              Get access to cutting-edge cargo tracking, auction marketplace, digital documentation, and analytics
-              tools.
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary font-semibold hover:underline">
+                Sign in
+              </Link>
             </p>
           </div>
         </div>
+
+        {/* Right Side - Image */}
+        <div className="hidden lg:block flex-1 relative bg-slate-950">
+          <div className="absolute inset-0 bg-[url(/bulk-cargo-ship.jpg)] bg-cover bg-center opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-accent/20" />
+          <div className="relative h-full flex items-center justify-center p-12">
+            <div className="max-w-md space-y-6 text-white">
+              <h2 className="text-4xl font-bold text-balance">Join Thousands of Maritime Professionals</h2>
+              <p className="text-lg leading-relaxed text-slate-200">
+                Get access to cutting-edge cargo tracking, auction marketplace, digital documentation, and analytics
+                tools.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }

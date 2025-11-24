@@ -77,7 +77,7 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
             <div className="bg-primary p-1.5 rounded-md">
               <Ship className="h-5 w-5 text-primary-foreground" />
             </div>
-            ONTIME
+            ONTIME MARITIME
           </Link>
         </div>
         <ScrollArea className="flex-1 py-6">
@@ -129,7 +129,7 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
                   <div className="bg-primary p-1.5 rounded-md">
                     <Ship className="h-5 w-5 text-primary-foreground" />
                   </div>
-                  ONTIME
+                  ONTIME MARITIME
                 </Link>
               </div>
               <ScrollArea className="flex-1 py-6">

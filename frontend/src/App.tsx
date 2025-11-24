@@ -25,7 +25,6 @@ import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerListingsPage from "./pages/seller/ListingsPage" // New
 import SellerTrackingPage from "./pages/seller/TrackingPage"
-import SellerAuctionsPage from "./pages/seller/AuctionsPage" // Public
 import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage" // Dashboard
 import SellerInsurancePage from "./pages/seller/InsurancePage"
 import SellerDocumentsPage from "./pages/seller/DocumentsPage"

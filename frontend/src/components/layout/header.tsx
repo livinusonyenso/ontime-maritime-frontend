@@ -24,7 +24,7 @@ export function Header() {
             <Ship className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-lg leading-none">ONTIME</span>
+            <span className="font-bold text-lg leading-none">ONTIME MARITIME</span>
             <span className="text-xs text-muted-foreground">Tech Meet Cargo</span>
           </div>
         </Link>
