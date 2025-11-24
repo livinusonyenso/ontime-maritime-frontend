@@ -29,6 +29,7 @@ import {
   Search,
   User,
   CreditCard,
+  Store,
 } from "lucide-react"
 
 interface DashboardLayoutProps {
@@ -42,7 +43,8 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
 
   const navItems = {
     buyer: [
-      { href: "/dashboard/buyer", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard/buyer", label: "Market", icon: Store },
+      { href: "/dashboard/buyer/overview", label: "Overview", icon: LayoutDashboard },
       { href: "/dashboard/buyer/tracking", label: "Tracking", icon: Ship },
       { href: "/dashboard/buyer/auctions", label: "Auctions", icon: Gavel },
       { href: "/dashboard/buyer/documents", label: "Documents", icon: FileText },
@@ -50,7 +52,8 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
       { href: "/dashboard/buyer/payments", label: "Payments", icon: CreditCard },
     ],
     seller: [
-      { href: "/dashboard/seller", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard/seller", label: "Market", icon: Store },
+      { href: "/dashboard/seller/overview", label: "Overview", icon: LayoutDashboard },
       { href: "/dashboard/seller/listings", label: "Listings", icon: Package },
       { href: "/dashboard/seller/sales", label: "Sales", icon: CreditCard },
       { href: "/dashboard/seller/tracking", label: "Tracking", icon: Ship },

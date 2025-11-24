@@ -12,6 +12,7 @@ import ServicesPage from "./pages/entry/ServicesPage"
 
 // Buyer Pages
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
+import BuyerMarketPage from "./pages/buyer/MarketPage" // New Default
 import BuyerTrackingPage from "./pages/buyer/TrackingPage" // Public/Old
 import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage" // New
 import BuyerAuctionsPage from "./pages/buyer/AuctionsPage" // Public/Old
@@ -23,6 +24,7 @@ import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
 // Seller Pages
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
+import SellerMarketPage from "./pages/seller/MarketPage" // New Default
 import SellerListingsPage from "./pages/seller/ListingsPage" // New
 import SellerTrackingPage from "./pages/seller/TrackingPage"
 import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage" // Dashboard
@@ -61,7 +63,8 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<BuyerDashboardPage />} />
+          <Route index element={<BuyerMarketPage />} />
+          <Route path="overview" element={<BuyerDashboardPage />} />
           <Route path="tracking" element={<BuyerDashboardTrackingPage />} />
           <Route path="auctions" element={<BuyerDashboardAuctionsPage />} />
           <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
@@ -78,7 +81,8 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<SellerDashboardPage />} />
+          <Route index element={<SellerMarketPage />} />
+          <Route path="overview" element={<SellerDashboardPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
           <Route path="tracking" element={<SellerTrackingPage />} />
           <Route path="auctions" element={<SellerDashboardAuctionsPage />} />
