@@ -3,13 +3,13 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, User, ArrowRight, Phone } from "lucide-react"
+import { Ship, Mail, Lock, Phone, ArrowRight } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,9 +42,12 @@ export default function RegisterPage() {
       await signup(email, phone, password, role)
       toast({
         title: "Account created!",
-        description: "Please verify your phone number with the OTP sent to you.",
+        description: "Redirecting to login page...",
       })
-      // router.push("/verify-otp")
+      // Redirect to login page after successful signup
+      setTimeout(() => {
+        navigate("/login")
+      }, 1500)
     } catch (error) {
       toast({
         title: "Registration failed",
