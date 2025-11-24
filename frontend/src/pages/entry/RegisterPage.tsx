@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 
 import { useState } from "react"
@@ -8,25 +10,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, Phone, ArrowRight } from "lucide-react"
+import { Ship, Mail, Lock, Phone, ArrowRight, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [role, setRole] = useState<'buyer' | 'seller'>('buyer')
+  const [role, setRole] = useState<"buyer" | "seller">("buyer")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const { signup } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
 
     if (password !== confirmPassword) {
+      setError("Passwords do not match.")
       toast({
         title: "Passwords don't match",
         description: "Please make sure your passwords match.",
@@ -47,7 +53,8 @@ export default function RegisterPage() {
       setTimeout(() => {
         navigate("/login")
       }, 1500)
-    } catch (error) {
+    } catch (error: any) {
+      setError(error.message || "Registration failed. Please try again.")
       toast({
         title: "Registration failed",
         description: "Please try again.",
@@ -82,6 +89,13 @@ export default function RegisterPage() {
           <Card className="glass border-2">
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
@@ -116,7 +130,7 @@ export default function RegisterPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="role">I am a</Label>
-                  <Select value={role} onValueChange={(value) => setRole(value as 'buyer' | 'seller')}>
+                  <Select value={role} onValueChange={(value) => setRole(value as "buyer" | "seller")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>

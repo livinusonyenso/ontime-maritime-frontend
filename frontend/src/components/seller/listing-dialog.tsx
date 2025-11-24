@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,6 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useListings } from "@/contexts/listings-context"
 import { useToast } from "@/hooks/use-toast"
 import type { Listing } from "@/types"
+import { Upload, X } from "lucide-react"
 
 const listingSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -48,6 +51,8 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
   const { createListing, updateListing } = useListings()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [photos, setPhotos] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
 
   const form = useForm<ListingFormValues>({
     resolver: zodResolver(listingSchema),
@@ -81,6 +86,7 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
         is_dangerous: listing.is_dangerous,
         is_high_value: listing.is_high_value,
       })
+      setPhotos(listing.photos || [])
     } else {
       form.reset({
         title: "",
@@ -95,19 +101,36 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
         is_dangerous: false,
         is_high_value: false,
       })
+      setPhotos([])
     }
   }, [listing, form, open])
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setUploading(true)
+      setTimeout(() => {
+        const newPhotos = Array.from(e.target.files!).map(() => `/generic-placeholder-300px.png?height=300&width=600`)
+        setPhotos((prev) => [...prev, ...newPhotos])
+        setUploading(false)
+        toast({ title: "Photo uploaded", description: "Image added successfully" })
+      }, 1000)
+    }
+  }
+
+  const removePhoto = (index: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const onSubmit = async (data: ListingFormValues) => {
     try {
       setLoading(true)
       if (listing) {
-        await updateListing(listing.id, data)
+        await updateListing(listing.id, { ...data, photos })
         toast({ title: "Listing updated", description: "Your listing has been successfully updated." })
       } else {
         await createListing({
           ...data,
-          photos: [], // Mock photos for now
+          photos: photos.length > 0 ? photos : [],
           certificates: [], // Mock certificates for now
         })
         toast({ title: "Listing created", description: "Your new listing is now active." })
@@ -154,6 +177,47 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
               {form.formState.errors.description && (
                 <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
               )}
+            </div>
+
+            <div className="space-y-2 md:col-span-2 border rounded-lg p-4 bg-muted/20">
+              <Label>Photos</Label>
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {photos.map((photo, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-square rounded-md overflow-hidden border bg-background group"
+                  >
+                    <img src={photo || "/placeholder.svg"} alt="Listing" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(index)}
+                      className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <label className="flex flex-col items-center justify-center aspect-square rounded-md border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer bg-background transition-colors">
+                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                    {uploading ? (
+                      <span className="loading loading-spinner loading-xs">...</span>
+                    ) : (
+                      <>
+                        <Upload className="h-6 w-6" />
+                        <span className="text-xs">Upload</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoUpload}
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
             </div>
 
             <div className="space-y-2">

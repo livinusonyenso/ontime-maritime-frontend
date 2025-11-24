@@ -173,6 +173,10 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-600" />
             </Button>
+            <Button variant="outline" size="sm" onClick={logout} className="gap-2">
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">

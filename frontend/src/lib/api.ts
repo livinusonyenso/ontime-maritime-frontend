@@ -38,9 +38,13 @@ api.interceptors.response.use(
       switch (status) {
         case 401:
           // Unauthorized - clear token and redirect to login
-          localStorage.removeItem('ontime_token')
-          localStorage.removeItem('ontime_user')
-          window.location.href = '/login'
+          // But don't redirect if we're already on the login or register page
+          const currentPath = window.location.pathname
+          if (currentPath !== '/login' && currentPath !== '/register') {
+            localStorage.removeItem('ontime_token')
+            localStorage.removeItem('ontime_user')
+            window.location.href = '/login'
+          }
           break
         case 403:
           console.error('Access forbidden:', message)

@@ -16,7 +16,8 @@ import BuyerTrackingPage from "./pages/buyer/TrackingPage" // Public/Old
 import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage" // New
 import BuyerAuctionsPage from "./pages/buyer/AuctionsPage" // Public/Old
 import BuyerDashboardAuctionsPage from "./pages/buyer/DashboardAuctionsPage" // New
-import BuyerInsurancePage from "./pages/buyer/InsurancePage"
+import BuyerInsurancePage from "./pages/buyer/InsurancePage" // Public
+import BuyerDashboardInsurancePage from "./pages/buyer/DashboardInsurancePage" // Dashboard
 import BuyerDocumentsPage from "./pages/buyer/DocumentsPage"
 import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
@@ -24,7 +25,8 @@ import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerListingsPage from "./pages/seller/ListingsPage" // New
 import SellerTrackingPage from "./pages/seller/TrackingPage"
-import SellerAuctionsPage from "./pages/seller/AuctionsPage"
+import SellerAuctionsPage from "./pages/seller/AuctionsPage" // Public
+import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage" // Dashboard
 import SellerInsurancePage from "./pages/seller/InsurancePage"
 import SellerDocumentsPage from "./pages/seller/DocumentsPage"
 import SellerPaymentsPage from "./pages/seller/PaymentsPage"
@@ -63,7 +65,7 @@ function App() {
           <Route index element={<BuyerDashboardPage />} />
           <Route path="tracking" element={<BuyerDashboardTrackingPage />} />
           <Route path="auctions" element={<BuyerDashboardAuctionsPage />} />
-          <Route path="insurance" element={<BuyerInsurancePage />} />
+          <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
           <Route path="documents" element={<BuyerDocumentsPage />} />
           <Route path="payments" element={<BuyerPaymentsPage />} />
         </Route>
@@ -80,7 +82,7 @@ function App() {
           <Route index element={<SellerDashboardPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
           <Route path="tracking" element={<SellerTrackingPage />} />
-          <Route path="auctions" element={<SellerAuctionsPage />} />
+          <Route path="auctions" element={<SellerDashboardAuctionsPage />} />
           <Route path="insurance" element={<SellerInsurancePage />} />
           <Route path="documents" element={<SellerDocumentsPage />} />
           <Route path="payments" element={<SellerPaymentsPage />} />

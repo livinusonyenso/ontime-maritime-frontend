@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react"
+"use client"
+
+import { useState } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuction } from "@/contexts/auction-context"
+import { AuctionCard } from "@/components/market/auction-card"
 import {
   Dialog,
   DialogContent,
@@ -15,52 +18,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Ship, MapPin, Package, Users, Clock, DollarSign, Gavel } from "lucide-react"
+import { DollarSign, Gavel } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function AuctionsPage() {
   const { auctions, placeBid } = useAuction()
   const [selectedAuction, setSelectedAuction] = useState<any>(null)
   const [bidAmount, setBidAmount] = useState("")
-  const [timeRemaining, setTimeRemaining] = useState<{ [key: string]: string }>({})
   const { toast } = useToast()
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const newTimeRemaining: { [key: string]: string } = {}
-      auctions.forEach((auction) => {
-        const end = new Date(auction.endTime).getTime()
-        const now = new Date().getTime()
-        const diff = end - now
-
-        if (diff > 0) {
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-
-          if (days > 0) {
-            newTimeRemaining[auction.id] = `${days}d ${hours}h`
-          } else if (hours > 0) {
-            newTimeRemaining[auction.id] = `${hours}h ${minutes}m`
-          } else {
-            newTimeRemaining[auction.id] = `${minutes}m`
-          }
-        } else {
-          newTimeRemaining[auction.id] = "Ended"
-        }
-      })
-      setTimeRemaining(newTimeRemaining)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [auctions])
-
   const handlePlaceBid = () => {
+    const currentPrice = selectedAuction.current_price || selectedAuction.currentBid
     const amount = Number.parseFloat(bidAmount)
-    if (amount <= selectedAuction.currentBid) {
+    if (amount <= currentPrice) {
       toast({
         title: "Invalid Bid",
-        description: `Bid must be higher than current bid of $${selectedAuction.currentBid.toLocaleString()}`,
+        description: `Bid must be higher than current bid of $${currentPrice.toLocaleString()}`,
         variant: "destructive",
       })
       return
@@ -73,6 +46,14 @@ export default function AuctionsPage() {
     })
     setSelectedAuction(null)
     setBidAmount("")
+  }
+
+  const onBid = (id: string) => {
+    const auction = auctions.find((a) => a.id === id)
+    if (auction) {
+      setSelectedAuction(auction)
+      setBidAmount(((auction.current_price || 0) + 100).toString())
+    }
   }
 
   return (
@@ -125,74 +106,9 @@ export default function AuctionsPage() {
         {/* Auctions Grid */}
         <section className="py-12 bg-background">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {auctions.map((auction) => (
-                <Card
-                  key={auction.id}
-                  className="glass border-2 hover:border-primary/50 transition-all overflow-hidden"
-                >
-                  <div className="aspect-video bg-slate-200 relative overflow-hidden">
-                    <img
-                      src={`/generic-placeholder-300px.png?height=300&width=600`}
-                      alt={auction.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4">
-                      <Badge className="bg-accent text-accent-foreground border-0">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {timeRemaining[auction.id] || "Loading..."}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <CardHeader>
-                    <CardTitle className="text-xl">{auction.title}</CardTitle>
-                    <CardDescription>{auction.description}</CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Ship className="h-4 w-4 text-primary" />
-                        <span className="text-muted-foreground">{auction.vessel}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Package className="h-4 w-4 text-secondary" />
-                        <span className="text-muted-foreground">{auction.cargo}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-accent" />
-                        <span className="text-muted-foreground text-xs">{auction.route}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-primary" />
-                        <span className="text-muted-foreground">{auction.bidders} bidders</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-4 space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Current Bid</span>
-                        <span className="text-2xl font-bold text-primary">${auction.currentBid.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">Minimum Bid</span>
-                        <span className="font-semibold">${auction.minimumBid.toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <Button
-                      className="w-full bg-accent hover:bg-accent/90"
-                      onClick={() => {
-                        setSelectedAuction(auction)
-                        setBidAmount((auction.currentBid + 100).toString())
-                      }}
-                    >
-                      <Gavel className="mr-2 h-4 w-4" />
-                      Place Bid
-                    </Button>
-                  </CardContent>
-                </Card>
+                <AuctionCard key={auction.id} auction={auction} onBid={onBid} />
               ))}
             </div>
           </div>
@@ -268,23 +184,21 @@ export default function AuctionsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Place Your Bid</DialogTitle>
-            <DialogDescription>{selectedAuction?.title}</DialogDescription>
+            <DialogDescription>{selectedAuction?.title || `Auction #${selectedAuction?.id}`}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Current Bid</span>
-                <span className="font-semibold">${selectedAuction?.currentBid.toLocaleString()}</span>
+                <span className="font-semibold">${selectedAuction?.current_price?.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Minimum Bid</span>
-                <span className="font-semibold">${selectedAuction?.minimumBid.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Time Remaining</span>
-                <span className="font-semibold text-accent">
-                  {selectedAuction && timeRemaining[selectedAuction.id]}
+                <span className="font-semibold">
+                  $
+                  {selectedAuction?.reserve_price?.toLocaleString() ||
+                    selectedAuction?.starting_price?.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -307,7 +221,7 @@ export default function AuctionsPage() {
             <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-sm">
               <p className="text-primary font-semibold mb-1">Winning this auction includes:</p>
               <ul className="space-y-1 text-muted-foreground">
-                <li>• Confirmed booking on {selectedAuction?.vessel}</li>
+                <li>• Confirmed booking on vessel</li>
                 <li>• Digital contract and documentation</li>
                 <li>• Real-time tracking throughout journey</li>
               </ul>

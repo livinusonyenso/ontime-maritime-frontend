@@ -1,10 +1,13 @@
+"use client"
+
 import { useState } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Shield, CheckCircle2, Star, TrendingUp, Clock } from "lucide-react"
+import { Shield, TrendingUp, Clock } from "lucide-react"
+import { InsuranceMarket } from "@/components/market/insurance-market"
 
 const insuranceProviders = [
   {
@@ -95,86 +98,10 @@ export default function InsurancePage() {
           </div>
         </section>
 
-        {/* Providers Grid */}
+        {/* Providers Grid / Market */}
         <section className="py-12 bg-background">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Compare Insurance Providers</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Get instant quotes and choose the best coverage for your cargo
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
-              {insuranceProviders.map((provider) => (
-                <Card
-                  key={provider.id}
-                  className={`glass border-2 transition-all ${
-                    selectedProvider === provider.id ? "border-primary shadow-lg" : "hover:border-primary/50"
-                  }`}
-                >
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl mb-2">{provider.name}</CardTitle>
-                        <div className="flex items-center gap-2">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${
-                                  i < Math.floor(provider.rating) ? "fill-accent text-accent" : "text-slate-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            {provider.rating} ({provider.reviews} reviews)
-                          </span>
-                        </div>
-                      </div>
-                      <Shield className="h-10 w-10 text-primary" />
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 pb-4 border-b">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Coverage Limit</p>
-                        <p className="text-lg font-bold text-primary">{provider.coverage}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Annual Premium</p>
-                        <p className="text-lg font-bold text-secondary">{provider.premium}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="font-semibold text-sm">Key Features:</p>
-                      <ul className="space-y-2">
-                        {provider.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center gap-2 text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="flex gap-2 pt-4">
-                      <Button
-                        variant="outline"
-                        className="flex-1 bg-transparent"
-                        onClick={() => setSelectedProvider(provider.id)}
-                      >
-                        View Details
-                      </Button>
-                      <Button className="flex-1 bg-accent hover:bg-accent/90">Get Quote</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <InsuranceMarket />
           </div>
         </section>
 

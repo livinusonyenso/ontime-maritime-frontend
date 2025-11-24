@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 
 import { useState } from "react"
@@ -8,13 +10,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, ArrowRight } from "lucide-react"
+import { Ship, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const { login } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -22,6 +26,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
 
     try {
       await login(email, password)
@@ -29,18 +34,17 @@ export default function LoginPage() {
         title: "Welcome back!",
         description: "You've successfully logged in.",
       })
-      
-      // Check role from localStorage since state update might be async
-      const storedUser = localStorage.getItem('ontime_user')
+
+      const storedUser = localStorage.getItem("ontime_user")
       if (storedUser) {
         const user = JSON.parse(storedUser)
-        if (user.role === 'buyer') {
+        if (user.role === "buyer") {
           navigate("/dashboard/buyer")
-        } else if (user.role === 'seller') {
+        } else if (user.role === "seller") {
           navigate("/dashboard/seller")
-        } else if (user.role === 'executive') {
+        } else if (user.role === "executive") {
           navigate("/dashboard/executive")
-        } else if (user.role === 'admin') {
+        } else if (user.role === "admin") {
           navigate("/admin")
         } else {
           navigate("/dashboard")
@@ -48,7 +52,8 @@ export default function LoginPage() {
       } else {
         navigate("/dashboard")
       }
-    } catch (error) {
+    } catch (error: any) {
+      setError(error.message || "Invalid email or password. Please try again.")
       toast({
         title: "Login failed",
         description: "Please check your credentials and try again.",
@@ -83,6 +88,13 @@ export default function LoginPage() {
           <Card className="glass border-2">
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
