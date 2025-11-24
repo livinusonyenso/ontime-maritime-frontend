@@ -48,10 +48,18 @@ export default function RegisterPage() {
       setTimeout(() => {
         navigate("/login")
       }, 1500)
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      // Try to extract error message from various possible locations
+      const errorMessage = 
+        error?.message || 
+        error?.data?.message || 
+        error?.response?.data?.message ||
+        'Registration failed. Please try again.'
+      
       toast({
         title: "Registration failed",
-        description: "Please try again.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {

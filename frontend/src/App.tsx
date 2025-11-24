@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { Providers } from './components/providers'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { Toaster } from './components/ui/toaster'
 
 // Entry Pages
 import HomePage from './pages/entry/HomePage'
@@ -94,6 +95,7 @@ function App() {
         <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={['admin']}><AdminDocumentsPage /></ProtectedRoute>} />
         <Route path="/admin/insurance" element={<ProtectedRoute allowedRoles={['admin']}><AdminInsurancePage /></ProtectedRoute>} />
       </Routes>
+      <Toaster />
     </Providers>
   )
 }

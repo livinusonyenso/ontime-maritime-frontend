@@ -49,10 +49,18 @@ export default function LoginPage() {
       } else {
         navigate("/dashboard")
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Login error:', error)
+      // Try to extract error message from various possible locations
+      const errorMessage = 
+        error?.message || 
+        error?.data?.message || 
+        error?.response?.data?.message ||
+        'Invalid email or password. Please try again.'
+      
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
