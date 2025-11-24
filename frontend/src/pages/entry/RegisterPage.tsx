@@ -1,4 +1,3 @@
-
 import type React from "react"
 
 import { useState } from "react"
@@ -48,18 +47,10 @@ export default function RegisterPage() {
       setTimeout(() => {
         navigate("/login")
       }, 1500)
-    } catch (error: any) {
-      console.error('Signup error:', error)
-      // Try to extract error message from various possible locations
-      const errorMessage = 
-        error?.message || 
-        error?.data?.message || 
-        error?.response?.data?.message ||
-        'Registration failed. Please try again.'
-      
+    } catch (error) {
       toast({
         title: "Registration failed",
-        description: errorMessage,
+        description: "Please try again.",
         variant: "destructive",
       })
     } finally {

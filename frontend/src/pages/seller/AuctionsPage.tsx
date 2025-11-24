@@ -1,6 +1,7 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Ship, MapPin, Package, Users, Clock, DollarSign, Gavel, ArrowLeft } from "lucide-react"
+import { DollarSign, Gavel, ArrowLeft, Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function DashboardAuctionsPage() {
@@ -136,61 +137,66 @@ export default function DashboardAuctionsPage() {
         {/* Auctions Grid */}
         <section className="py-12 bg-background">
           <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">My Auctions</h1>
+                <p className="text-muted-foreground">Manage your active listings and bids.</p>
+              </div>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" /> Create Auction
+              </Button>
+            </div>
             {auctions.length === 0 ? (
-              <Card className="glass max-w-2xl mx-auto">
-                <CardContent className="p-12 text-center">
-                  <Gavel className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">No active auctions</h3>
-                  <p className="text-muted-foreground">
-                    Check back later for new auction opportunities
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="col-span-full text-center py-12 bg-muted/20 rounded-lg border border-dashed">
+                <Gavel className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                <h3 className="font-medium text-lg">No Active Auctions</h3>
+                <p className="text-muted-foreground mb-4">Create a new auction to start selling.</p>
+                <Button variant="outline">Create First Auction</Button>
+              </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
                 {auctions.map((auction) => (
                   <Card
                     key={auction.id}
-                    className="glass border-2 hover:border-primary/50 transition-all overflow-hidden"
+                    className="glass border-2 hover:border-primary/50 transition-all overflow-hidden flex flex-col"
                   >
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
-                          <CardTitle className="text-xl">Auction #{auction.id.slice(0, 8)}</CardTitle>
-                          <CardDescription>Listing ID: {auction.listing_id.slice(0, 8)}</CardDescription>
+                          <CardTitle className="text-xl line-clamp-1" title={auction.title}>
+                            {auction.title}
+                          </CardTitle>
+                          <CardDescription>ID: {auction.id.slice(0, 8)}</CardDescription>
                         </div>
-                        <Badge className="bg-accent text-accent-foreground border-0">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {timeRemaining[auction.id] || "Loading..."}
+                        <Badge variant={timeRemaining[auction.id] === "Ended" ? "secondary" : "default"}>
+                          {timeRemaining[auction.id] || "..."}
                         </Badge>
                       </div>
                     </CardHeader>
 
-                    <CardContent className="space-y-4">
+                    <CardContent className="flex-1 space-y-4">
                       <div className="border-t pt-4 space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">Current Bid</span>
-                          <span className="text-2xl font-bold text-primary">${auction.current_bid.toLocaleString()}</span>
+                          <span className="text-sm text-muted-foreground">Highest Bid</span>
+                          <span className="text-2xl font-bold text-primary">
+                            ${auction.current_bid.toLocaleString()}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground">Starting Bid</span>
+                          <span className="text-muted-foreground">Starting</span>
                           <span className="font-semibold">${auction.starting_bid.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground">Ends</span>
-                          <span className="font-semibold">{new Date(auction.end_time).toLocaleString()}</span>
                         </div>
                       </div>
 
                       <Button
-                        className="w-full bg-accent hover:bg-accent/90"
+                        variant="outline"
+                        className="w-full mt-4 bg-transparent"
                         onClick={() => {
                           setSelectedAuction(auction)
                           setBidAmount((auction.current_bid + 100).toString())
                         }}
                       >
-                        <Gavel className="mr-2 h-4 w-4" />
-                        Place Bid
+                        Manage Auction
                       </Button>
                     </CardContent>
                   </Card>

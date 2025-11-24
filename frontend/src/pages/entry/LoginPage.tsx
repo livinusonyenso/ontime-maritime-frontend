@@ -1,4 +1,3 @@
-
 import type React from "react"
 
 import { useState } from "react"
@@ -49,18 +48,10 @@ export default function LoginPage() {
       } else {
         navigate("/dashboard")
       }
-    } catch (error: any) {
-      console.error('Login error:', error)
-      // Try to extract error message from various possible locations
-      const errorMessage = 
-        error?.message || 
-        error?.data?.message || 
-        error?.response?.data?.message ||
-        'Invalid email or password. Please try again.'
-      
+    } catch (error) {
       toast({
         title: "Login failed",
-        description: errorMessage,
+        description: "Please check your credentials and try again.",
         variant: "destructive",
       })
     } finally {
