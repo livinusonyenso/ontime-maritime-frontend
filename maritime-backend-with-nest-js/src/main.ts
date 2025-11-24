@@ -24,6 +24,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://ontime-maritime.onrender.com',
+      'https://ontime-maritime-1.onrender.com',
       ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
     ],
     credentials: true,
