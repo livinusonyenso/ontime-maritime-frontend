@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
