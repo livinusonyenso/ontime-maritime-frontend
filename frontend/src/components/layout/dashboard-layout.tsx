@@ -30,6 +30,7 @@ import {
   User,
   CreditCard,
   Store,
+  Plus,
 } from "lucide-react"
 
 interface DashboardLayoutProps {
@@ -54,9 +55,9 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
     seller: [
       { href: "/dashboard/seller", label: "Market", icon: Store },
       { href: "/dashboard/seller/overview", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard/seller/create-listing", label: "Create Listing", icon: Plus },
       { href: "/dashboard/seller/listings", label: "Listings", icon: Package },
       { href: "/dashboard/seller/sales", label: "Sales", icon: CreditCard },
-      { href: "/dashboard/seller/tracking", label: "Tracking", icon: Ship },
       { href: "/dashboard/seller/auctions", label: "Auctions", icon: Gavel },
       { href: "/dashboard/seller/documents", label: "Documents", icon: FileText },
     ],

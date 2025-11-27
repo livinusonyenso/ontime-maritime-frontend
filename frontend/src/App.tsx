@@ -33,6 +33,7 @@ import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
 // Seller Pages
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
+import SellerCreateListingPage from "./pages/seller/CreateListingPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
 import SellerTrackingPage from "./pages/seller/TrackingPage"
@@ -103,6 +104,7 @@ function App() {
         >
           <Route index element={<SellerMarketPage />} />
           <Route path="overview" element={<SellerDashboardPage />} />
+          <Route path="create-listing" element={<SellerCreateListingPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
           <Route path="tracking" element={<SellerTrackingPage />} />
           <Route path="auctions" element={<SellerDashboardAuctionsPage />} />

@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useListings } from "@/contexts/listings-context"
+import { useAppSelector } from "@/store/hooks"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -13,13 +14,42 @@ import { Plus, Search, Edit, Trash2, Package, MapPin, DollarSign, Filter } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import type { Listing } from "@/types"
+import type { MarketplaceListing } from "@/types/maritime"
+import type { RootState } from "@/store"
 
 export default function SellerListingsPage() {
-  const { listings, deleteListing, getAllListings, searchListings } = useListings()
+  const { listings: contextListings, deleteListing, getAllListings, searchListings } = useListings()
+  const marketplaceListings = useAppSelector((state: RootState) => state.marketplace.listings)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingListing, setEditingListing] = useState<Listing | null>(null)
   const { toast } = useToast()
+
+  // Merge context listings with Redux listings (mapped to Listing type)
+  const reduxListings: Listing[] = marketplaceListings
+    .filter((l: MarketplaceListing) => l.sellerId === "current-user" || l.sellerId === "seller1")
+    .map((l: MarketplaceListing) => ({
+      id: l.id,
+      seller_id: l.sellerId,
+      category: l.category as any,
+      title: l.title,
+      description: l.description,
+      price_usd: l.price,
+      origin_port: l.location.port || l.location.city,
+      destination_port: "N/A", // Dummy default
+      container_number: l.bolNumber || null,
+      eta: null,
+      photos: l.images,
+      certificates: [],
+      is_perishable: false,
+      is_dangerous: false,
+      is_high_value: false,
+      status: "active",
+      created_at: l.createdAt,
+      updated_at: l.updatedAt,
+    }))
+
+  const listings = [...reduxListings, ...contextListings]
 
   // Load initial listings
   useEffect(() => {
