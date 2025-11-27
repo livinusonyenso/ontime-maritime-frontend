@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Ship, Package, Gavel, Clock, MapPin, DollarSign, ArrowRight } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Search, Filter, Ship, Package, Gavel, Clock, MapPin, DollarSign, ArrowRight, ShieldCheck, Loader2, Bot, CheckCircle2, XCircle } from "lucide-react"
 
 export function MarketView() {
   const { getAllListings, searchListings } = useListings()
@@ -180,6 +182,39 @@ export function MarketView() {
     }, 1000)
     return () => clearInterval(timer)
   }, [auctions])
+
+  const [selectedListing, setSelectedListing] = useState<any>(null)
+  const [showPurchaseDialog, setShowPurchaseDialog] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [verificationResult, setVerificationResult] = useState<any>(null)
+
+  const handleVerifyAndPay = () => {
+    setIsVerifying(true)
+    // Simulate AI/Grok validation
+    setTimeout(() => {
+      setVerificationResult({
+        bolValid: true,
+        ownershipVerified: true,
+        originVerified: true,
+        destinationVerified: true,
+        inconsistencies: [],
+        riskLevel: "low",
+      })
+      setIsVerifying(false)
+    }, 2500)
+  }
+
+  const handleConfirmPurchase = () => {
+    // Simulate payment processing
+    const transactionId = "TXN-" + Math.random().toString(36).substr(2, 9).toUpperCase()
+    
+    // Update state to show success message
+    setVerificationResult((prev: any) => ({
+      ...prev,
+      paymentComplete: true,
+      transactionId: transactionId
+    }))
+  }
 
   return (
     <div className="p-6 space-y-8 min-h-screen bg-muted/10">
@@ -399,7 +434,11 @@ export function MarketView() {
         <TabsContent value="listings">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {listings.map((listing) => (
-              <Card key={listing.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background">
+              <Card 
+                key={listing.id} 
+                className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background cursor-pointer"
+                onClick={() => setSelectedListing(listing)}
+              >
                 {/* ... Listing Card Content (Same as above) ... */}
                 <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                   <img
@@ -434,6 +473,208 @@ export function MarketView() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Listing Detail Dialog */}
+      <Dialog open={!!selectedListing} onOpenChange={() => setSelectedListing(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedListing && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Images */}
+              <div>
+                <div className="relative h-64 bg-muted rounded-lg overflow-hidden mb-4">
+                  <img
+                    src={selectedListing.photos[0] || `/generic-placeholder-300px.png?height=300&width=400`}
+                    alt={selectedListing.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {selectedListing.photos.slice(1).map((img: string, i: number) => (
+                    <div key={i} className="h-20 w-20 bg-muted rounded overflow-hidden">
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Details */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="capitalize">
+                    {selectedListing.category}
+                  </Badge>
+                  <Badge variant={selectedListing.status === "active" ? "default" : "secondary"}>
+                    {selectedListing.status}
+                  </Badge>
+                </div>
+
+                <h2 className="text-2xl font-bold mb-2">{selectedListing.title}</h2>
+
+                <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                  <MapPin className="h-4 w-4" />
+                  {selectedListing.origin_port}
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-3xl font-bold text-primary">
+                    ${selectedListing.price_usd.toLocaleString()}
+                    <span className="text-sm font-normal text-muted-foreground ml-2">USD</span>
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground mb-4">{selectedListing.description}</p>
+
+                {/* Seller Info */}
+                <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium">Seller ID: {selectedListing.seller_id}</div>
+                      <div className="flex items-center gap-1 text-sm text-yellow-500">
+                        ★★★★★ <span className="text-muted-foreground">(5.0)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Button 
+                    className="flex-1" 
+                    size="lg"
+                    onClick={() => setShowPurchaseDialog(true)}
+                  >
+                    <ShieldCheck className="h-5 w-5 mr-2" />
+                    Verify & Pay
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Purchase/Verify Dialog */}
+      <Dialog open={showPurchaseDialog} onOpenChange={setShowPurchaseDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5" />
+              Verify & Purchase
+            </DialogTitle>
+            <DialogDescription>
+              AI/Grok validates BOL details, ownership, and shipment information before purchase.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4 space-y-4">
+            {!verificationResult ? (
+              <>
+                <div>
+                  <Label>Bill of Lading Number (if applicable)</Label>
+                  <Input placeholder="Enter BOL number for verification" />
+                </div>
+
+                <div>
+                  <Label>Message to Seller</Label>
+                  <Input placeholder="Any questions or special requests..." />
+                </div>
+
+                <Button
+                  className="w-full"
+                  onClick={handleVerifyAndPay}
+                  disabled={isVerifying}
+                >
+                  {isVerifying ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Verifying with AI...
+                    </>
+                  ) : (
+                    <>
+                      <Bot className="h-4 w-4 mr-2" />
+                      Run AI Verification
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : verificationResult.paymentComplete ? (
+              <div className="text-center space-y-4 py-6">
+                <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-green-700">Payment Successful!</h3>
+                  <p className="text-muted-foreground">Your transaction has been processed securely.</p>
+                </div>
+                <div className="bg-muted p-4 rounded-lg text-left">
+                  <p className="text-sm text-muted-foreground">Transaction ID</p>
+                  <p className="font-mono font-medium">{verificationResult.transactionId}</p>
+                  <div className="my-2 border-t" />
+                  <div className="flex justify-between text-sm">
+                    <span>Amount Paid</span>
+                    <span className="font-bold">${selectedListing?.price_usd.toLocaleString()}</span>
+                  </div>
+                </div>
+                <Button className="w-full" onClick={() => {
+                  setShowPurchaseDialog(false)
+                  setVerificationResult(null)
+                  setSelectedListing(null)
+                }}>
+                  Done
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <span className="font-semibold text-green-600">Verification Complete</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      BOL Valid
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Ownership Verified
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Origin Verified
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Destination Verified
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
+                    <Badge className="bg-green-500 text-white">
+                      Risk Level: LOW
+                    </Badge>
+                  </div>
+                </div>
+
+                {selectedListing && (
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Total Amount</span>
+                      <span className="text-2xl font-bold">
+                        ${selectedListing.price_usd.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <Button className="w-full" size="lg" onClick={handleConfirmPurchase}>
+                  <DollarSign className="h-5 w-5 mr-2" />
+                  Proceed to Payment
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -64,6 +64,7 @@ import {
   ShieldCheck,
   Loader2,
   Bot,
+ 
 } from "lucide-react"
 
 export default function MarketplacePage() {
@@ -214,6 +215,9 @@ export default function MarketplacePage() {
   }
 
   const handleConfirmPurchase = () => {
+    // Simulate payment processing
+    const transactionId = "TXN-" + Math.random().toString(36).substr(2, 9).toUpperCase()
+    
     if (selectedListing) {
       dispatch(
         addPurchaseRequest({
@@ -227,10 +231,18 @@ export default function MarketplacePage() {
         })
       )
     }
-    setShowPurchaseDialog(false)
-    setVerificationResult(null)
-    setPurchaseForm({ message: "", bolNumber: "" })
-    dispatch(clearSelectedListing())
+    
+    // Update state to show success message
+    setVerificationResult((prev: any) => ({
+      ...prev,
+      paymentComplete: true,
+      transactionId: transactionId
+    }))
+    
+    // Don't close dialog immediately
+    // setShowPurchaseDialog(false)
+    // setPurchaseForm({ message: "", bolNumber: "" })
+    // dispatch(clearSelectedListing())
   }
 
   return (
@@ -619,6 +631,32 @@ export default function MarketplacePage() {
                     )}
                   </Button>
                 </>
+              ) : verificationResult.paymentComplete ? (
+                <div className="text-center space-y-4 py-6">
+                  <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-green-700">Payment Successful!</h3>
+                    <p className="text-muted-foreground">Your transaction has been processed securely.</p>
+                  </div>
+                  <div className="bg-muted p-4 rounded-lg text-left">
+                    <p className="text-sm text-muted-foreground">Transaction ID</p>
+                    <p className="font-mono font-medium">{verificationResult.transactionId}</p>
+                    <div className="my-2 border-t" />
+                    <div className="flex justify-between text-sm">
+                      <span>Amount Paid</span>
+                      <span className="font-bold">${selectedListing?.price.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <Button className="w-full" onClick={() => {
+                    setShowPurchaseDialog(false)
+                    setVerificationResult(null)
+                    dispatch(clearSelectedListing())
+                  }}>
+                    Done
+                  </Button>
+                </div>
               ) : (
                 <>
                   <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
@@ -684,7 +722,7 @@ export default function MarketplacePage() {
 
                   <Button className="w-full" size="lg" onClick={handleConfirmPurchase}>
                     <DollarSign className="h-5 w-5 mr-2" />
-                    Confirm Purchase
+                    Proceed to Payment
                   </Button>
                 </>
               )}
