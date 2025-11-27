@@ -114,7 +114,7 @@ export function Header() {
                 <NavigationMenuTrigger className="bg-transparent">
                   Platform
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-background border shadow-lg">
+                <NavigationMenuContent className="bg-white text-black dark:bg-slate-950 dark:text-white">
                   <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-2">
                     {features.map((feature) => (
                       <li key={feature.href}>
