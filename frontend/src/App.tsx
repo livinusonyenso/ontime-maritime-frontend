@@ -10,24 +10,33 @@ import LoginPage from "./pages/entry/LoginPage"
 import RegisterPage from "./pages/entry/RegisterPage"
 import ServicesPage from "./pages/entry/ServicesPage"
 
+// Feature Pages - Maritime Platform Modules
+import VesselTrackingPage from "./pages/features/VesselTrackingPage"
+import EBOLPage from "./pages/features/EBOLPage"
+import LegalHubPage from "./pages/features/LegalHubPage"
+import SecurityHotlinePage from "./pages/features/SecurityHotlinePage"
+import ArbitrationPage from "./pages/features/ArbitrationPage"
+import MarketplacePage from "./pages/features/MarketplacePage"
+import KnowledgePage from "./pages/features/KnowledgePage"
+
 // Buyer Pages
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
-import BuyerMarketPage from "./pages/buyer/MarketPage" // New Default
-import BuyerTrackingPage from "./pages/buyer/TrackingPage" // Public/Old
-import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage" // New
-import BuyerAuctionsPage from "./pages/buyer/AuctionsPage" // Public/Old
-import BuyerDashboardAuctionsPage from "./pages/buyer/DashboardAuctionsPage" // New
-import BuyerInsurancePage from "./pages/buyer/InsurancePage" // Public
-import BuyerDashboardInsurancePage from "./pages/buyer/DashboardInsurancePage" // Dashboard
+import BuyerMarketPage from "./pages/buyer/MarketPage"
+import BuyerTrackingPage from "./pages/buyer/TrackingPage"
+import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage"
+import BuyerAuctionsPage from "./pages/buyer/AuctionsPage"
+import BuyerDashboardAuctionsPage from "./pages/buyer/DashboardAuctionsPage"
+import BuyerInsurancePage from "./pages/buyer/InsurancePage"
+import BuyerDashboardInsurancePage from "./pages/buyer/DashboardInsurancePage"
 import BuyerDocumentsPage from "./pages/buyer/DocumentsPage"
 import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
 // Seller Pages
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
-import SellerMarketPage from "./pages/seller/MarketPage" // New Default
-import SellerListingsPage from "./pages/seller/ListingsPage" // New
+import SellerMarketPage from "./pages/seller/MarketPage"
+import SellerListingsPage from "./pages/seller/ListingsPage"
 import SellerTrackingPage from "./pages/seller/TrackingPage"
-import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage" // Dashboard
+import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage"
 import SellerInsurancePage from "./pages/seller/InsurancePage"
 import SellerDocumentsPage from "./pages/seller/DocumentsPage"
 import SellerPaymentsPage from "./pages/seller/PaymentsPage"
@@ -50,6 +59,17 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        
+        {/* Feature Routes - Maritime Platform Modules (Public) */}
+        <Route path="/vessel-tracking" element={<VesselTrackingPage />} />
+        <Route path="/e-bol" element={<EBOLPage />} />
+        <Route path="/legal-hub" element={<LegalHubPage />} />
+        <Route path="/security-hotline" element={<SecurityHotlinePage />} />
+        <Route path="/arbitration" element={<ArbitrationPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/knowledge" element={<KnowledgePage />} />
+
+        {/* Legacy public routes */}
         <Route path="/tracking" element={<BuyerTrackingPage />} />
         <Route path="/auctions" element={<BuyerAuctionsPage />} />
         <Route path="/insurance" element={<BuyerInsurancePage />} />
@@ -89,7 +109,7 @@ function App() {
           <Route path="insurance" element={<SellerInsurancePage />} />
           <Route path="documents" element={<SellerDocumentsPage />} />
           <Route path="payments" element={<SellerPaymentsPage />} />
-          <Route path="sales" element={<SellerDashboardPage />} /> {/* Placeholder */}
+          <Route path="sales" element={<SellerDashboardPage />} />
         </Route>
 
         {/* Executive Dashboard Routes */}

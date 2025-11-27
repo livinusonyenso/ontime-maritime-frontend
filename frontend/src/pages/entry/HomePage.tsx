@@ -17,7 +17,64 @@ import {
   CheckCircle2,
   Star,
   ArrowRight,
+  Scale,
+  Bot,
+  Store,
+  BookOpen,
+  Siren,
 } from "lucide-react"
+
+const platformModules = [
+  {
+    title: "Vessel Tracking",
+    description: "Real-time vessel tracking via MarineTraffic & VesselFinder AIS data",
+    href: "/vessel-tracking",
+    icon: Ship,
+    color: "bg-blue-500/10 text-blue-600",
+  },
+  {
+    title: "Digital Bill of Lading",
+    description: "Blockchain-verified e-BOL system with automatic validation. $50 per BOL",
+    href: "/e-bol",
+    icon: FileText,
+    color: "bg-green-500/10 text-green-600",
+  },
+  {
+    title: "Legal & Compliance Hub",
+    description: "Access verified maritime lawyers, templates, and compliance consulting",
+    href: "/legal-hub",
+    icon: Scale,
+    color: "bg-purple-500/10 text-purple-600",
+  },
+  {
+    title: "Security Hotline",
+    description: "Report fraud, piracy, missing shipments, and maritime crimes",
+    href: "/security-hotline",
+    icon: Siren,
+    color: "bg-red-500/10 text-red-600",
+  },
+  {
+    title: "AI Arbitration",
+    description: "Grok 4.1 powered dispute resolution with settlement recommendations",
+    href: "/arbitration",
+    icon: Bot,
+    color: "bg-indigo-500/10 text-indigo-600",
+  },
+  {
+    title: "Equipment Marketplace",
+    description: "Buy/sell containers, cranes, warehouses, spare parts & insurance",
+    href: "/marketplace",
+    icon: Store,
+    color: "bg-orange-500/10 text-orange-600",
+  },
+  {
+    title: "Knowledge Center",
+    description: "PDF guides, training materials, IMO standards & customs resources",
+    href: "/knowledge",
+    icon: BookOpen,
+    color: "bg-teal-500/10 text-teal-600",
+  },
+]
 
 export default function HomePage() {
   return (
@@ -118,6 +175,43 @@ export default function HomePage() {
                   </p>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Platform Modules */}
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Complete Maritime Platform</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Seven integrated modules covering every aspect of maritime operations
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {platformModules.map((module) => (
+                <Link key={module.href} to={module.href}>
+                  <Card className="h-full hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer group">
+                    <CardContent className="p-6 space-y-4">
+                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${module.color}`}>
+                        <module.icon className="h-7 w-7" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                          {module.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {module.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center text-sm text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        Explore <ArrowRight className="h-4 w-4 ml-1" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
