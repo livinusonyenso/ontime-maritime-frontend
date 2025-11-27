@@ -78,7 +78,7 @@ export function CreateListingForm({ onSuccess, onCancel }: CreateListingFormProp
         sellerId: "current-user",
         sellerName: "Current User",
         sellerRating: 5,
-        category: data.category,
+        category: data.category as any,
         title: data.title,
         description: data.description,
         price: data.price,
