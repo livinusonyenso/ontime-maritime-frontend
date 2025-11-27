@@ -12,21 +12,148 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Ship, Package, Gavel, Clock, MapPin, DollarSign, ArrowRight } from "lucide-react"
 
 export function MarketView() {
-  const { listings, getAllListings, searchListings } = useListings()
-  const { auctions } = useAuction()
+  const { getAllListings, searchListings } = useListings()
+  const { } = useAuction() // Keep hook for potential future use but ignore data
+
+  // DUMMY DATA FOR DEMONSTRATION
+  const listings = [
+    {
+      id: '1',
+      seller_id: 'seller1',
+      category: 'vessel',
+      title: '2015 Supramax Bulk Carrier',
+      description: '58,000 DWT, built in Japan. Excellent condition, special survey passed recently.',
+      price_usd: 14500000,
+      origin_port: 'Singapore',
+      destination_port: 'Rotterdam',
+      container_number: null,
+      eta: null,
+      photos: ['https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?q=80&w=1000&auto=format&fit=crop'],
+      certificates: [],
+      is_perishable: false,
+      is_dangerous: false,
+      is_high_value: true,
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      seller_id: 'seller2',
+      category: 'container',
+      title: '20ft Standard Dry Containers (Batch of 50)',
+      description: 'Cargo worthy condition, located in Shanghai. Immediate availability.',
+      price_usd: 85000,
+      origin_port: 'Shanghai',
+      destination_port: 'Los Angeles',
+      container_number: null,
+      eta: null,
+      photos: ['https://images.unsplash.com/photo-1494412651409-ae5d985a3f3f?q=80&w=1000&auto=format&fit=crop'],
+      certificates: [],
+      is_perishable: false,
+      is_dangerous: false,
+      is_high_value: false,
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '3',
+      seller_id: 'seller3',
+      category: 'cargo',
+      title: 'Electronics Shipment - 5 TEU',
+      description: 'Consumer electronics requiring temperature controlled transport.',
+      price_usd: 12000,
+      origin_port: 'Shenzhen',
+      destination_port: 'Hamburg',
+      container_number: null,
+      eta: null,
+      photos: ['https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1000&auto=format&fit=crop'],
+      certificates: [],
+      is_perishable: false,
+      is_dangerous: false,
+      is_high_value: true,
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '4',
+      seller_id: 'seller4',
+      category: 'equipment',
+      title: 'Port Crane - Liebherr LHM 550',
+      description: 'Mobile harbour crane, max lifting capacity 144t. Year 2018.',
+      price_usd: 2800000,
+      origin_port: 'Dubai',
+      destination_port: 'Mumbai',
+      container_number: null,
+      eta: null,
+      photos: ['https://images.unsplash.com/photo-1590930591148-5216718d4158?q=80&w=1000&auto=format&fit=crop'],
+      certificates: [],
+      is_perishable: false,
+      is_dangerous: false,
+      is_high_value: true,
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  ] as any[] // Cast to any to avoid strict type checking against the full interface if some optional fields are missing
+
+  const auctions = [
+    {
+      id: 'a1',
+      listing_id: 'l_a1',
+      starting_price: 50000,
+      current_price: 65000,
+      reserve_price: 100000,
+      status: 'active',
+      start_time: new Date().toISOString(),
+      end_time: new Date(Date.now() + 86400000 * 2).toISOString(), // Ends in 2 days
+      winner_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: 'a2',
+      listing_id: 'l_a2',
+      starting_price: 120000,
+      current_price: 145000,
+      reserve_price: 200000,
+      status: 'active',
+      start_time: new Date().toISOString(),
+      end_time: new Date(Date.now() + 86400000 * 5).toISOString(), // Ends in 5 days
+      winner_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: 'a3',
+      listing_id: 'l_a3',
+      starting_price: 10000,
+      current_price: 12500,
+      reserve_price: 25000,
+      status: 'active',
+      start_time: new Date().toISOString(),
+      end_time: new Date(Date.now() + 3600000 * 4).toISOString(), // Ends in 4 hours
+      winner_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  ] as any[]
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("all")
 
   useEffect(() => {
-    getAllListings()
+    // getAllListings()
   }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      searchListings(searchQuery)
+      // searchListings(searchQuery)
+      console.log("Searching for:", searchQuery)
     } else {
-      getAllListings()
+      // getAllListings()
     }
   }
 
