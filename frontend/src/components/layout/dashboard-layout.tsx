@@ -30,7 +30,6 @@ import {
   User,
   CreditCard,
   Store,
-  Plus,
 } from "lucide-react"
 
 interface DashboardLayoutProps {
@@ -46,6 +45,9 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
     buyer: [
       { href: "/dashboard/buyer", label: "Market", icon: Store },
       { href: "/dashboard/buyer/overview", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard/buyer/ebol", label: "e-BOL", icon: FileText },
+      { href: "/dashboard/buyer/arbitration", label: "Arbitration", icon: Gavel },
+      { href: "/dashboard/buyer/security-hotline", label: "Security Hotline", icon: Bell },
       { href: "/dashboard/buyer/tracking", label: "Tracking", icon: Ship },
       { href: "/dashboard/buyer/auctions", label: "Auctions", icon: Gavel },
       { href: "/dashboard/buyer/documents", label: "Documents", icon: FileText },
@@ -55,9 +57,12 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
     seller: [
       { href: "/dashboard/seller", label: "Market", icon: Store },
       { href: "/dashboard/seller/overview", label: "Overview", icon: LayoutDashboard },
-      { href: "/dashboard/seller/create-listing", label: "Create Listing", icon: Plus },
       { href: "/dashboard/seller/listings", label: "Listings", icon: Package },
       { href: "/dashboard/seller/sales", label: "Sales", icon: CreditCard },
+      { href: "/dashboard/seller/ebol", label: "e-BOL", icon: FileText },
+      { href: "/dashboard/seller/arbitration", label: "Arbitration", icon: Gavel },
+      { href: "/dashboard/seller/security-hotline", label: "Security Hotline", icon: Bell },
+      { href: "/dashboard/seller/tracking", label: "Tracking", icon: Ship },
       { href: "/dashboard/seller/auctions", label: "Auctions", icon: Gavel },
       { href: "/dashboard/seller/documents", label: "Documents", icon: FileText },
     ],

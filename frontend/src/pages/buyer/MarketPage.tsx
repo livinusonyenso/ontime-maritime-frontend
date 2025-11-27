@@ -1,5 +1,5 @@
-import MarketplaceMain from "@/components/MarketplaceMain"
+import { MarketView } from "@/components/market/market-view"
 
 export default function BuyerMarketPage() {
-  return <MarketplaceMain />
+  return <MarketView />
 }

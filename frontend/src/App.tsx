@@ -3,37 +3,33 @@ import { Providers } from "./components/providers"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { DashboardLayout } from "./components/layout/dashboard-layout"
 
-// Entry Pages
+// Entry / Public Pages
 import HomePage from "./pages/entry/HomePage"
 import AboutPage from "./pages/entry/AboutPage"
+import ServicesPage from "./pages/entry/ServicesPage"
 import LoginPage from "./pages/entry/LoginPage"
 import RegisterPage from "./pages/entry/RegisterPage"
-import ServicesPage from "./pages/entry/ServicesPage"
 
-// Feature Pages - Maritime Platform Modules
+// Platform Public Pages
+// import PlatformHomePage from "./pages/features/PlatformHomePage" /
 import VesselTrackingPage from "./pages/features/VesselTrackingPage"
 import EBOLPage from "./pages/features/EBOLPage"
-import LegalHubPage from "./pages/features/LegalHubPage"
-import SecurityHotlinePage from "./pages/features/SecurityHotlinePage"
 import ArbitrationPage from "./pages/features/ArbitrationPage"
+import SecurityHotlinePage from "./pages/features/SecurityHotlinePage"
 import MarketplacePage from "./pages/features/MarketplacePage"
 import KnowledgePage from "./pages/features/KnowledgePage"
 
-// Buyer Pages
+// Buyer Pages (Protected)
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
 import BuyerMarketPage from "./pages/buyer/MarketPage"
-import BuyerTrackingPage from "./pages/buyer/TrackingPage"
 import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage"
-import BuyerAuctionsPage from "./pages/buyer/AuctionsPage"
 import BuyerDashboardAuctionsPage from "./pages/buyer/DashboardAuctionsPage"
-import BuyerInsurancePage from "./pages/buyer/InsurancePage"
 import BuyerDashboardInsurancePage from "./pages/buyer/DashboardInsurancePage"
 import BuyerDocumentsPage from "./pages/buyer/DocumentsPage"
 import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
-// Seller Pages
+// Seller Pages (Protected)
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
-import SellerCreateListingPage from "./pages/seller/CreateListingPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
 import SellerTrackingPage from "./pages/seller/TrackingPage"
@@ -42,7 +38,12 @@ import SellerInsurancePage from "./pages/seller/InsurancePage"
 import SellerDocumentsPage from "./pages/seller/DocumentsPage"
 import SellerPaymentsPage from "./pages/seller/PaymentsPage"
 
-// Executive Corner Pages
+// Dashboard Side-Panel Modules (Protected)
+import { EBOLModule } from "./components/dashboard/EBOLModule"
+import { SecurityHotlineModule } from "./components/dashboard/SecurityHotlineModule"
+import { ArbitrationModule } from "./components/dashboard/ArbitrationModule"
+
+// Executive Corner Pages (Protected)
 import ExecutiveDashboardPage from "./pages/executive-corner/ExecutiveDashboardPage"
 import AdminPage from "./pages/executive-corner/AdminPage"
 import AdminUsersPage from "./pages/executive-corner/AdminUsersPage"
@@ -54,28 +55,26 @@ function App() {
   return (
     <Providers>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
+
+        {/* PUBLIC AUTH ROUTES */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* PUBLIC ROUTES */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />
-        
-        {/* Feature Routes - Maritime Platform Modules (Public) */}
-        <Route path="/vessel-tracking" element={<VesselTrackingPage />} />
-        <Route path="/e-bol" element={<EBOLPage />} />
-        <Route path="/legal-hub" element={<LegalHubPage />} />
-        <Route path="/security-hotline" element={<SecurityHotlinePage />} />
-        <Route path="/arbitration" element={<ArbitrationPage />} />
-        <Route path="/marketplace" element={<MarketplacePage />} />
-        <Route path="/knowledge" element={<KnowledgePage />} />
 
-        {/* Legacy public routes */}
-        <Route path="/tracking" element={<BuyerTrackingPage />} />
-        <Route path="/auctions" element={<BuyerAuctionsPage />} />
-        <Route path="/insurance" element={<BuyerInsurancePage />} />
+        {/* PUBLIC PLATFORM ROUTES */}
+        {/* <Route path="/platform" element={<PlatformHomePage />} /> */}
+        <Route path="/platform/vessel-tracking" element={<VesselTrackingPage />} />
+        <Route path="/platform/e-bol" element={<EBOLPage />} />
+        <Route path="/platform/arbitration" element={<ArbitrationPage />} />
+        <Route path="/platform/security-hotline" element={<SecurityHotlinePage />} />
+        <Route path="/platform/marketplace" element={<MarketplacePage />} />
+        <Route path="/platform/knowledge" element={<KnowledgePage />} />
 
-        {/* Buyer Dashboard Routes */}
+        {/* BUYER DASHBOARD (PROTECTED) */}
         <Route
           path="/dashboard/buyer"
           element={
@@ -86,6 +85,9 @@ function App() {
         >
           <Route index element={<BuyerMarketPage />} />
           <Route path="overview" element={<BuyerDashboardPage />} />
+          <Route path="ebol" element={<EBOLModule />} />
+          <Route path="arbitration" element={<ArbitrationModule />} />
+          <Route path="security-hotline" element={<SecurityHotlineModule />} />
           <Route path="tracking" element={<BuyerDashboardTrackingPage />} />
           <Route path="auctions" element={<BuyerDashboardAuctionsPage />} />
           <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
@@ -93,7 +95,7 @@ function App() {
           <Route path="payments" element={<BuyerPaymentsPage />} />
         </Route>
 
-        {/* Seller Dashboard Routes */}
+        {/* SELLER DASHBOARD (PROTECTED) */}
         <Route
           path="/dashboard/seller"
           element={
@@ -104,8 +106,10 @@ function App() {
         >
           <Route index element={<SellerMarketPage />} />
           <Route path="overview" element={<SellerDashboardPage />} />
-          <Route path="create-listing" element={<SellerCreateListingPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
+          <Route path="ebol" element={<EBOLModule />} />
+          <Route path="arbitration" element={<ArbitrationModule />} />
+          <Route path="security-hotline" element={<SecurityHotlineModule />} />
           <Route path="tracking" element={<SellerTrackingPage />} />
           <Route path="auctions" element={<SellerDashboardAuctionsPage />} />
           <Route path="insurance" element={<SellerInsurancePage />} />
@@ -114,17 +118,17 @@ function App() {
           <Route path="sales" element={<SellerDashboardPage />} />
         </Route>
 
-        {/* Executive Dashboard Routes */}
+        {/* EXECUTIVE DASHBOARD */}
         <Route
           path="/dashboard/executive"
           element={
-            <ProtectedRoute allowedRoles={["executive"] as any}>
+            <ProtectedRoute allowedRoles={["executive"]}>
               <ExecutiveDashboardPage />
             </ProtectedRoute>
           }
         />
 
-        {/* Admin routes */}
+        {/* ADMIN DASHBOARD */}
         <Route
           path="/admin"
           element={
@@ -140,8 +144,9 @@ function App() {
           <Route path="insurance" element={<AdminInsurancePage />} />
         </Route>
 
-        {/* Redirect legacy/unknown routes */}
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </Providers>
   )

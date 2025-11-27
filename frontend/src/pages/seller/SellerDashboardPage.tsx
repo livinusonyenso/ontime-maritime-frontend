@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/contexts/auth-context"
 import { useNotification } from "@/contexts/notification-context"
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FileText, DollarSign, Package, Plus, LogOut, BarChartIcon, TrendingUp, Users } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts"
-import { CreateListingDialog } from "@/components/seller/create-listing-dialog"
 
 // Mock data for seller revenue
 const revenueData = [
@@ -25,7 +24,6 @@ export default function SellerDashboardPage() {
   const { user, isAuthenticated, loading, logout } = useAuth()
   const { unreadCount } = useNotification()
   const navigate = useNavigate()
-  const [isCreateListingOpen, setIsCreateListingOpen] = useState(false)
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -63,8 +61,11 @@ export default function SellerDashboardPage() {
             <p className="text-muted-foreground">Manage your listings, track sales, and monitor performance.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="lg" className="shadow-sm" onClick={() => setIsCreateListingOpen(true)}>
+            <Button size="lg" className="shadow-sm">
               <Plus className="mr-2 h-5 w-5" /> Create New Listing
+            </Button>
+            <Button variant="outline" size="icon" onClick={logout} title="Logout">
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -315,7 +316,6 @@ export default function SellerDashboardPage() {
           </div>
         </div>
       </main>
-      <CreateListingDialog open={isCreateListingOpen} onOpenChange={setIsCreateListingOpen} />
     </div>
   )
 }
