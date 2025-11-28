@@ -19,6 +19,11 @@ import ArbitrationPage from "./pages/features/ArbitrationPage"
 import MarketplacePage from "./pages/features/MarketplacePage"
 import KnowledgePage from "./pages/features/KnowledgePage"
 
+// Feature Views
+import { EBOLView } from "./components/features/ebol/EBOLView"
+import { ArbitrationView } from "./components/features/arbitration/ArbitrationView"
+import { SecurityHotlineView } from "./components/features/security-hotline/SecurityHotlineView"
+
 // Buyer Pages
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
 import BuyerMarketPage from "./pages/buyer/MarketPage"
@@ -110,6 +115,9 @@ function App() {
           <Route path="documents" element={<SellerDocumentsPage />} />
           <Route path="payments" element={<SellerPaymentsPage />} />
           <Route path="sales" element={<SellerDashboardPage />} />
+          <Route path="ebol" element={<EBOLView />} />
+          <Route path="arbitration" element={<ArbitrationView />} />
+          <Route path="security-hotline" element={<SecurityHotlineView />} />
         </Route>
 
         {/* Executive Dashboard Routes */}
