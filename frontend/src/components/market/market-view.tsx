@@ -12,12 +12,18 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Ship, Package, Gavel, Clock, MapPin, DollarSign, ArrowRight } from "lucide-react"
 
+import { ListingDetailModal } from "@/components/marketplace/ListingDetailModal"
+
 export function MarketView() {
   // Get listings from Redux instead of Context
   const allListings = useSelector(selectAllListings)
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("all")
   const [filteredListings, setFilteredListings] = useState(allListings)
+  
+  // State for detail modal
+  const [selectedListing, setSelectedListing] = useState<MarketplaceListing | null>(null)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
 
   // Update filtered listings when Redux state changes
   useEffect(() => {
@@ -36,6 +42,11 @@ export function MarketView() {
     } else {
       setFilteredListings(allListings)
     }
+  }
+
+  const handleListingClick = (listing: MarketplaceListing) => {
+    setSelectedListing(listing)
+    setDetailModalOpen(true)
   }
 
   // For now, we'll use empty array for auctions until you add them to Redux
@@ -98,28 +109,29 @@ export function MarketView() {
       <div className="flex flex-col md:flex-row gap-4 items-center bg-background p-4 rounded-xl border shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search by name, category, or location..." 
-            className="pl-10 bg-muted/30 border-0 focus-visible:ring-1"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <form onSubmit={handleSearch}>
+            <Input 
+              placeholder="Search for vessels, containers, or equipment..." 
+              className="pl-10 h-12 text-base border-0 bg-transparent focus-visible:ring-0"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </form>
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <Select defaultValue="all">
-            <SelectTrigger className="w-[140px] bg-muted/30 border-0">
+            <SelectTrigger className="w-[160px] h-12 border-0 bg-muted/50">
+              <Filter className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="vessel">Vessels</SelectItem>
               <SelectItem value="container">Containers</SelectItem>
-              <SelectItem value="cargo">Cargo</SelectItem>
+              <SelectItem value="equipment">Equipment</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon" className="bg-muted/30 border-0">
-            <Filter className="h-4 w-4" />
-          </Button>
+          <Button size="lg" className="h-12 px-8">Search</Button>
         </div>
       </div>
 
@@ -128,123 +140,141 @@ export function MarketView() {
         <TabsList className="bg-transparent p-0 h-auto gap-6 border-b w-full justify-start rounded-none">
           <TabsTrigger 
             value="all" 
-            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-3 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
           >
-            All Items
+            All Listings
           </TabsTrigger>
           <TabsTrigger 
             value="auctions" 
-            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-3 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
           >
             Live Auctions
           </TabsTrigger>
           <TabsTrigger 
-            value="listings" 
-            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
+            value="saved" 
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 pb-3 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
           >
-            Direct Sales
+            Saved Items
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="space-y-8">
-          {/* Featured Auctions */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Gavel className="h-6 w-6 text-primary" />
-                Live Auctions
-              </h2>
-              <Button variant="ghost" className="text-primary hover:text-primary/80">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {auctions.slice(0, 4).map((auction) => (
-                <Card key={auction.id} className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 bg-background/50 backdrop-blur-sm">
-                  <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                    <img
-                      src={`/generic-placeholder-300px.png?height=300&width=400`}
-                      alt="Auction Item"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Badge className="absolute top-3 right-3 bg-black/50 backdrop-blur-md border-white/10 text-white hover:bg-black/60">
-                      <Clock className="w-3 h-3 mr-1.5 text-primary" />
-                      {timeRemaining[auction.id] || "..."}
-                    </Badge>
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground border-0">
-                      Auction
-                    </Badge>
-                  </div>
-                  <CardContent className="p-5">
-                    <div className="mb-3">
-                      <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">Listing #{auction.listing_id.substring(0, 8)}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">Auction Item</p>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <div className="text-sm text-muted-foreground">Current Bid</div>
-                      <div className="font-bold text-lg text-primary">${auction.current_price.toLocaleString()}</div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-5 pt-0">
-                    <Button className="w-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border-0 shadow-none">
-                      Place Bid
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Latest Listings */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Package className="h-6 w-6 text-secondary" />
-                Latest Listings
-              </h2>
-              <Button variant="ghost" className="text-secondary hover:text-secondary/80">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredListings.slice(0, 8).map((listing: MarketplaceListing) => (
-                <Card key={listing.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background">
-                  <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                    <img
-                      src={listing.images[0] || `/generic-placeholder-300px.png?height=300&width=400`}
-                      alt={listing.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <Badge variant="secondary" className="absolute top-3 left-3 shadow-sm">
+        <TabsContent value="all" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredListings.map((listing: MarketplaceListing) => (
+              <Card 
+                key={listing.id} 
+                className="group overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                onClick={() => handleListingClick(listing)}
+              >
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img 
+                    src={listing.images[0] || "/placeholder.svg"} 
+                    alt={listing.title} 
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <Badge className="bg-white/90 text-slate-900 hover:bg-white backdrop-blur-sm shadow-sm">
                       {listing.category}
                     </Badge>
                   </div>
-                  <CardContent className="p-5">
-                    <div className="mb-4">
-                      <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-secondary transition-colors">{listing.title}</h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                        <MapPin className="h-3.5 w-3.5" />
-                        <span className="truncate">{listing.location.city}, {listing.location.country}</span>
-                      </div>
+                  {listing.featured && (
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-amber-500 text-white border-0 shadow-sm">Featured</Badge>
                     </div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-lg font-bold">${listing.price.toLocaleString()}</span>
-                      <span className="text-xs text-muted-foreground">{listing.currency}</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-5 pt-0">
-                    <Button variant="outline" className="w-full hover:bg-secondary hover:text-secondary-foreground hover:border-secondary transition-colors">
-                      View Details
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </section>
+                  )}
+                </div>
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex justify-between items-start gap-2">
+                    <CardTitle className="text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">
+                      {listing.title}
+                    </CardTitle>
+                  </div>
+                  <CardDescription className="flex items-center gap-1 text-xs mt-1">
+                    <MapPin className="h-3 w-3" /> {listing.location.city}, {listing.location.country}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 pt-2">
+                  <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-xl font-bold text-primary">{listing.currency} {listing.price.toLocaleString()}</span>
+                    {listing.priceType !== 'fixed' && (
+                      <span className="text-xs text-muted-foreground capitalize">/ {listing.priceType.replace('_', ' ')}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="secondary" className="text-xs font-normal">
+                      {listing.condition.replace('_', ' ')}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs font-normal border-dashed">
+                      {Object.keys(listing.specifications).length} Specs
+                    </Badge>
+                  </div>
+                </CardContent>
+                <CardFooter className="p-4 pt-0 flex gap-2">
+                  <Button className="w-full group-hover:bg-primary group-hover:text-white transition-colors" variant="secondary">
+                    View Details <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="auctions">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {auctions.map((auction) => (
+              <Card key={auction.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img 
+                    src={auction.image} 
+                    alt={auction.title} 
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button variant="secondary" className="font-semibold">Place Bid</Button>
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <Badge variant="destructive" className="animate-pulse shadow-sm">
+                      Live Auction
+                    </Badge>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <div className="bg-black/70 backdrop-blur-md text-white text-xs font-medium py-1.5 px-3 rounded-full flex items-center justify-center gap-2 shadow-sm">
+                      <Clock className="h-3 w-3 text-red-400" />
+                      <span>Ends in: {timeRemaining[auction.id]}</span>
+                    </div>
+                  </div>
+                </div>
+                <CardHeader className="p-4 pb-2">
+                  <CardTitle className="text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">
+                    {auction.title}
+                  </CardTitle>
+                  <CardDescription className="flex items-center gap-1 text-xs mt-1">
+                    <Gavel className="h-3 w-3" /> {auction.bids} Bids placed
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 pt-2">
+                  <div className="flex justify-between items-end mb-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Current Bid</p>
+                      <p className="text-xl font-bold text-primary">${auction.current_bid.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Buy Now</p>
+                      <p className="text-sm font-semibold">${auction.buy_now_price.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {auctions.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                No active auctions at the moment. Check back later!
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="saved">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {auctions.map((auction) => (
               <Card key={auction.id} className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 bg-background/50 backdrop-blur-sm">
@@ -280,44 +310,14 @@ export function MarketView() {
           </div>
         </TabsContent>
 
-        <TabsContent value="listings">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredListings.map((listing: MarketplaceListing) => (
-              <Card key={listing.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background">
-                {/* ... Listing Card Content (Same as above) ... */}
-                <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                  <img
-                    src={listing.images[0] || `/generic-placeholder-300px.png?height=300&width=400`}
-                    alt={listing.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <Badge variant="secondary" className="absolute top-3 left-3 shadow-sm">
-                    {listing.category}
-                  </Badge>
-                </div>
-                <CardContent className="p-5">
-                  <div className="mb-4">
-                    <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-secondary transition-colors">{listing.title}</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span className="truncate">{listing.location.city}, {listing.location.country}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold">${listing.price.toLocaleString()}</span>
-                    <span className="text-xs text-muted-foreground">{listing.currency}</span>
-                  </div>
-                </CardContent>
-                <CardFooter className="p-5 pt-0">
-                  <Button variant="outline" className="w-full hover:bg-secondary hover:text-secondary-foreground hover:border-secondary transition-colors">
-                    View Details
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+
       </Tabs>
+
+      <ListingDetailModal 
+        open={detailModalOpen} 
+        onClose={() => setDetailModalOpen(false)} 
+        listing={selectedListing} 
+      />
     </div>
   )
 }

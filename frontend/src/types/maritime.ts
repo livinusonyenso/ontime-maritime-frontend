@@ -228,6 +228,7 @@ export interface MarketplaceListing {
     port?: string
     coordinates?: { lat: number; lng: number }
   }
+  bolImage?: string // URL or base64 of the Bill of Lading image
   specifications: Record<string, string>
   condition: 'new' | 'like_new' | 'good' | 'fair' | 'used'
   availability: 'available' | 'pending' | 'sold' | 'rented'

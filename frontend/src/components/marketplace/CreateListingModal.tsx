@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X, Upload, Plus, Trash2 } from "lucide-react"
+import { X, Upload, Plus, Trash2, FileText } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 interface CreateListingModalProps {
@@ -33,6 +33,7 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
   const [city, setCity] = useState("")
   const [port, setPort] = useState("")
   const [images, setImages] = useState<string[]>([])
+  const [bolImage, setBolImage] = useState("")
   const [specifications, setSpecifications] = useState<{ key: string; value: string }[]>([])
   const [newSpecKey, setNewSpecKey] = useState("")
   const [newSpecValue, setNewSpecValue] = useState("")
@@ -64,6 +65,24 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
       }
       reader.readAsDataURL(file)
     })
+  }
+
+  const handleBolUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+      alert("Please upload only image or PDF files")
+      return
+    }
+
+    // Convert to base64
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setBolImage(reader.result as string)
+    }
+    reader.readAsDataURL(file)
   }
 
   const removeImage = (index: number) => {
@@ -114,6 +133,7 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
       priceType: "fixed",
       currency,
       images,
+      bolImage: bolImage || undefined,
       location: {
         country,
         city,
@@ -122,7 +142,7 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
       specifications: specsObject,
       condition: condition as any,
       availability: "available",
-      bolRequired: false,
+      bolRequired: !!bolImage,
       bolVerified: false,
       featured: false,
     }))
@@ -337,6 +357,56 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Bill of Lading (BOL) */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-sm">Bill of Lading (Optional)</h3>
+            <p className="text-xs text-muted-foreground">
+              Upload a Bill of Lading to verify your ownership. Buyers can pay to view this document.
+            </p>
+            
+            <div className="border-2 border-dashed rounded-lg p-4">
+              <Input
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={handleBolUpload}
+                className="hidden"
+                id="bol-upload"
+              />
+              <Label
+                htmlFor="bol-upload"
+                className="flex flex-col items-center justify-center cursor-pointer"
+              >
+                {bolImage ? (
+                  <div className="relative group w-full">
+                    <div className="flex items-center justify-center gap-2 p-4 bg-muted rounded-lg">
+                      <FileText className="h-8 w-8 text-primary" />
+                      <span className="text-sm font-medium">BOL Uploaded</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setBolImage("")
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground">
+                      Click to upload BOL (Image or PDF)
+                    </span>
+                  </>
+                )}
+              </Label>
+            </div>
           </div>
 
           {/* Specifications */}

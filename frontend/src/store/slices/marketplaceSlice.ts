@@ -23,6 +23,7 @@ interface MarketplaceState {
   loading: boolean;
   error: string | null;
   verificationInProgress: boolean;
+  unlockedBols: Record<string, string[]>; // userId -> listingId[]
 }
 
 const initialState: MarketplaceState = {
@@ -38,6 +39,7 @@ const initialState: MarketplaceState = {
   loading: false,
   error: null,
   verificationInProgress: false,
+  unlockedBols: {},
 };
 
 const marketplaceSlice = createSlice({
@@ -266,6 +268,16 @@ const marketplaceSlice = createSlice({
     ) => {
       state.verificationInProgress = action.payload;
     },
+
+    unlockBol: (state, action: PayloadAction<{ userId: string; listingId: string }>) => {
+      const { userId, listingId } = action.payload;
+      if (!state.unlockedBols[userId]) {
+        state.unlockedBols[userId] = [];
+      }
+      if (!state.unlockedBols[userId].includes(listingId)) {
+        state.unlockedBols[userId].push(listingId);
+      }
+    },
   },
 });
 
@@ -295,6 +307,7 @@ export const {
   setLoading,
   setError,
   setVerificationInProgress,
+  unlockBol,
 } = marketplaceSlice.actions;
 
 export default marketplaceSlice.reducer;
@@ -312,3 +325,6 @@ export const selectAllListings = (state: any) =>
 
 export const selectSellerListings = (state: any, sellerId: string) =>
   state.marketplace.listings.filter((l: MarketplaceListing) => l.sellerId === sellerId);
+
+export const selectUnlockedBols = (state: any, userId: string) =>
+  state.marketplace.unlockedBols[userId] || [];
