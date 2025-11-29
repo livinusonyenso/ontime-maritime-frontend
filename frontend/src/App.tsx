@@ -95,6 +95,9 @@ function App() {
           <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
           <Route path="documents" element={<BuyerDocumentsPage />} />
           <Route path="payments" element={<BuyerPaymentsPage />} />
+          <Route path="ebol" element={<EBOLView />} />
+          <Route path="arbitration" element={<ArbitrationView />} />
+          <Route path="security-hotline" element={<SecurityHotlineView />} />
         </Route>
 
         {/* Seller Dashboard Routes */}

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useListings } from "@/contexts/listings-context"
-import { useAuction } from "@/contexts/auction-context"
+import { useSelector } from "react-redux"
+import { selectAllListings } from "@/store/slices/marketplaceSlice"
+import type { MarketplaceListing } from "@/types/maritime"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,23 +13,33 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Ship, Package, Gavel, Clock, MapPin, DollarSign, ArrowRight } from "lucide-react"
 
 export function MarketView() {
-  const { listings, getAllListings, searchListings } = useListings()
-  const { auctions } = useAuction()
+  // Get listings from Redux instead of Context
+  const allListings = useSelector(selectAllListings)
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("all")
+  const [filteredListings, setFilteredListings] = useState(allListings)
 
+  // Update filtered listings when Redux state changes
   useEffect(() => {
-    getAllListings()
-  }, [])
+    setFilteredListings(allListings)
+  }, [allListings])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      searchListings(searchQuery)
+      const filtered = allListings.filter((listing: MarketplaceListing) =>
+        listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setFilteredListings(filtered)
     } else {
-      getAllListings()
+      setFilteredListings(allListings)
     }
   }
+
+  // For now, we'll use empty array for auctions until you add them to Redux
+  const auctions: any[] = []
 
   // Calculate time remaining for auctions
   const [timeRemaining, setTimeRemaining] = useState<{ [key: string]: string }>({})
@@ -197,11 +208,11 @@ export function MarketView() {
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {listings.slice(0, 8).map((listing) => (
+              {filteredListings.slice(0, 8).map((listing: MarketplaceListing) => (
                 <Card key={listing.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background">
                   <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                     <img
-                      src={listing.photos[0] || `/generic-placeholder-300px.png?height=300&width=400`}
+                      src={listing.images[0] || `/generic-placeholder-300px.png?height=300&width=400`}
                       alt={listing.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -214,12 +225,12 @@ export function MarketView() {
                       <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-secondary transition-colors">{listing.title}</h3>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                         <MapPin className="h-3.5 w-3.5" />
-                        <span className="truncate">{listing.origin_port}</span>
+                        <span className="truncate">{listing.location.city}, {listing.location.country}</span>
                       </div>
                     </div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-lg font-bold">${listing.price_usd.toLocaleString()}</span>
-                      <span className="text-xs text-muted-foreground">USD</span>
+                      <span className="text-lg font-bold">${listing.price.toLocaleString()}</span>
+                      <span className="text-xs text-muted-foreground">{listing.currency}</span>
                     </div>
                   </CardContent>
                   <CardFooter className="p-5 pt-0">
@@ -271,12 +282,12 @@ export function MarketView() {
 
         <TabsContent value="listings">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {listings.map((listing) => (
+            {filteredListings.map((listing: MarketplaceListing) => (
               <Card key={listing.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-background">
                 {/* ... Listing Card Content (Same as above) ... */}
                 <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                   <img
-                    src={listing.photos[0] || `/generic-placeholder-300px.png?height=300&width=400`}
+                    src={listing.images[0] || `/generic-placeholder-300px.png?height=300&width=400`}
                     alt={listing.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -289,12 +300,12 @@ export function MarketView() {
                     <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-secondary transition-colors">{listing.title}</h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                       <MapPin className="h-3.5 w-3.5" />
-                      <span className="truncate">{listing.origin_port}</span>
+                      <span className="truncate">{listing.location.city}, {listing.location.country}</span>
                     </div>
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold">${listing.price_usd.toLocaleString()}</span>
-                    <span className="text-xs text-muted-foreground">USD</span>
+                    <span className="text-lg font-bold">${listing.price.toLocaleString()}</span>
+                    <span className="text-xs text-muted-foreground">{listing.currency}</span>
                   </div>
                 </CardContent>
                 <CardFooter className="p-5 pt-0">

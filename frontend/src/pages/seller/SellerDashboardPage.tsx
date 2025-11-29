@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/contexts/auth-context"
 import { useNotification } from "@/contexts/notification-context"
@@ -9,6 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FileText, DollarSign, Package, Plus, LogOut, BarChartIcon, TrendingUp, Users } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts"
+import { useSelector, useDispatch } from "react-redux"
+import { addListing, selectAllListings } from "@/store/slices/marketplaceSlice"
+import { CreateListingModal } from "@/components/marketplace/CreateListingModal"
+import { SellerListingsView } from "@/components/marketplace/SellerListingsView"
+import type { MarketplaceListing } from "@/types/maritime"
 
 // Mock data for seller revenue
 const revenueData = [
@@ -24,6 +29,16 @@ export default function SellerDashboardPage() {
   const { user, isAuthenticated, loading, logout } = useAuth()
   const { unreadCount } = useNotification()
   const navigate = useNavigate()
+  
+  // Redux hooks for marketplace listings
+  const dispatch = useDispatch()
+  const listings = useSelector(selectAllListings)
+  
+  // Modal state
+  const [createModalOpen, setCreateModalOpen] = useState(false)
+
+  // Filter seller's listings
+  const myListings = listings.filter((l: MarketplaceListing) => l.sellerId === user?.id)
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -61,7 +76,7 @@ export default function SellerDashboardPage() {
             <p className="text-muted-foreground">Manage your listings, track sales, and monitor performance.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="lg" className="shadow-sm">
+            <Button size="lg" className="shadow-sm" onClick={() => setCreateModalOpen(true)}>
               <Plus className="mr-2 h-5 w-5" /> Create New Listing
             </Button>
             <Button variant="outline" size="icon" onClick={logout} title="Logout">
@@ -315,7 +330,28 @@ export default function SellerDashboardPage() {
             </Card>
           </div>
         </div>
+
+        {/* My Listings Section */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">My Listings</h2>
+              <p className="text-muted-foreground">Manage your marketplace listings</p>
+            </div>
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              {myListings.length} {myListings.length === 1 ? "Listing" : "Listings"}
+            </Badge>
+          </div>
+          
+          <SellerListingsView />
+        </div>
       </main>
+
+      {/* Create Listing Modal */}
+      <CreateListingModal 
+        open={createModalOpen} 
+        onClose={() => setCreateModalOpen(false)} 
+      />
     </div>
   )
 }
