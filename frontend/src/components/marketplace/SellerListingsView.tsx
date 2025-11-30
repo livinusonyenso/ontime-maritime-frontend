@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { selectSellerListings, deleteSellerListing } from "@/store/slices/sellerListingSlice"
+import { deleteListing } from "@/store/slices/marketplaceSlice"
 import type { MarketplaceListing } from "@/types/maritime"
 import { useAuth } from "@/contexts/auth-context"
 import { Package } from "lucide-react"
@@ -30,6 +31,7 @@ export function SellerListingsView() {
   const handleDelete = () => {
     if (deletingListingId) {
       dispatch(deleteSellerListing(deletingListingId))
+      dispatch(deleteListing(deletingListingId)) // Sync with marketplace
       setDeletingListingId(null)
     }
   }

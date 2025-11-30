@@ -56,13 +56,13 @@ const marketplaceSlice = createSlice({
       action: PayloadAction<
         Omit<
           MarketplaceListing,
-          "id" | "views" | "inquiries" | "createdAt" | "updatedAt"
+          "views" | "inquiries" | "createdAt" | "updatedAt"
         >
       >
     ) => {
       const newListing: MarketplaceListing = {
         ...action.payload,
-        id: `ml${Date.now()}`,
+        id: action.payload.id || `ml${Date.now()}`,
         views: 0,
         inquiries: 0,
         createdAt: new Date().toISOString(),
