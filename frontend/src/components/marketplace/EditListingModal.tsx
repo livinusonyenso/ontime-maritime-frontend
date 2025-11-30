@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { updateSellerListing } from "@/store/slices/sellerListingSlice"
-import { updateListing } from "@/store/slices/marketplaceSlice"
 import type { MarketplaceListing } from "@/types/maritime"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -161,15 +160,6 @@ export function EditListingModal({ open, onClose, listing }: EditListingModalPro
     dispatch(updateSellerListing({
       id: listing.id,
       updates,
-    }))
-
-    // Sync with Marketplace Slice (for buyer view)
-    dispatch(updateListing({
-      id: listing.id,
-      updates: {
-        ...updates,
-        bolRequired: !!bolImage, // Ensure this is synced if changed
-      },
     }))
 
     onClose()

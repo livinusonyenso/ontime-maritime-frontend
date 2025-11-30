@@ -17,19 +17,19 @@ const sellerListingSlice = createSlice({
   name: "sellerListings",
   initialState,
   reducers: {
-    fetchSellerListingsStart: (state) => {
+    getSellerListingsStart: (state) => {
       state.loading = true
       state.error = null
     },
-    fetchSellerListingsSuccess: (state, action: PayloadAction<MarketplaceListing[]>) => {
+    getSellerListingsSuccess: (state, action: PayloadAction<MarketplaceListing[]>) => {
       state.listings = action.payload
       state.loading = false
     },
-    fetchSellerListingsFailure: (state, action: PayloadAction<string>) => {
+    getSellerListingsFailure: (state, action: PayloadAction<string>) => {
       state.loading = false
       state.error = action.payload
     },
-    createSellerListing: (state, action: PayloadAction<MarketplaceListing>) => {
+    addSellerListing: (state, action: PayloadAction<MarketplaceListing>) => {
       state.listings.unshift(action.payload)
     },
     updateSellerListing: (state, action: PayloadAction<{ id: string; updates: Partial<MarketplaceListing> }>) => {
@@ -46,10 +46,10 @@ const sellerListingSlice = createSlice({
 })
 
 export const {
-  fetchSellerListingsStart,
-  fetchSellerListingsSuccess,
-  fetchSellerListingsFailure,
-  createSellerListing,
+  getSellerListingsStart,
+  getSellerListingsSuccess,
+  getSellerListingsFailure,
+  addSellerListing,
   updateSellerListing,
   deleteSellerListing,
 } = sellerListingSlice.actions

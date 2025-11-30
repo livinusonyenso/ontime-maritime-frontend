@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { createSellerListing } from "@/store/slices/sellerListingSlice"
-import { addListing } from "@/store/slices/marketplaceSlice"
+import { addSellerListing } from "@/store/slices/sellerListingSlice"
 import { useAuth } from "@/contexts/auth-context"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -147,39 +146,14 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
     }
 
     // Dispatch to Seller Listing Slice
-    dispatch(createSellerListing(newListing))
+    dispatch(addSellerListing(newListing))
     
-    // Sync with Marketplace Slice (for buyer view)
-    // Note: addListing in marketplaceSlice generates its own ID and timestamps, 
-    // but we want to keep them consistent if possible. 
-    // However, addListing expects Omit<MarketplaceListing, "id" | ...>
-    // So we pass the data without the auto-generated fields
-    dispatch(addListing({
-      id: newListing.id,
-      sellerId: newListing.sellerId,
-      sellerName: newListing.sellerName,
-      sellerRating: newListing.sellerRating,
-      title: newListing.title,
-      description: newListing.description,
-      price: newListing.price,
-      priceType: newListing.priceType,
-      currency: newListing.currency,
-      category: newListing.category,
-      condition: newListing.condition,
-      images: newListing.images,
-      bolImage: newListing.bolImage,
-      location: newListing.location,
-      specifications: newListing.specifications,
-      availability: newListing.availability,
-      bolRequired: newListing.bolRequired,
-      bolVerified: newListing.bolVerified,
-      featured: newListing.featured,
-    }))
-
     // Reset form and close
     resetForm()
     onClose()
   }
+
+
 
   const resetForm = () => {
     setTitle("")
