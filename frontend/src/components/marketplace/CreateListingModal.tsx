@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { addListing } from "@/store/slices/marketplaceSlice"
+import { createSellerListing } from "@/store/slices/sellerListingSlice"
 import { useAuth } from "@/contexts/auth-context"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -121,17 +121,19 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
       specsObject[spec.key] = spec.value
     })
 
-    // Dispatch to Redux
-    dispatch(addListing({
+    // Dispatch to Seller Listing Slice
+    dispatch(createSellerListing({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       sellerId: user?.id || "unknown",
-      sellerName: user?.email || "Unknown Seller",
-      sellerRating: 4.5,
-      category: category as any,
+      sellerName: user?.name || "Unknown Seller",
+      sellerRating: 0,
       title,
       description,
       price: parseFloat(price),
       priceType: "fixed",
       currency,
+      category: category as any,
+      condition: condition as any,
       images,
       bolImage: bolImage || undefined,
       location: {
@@ -140,11 +142,14 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
         port: port || undefined,
       },
       specifications: specsObject,
-      condition: condition as any,
       availability: "available",
       bolRequired: !!bolImage,
       bolVerified: false,
       featured: false,
+      views: 0,
+      inquiries: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }))
 
     // Reset form and close
@@ -163,6 +168,7 @@ export function CreateListingModal({ open, onClose }: CreateListingModalProps) {
     setCity("")
     setPort("")
     setImages([])
+    setBolImage("")
     setSpecifications([])
   }
 

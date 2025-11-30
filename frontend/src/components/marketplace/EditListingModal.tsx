@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
-import { updateListing } from "@/store/slices/marketplaceSlice"
+import { updateSellerListing } from "@/store/slices/sellerListingSlice"
 import type { MarketplaceListing } from "@/types/maritime"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -139,8 +139,8 @@ export function EditListingModal({ open, onClose, listing }: EditListingModalPro
       specsObject[spec.key] = spec.value
     })
 
-    // Dispatch update to Redux
-    dispatch(updateListing({
+    // Dispatch update to Seller Listing Slice
+    dispatch(updateSellerListing({
       id: listing.id,
       updates: {
         title,

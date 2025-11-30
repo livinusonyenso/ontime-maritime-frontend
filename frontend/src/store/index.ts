@@ -6,6 +6,7 @@ import securityReducer from './slices/securitySlice'
 import arbitrationReducer from './slices/arbitrationSlice'
 import marketplaceReducer from './slices/marketplaceSlice'
 import knowledgeReducer from './slices/knowledgeSlice'
+import sellerListingReducer from './slices/sellerListingSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     arbitration: arbitrationReducer,
     marketplace: marketplaceReducer,
     knowledge: knowledgeReducer,
+    sellerListings: sellerListingReducer,
   },
 })
 

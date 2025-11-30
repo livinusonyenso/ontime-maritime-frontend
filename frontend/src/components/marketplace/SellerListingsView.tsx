@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { selectAllListings, deleteListing } from "@/store/slices/marketplaceSlice"
+import { selectSellerListings, deleteSellerListing } from "@/store/slices/sellerListingSlice"
 import type { MarketplaceListing } from "@/types/maritime"
 import { useAuth } from "@/contexts/auth-context"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Edit, Trash2, MapPin, DollarSign, Package } from "lucide-react"
+import { Package } from "lucide-react"
 import { EditListingModal } from "./EditListingModal"
+import { SellerListingCard } from "./SellerListingCard"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,19 +22,14 @@ import {
 export function SellerListingsView() {
   const dispatch = useDispatch()
   const { user } = useAuth()
-  const allListings = useSelector(selectAllListings)
+  const myListings = useSelector(selectSellerListings)
   
-  // Filter listings by current seller
-  const myListings = allListings.filter(
-    (listing: MarketplaceListing) => listing.sellerId === user?.id
-  )
-
   const [editingListing, setEditingListing] = useState<MarketplaceListing | null>(null)
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null)
 
   const handleDelete = () => {
     if (deletingListingId) {
-      dispatch(deleteListing(deletingListingId))
+      dispatch(deleteSellerListing(deletingListingId))
       setDeletingListingId(null)
     }
   }
@@ -55,77 +48,14 @@ export function SellerListingsView() {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col gap-4">
         {myListings.map((listing: MarketplaceListing) => (
-          <Card key={listing.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="aspect-[4/3] bg-muted relative">
-              <img
-                src={listing.images[0] || "/generic-placeholder-300px.png"}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
-              <Badge
-                variant={listing.availability === "available" ? "default" : "secondary"}
-                className="absolute top-3 left-3"
-              >
-                {listing.availability}
-              </Badge>
-            </div>
-
-            <CardContent className="p-4">
-              <div className="mb-3">
-                <h3 className="font-semibold text-lg line-clamp-1">{listing.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                  {listing.description}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5" />
-                  <span className="truncate">
-                    {listing.location.city}, {listing.location.country}
-                  </span>
-                </div>
-
-                <div className="flex items-baseline gap-1">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="text-lg font-bold">{listing.price.toLocaleString()}</span>
-                  <span className="text-xs text-muted-foreground">{listing.currency}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs">
-                    {listing.category}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {listing.condition}
-                  </Badge>
-                </div>
-              </div>
-            </CardContent>
-
-            <CardFooter className="p-4 pt-0 flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => setEditingListing(listing)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="flex-1"
-                onClick={() => setDeletingListingId(listing.id)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </CardFooter>
-          </Card>
+          <SellerListingCard
+            key={listing.id}
+            listing={listing}
+            onEdit={setEditingListing}
+            onDelete={setDeletingListingId}
+          />
         ))}
       </div>
 

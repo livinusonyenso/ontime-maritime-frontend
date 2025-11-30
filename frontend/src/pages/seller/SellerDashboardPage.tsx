@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { FileText, DollarSign, Package, Plus, LogOut, BarChartIcon, TrendingUp, Users } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import { useSelector, useDispatch } from "react-redux"
-import { addListing, selectAllListings } from "@/store/slices/marketplaceSlice"
+import { selectSellerListings } from "@/store/slices/sellerListingSlice"
 import { CreateListingModal } from "@/components/marketplace/CreateListingModal"
 import { SellerListingsView } from "@/components/marketplace/SellerListingsView"
 import type { MarketplaceListing } from "@/types/maritime"
@@ -32,13 +32,10 @@ export default function SellerDashboardPage() {
   
   // Redux hooks for marketplace listings
   const dispatch = useDispatch()
-  const listings = useSelector(selectAllListings)
+  const myListings = useSelector(selectSellerListings)
   
   // Modal state
   const [createModalOpen, setCreateModalOpen] = useState(false)
-
-  // Filter seller's listings
-  const myListings = listings.filter((l: MarketplaceListing) => l.sellerId === user?.id)
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
