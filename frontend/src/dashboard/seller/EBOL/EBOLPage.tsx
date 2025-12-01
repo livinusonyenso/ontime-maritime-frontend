@@ -1,0 +1,1 @@
+export default function SellerEBOLPage(){return (<div>seller EBOL Placeholder</div>);}

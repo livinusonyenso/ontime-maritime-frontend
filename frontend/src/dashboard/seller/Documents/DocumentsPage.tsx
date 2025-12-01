@@ -1,0 +1,1 @@
+export default function SellerDocumentsPage(){return (<div>seller Documents Placeholder</div>);}

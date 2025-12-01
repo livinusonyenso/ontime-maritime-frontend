@@ -20,11 +20,11 @@ import MarketplacePage from "./pages/features/MarketplacePage"
 import KnowledgePage from "./pages/features/KnowledgePage"
 
 // Feature Views
-import { EBOLView } from "./components/features/ebol/EBOLView"
-import { ArbitrationView } from "./components/features/arbitration/ArbitrationView"
-import { SecurityHotlineView } from "./components/features/security-hotline/SecurityHotlineView"
 
 // Buyer Pages
+import BuyerEBOLDashboardPage from "./pages/buyer/EBOLDashboardPage"
+import BuyerArbitrationDashboardPage from "./pages/buyer/ArbitrationDashboardPage"
+import BuyerSecurityHotlineDashboardPage from "./pages/buyer/SecurityHotlineDashboardPage"
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
 import BuyerMarketPage from "./pages/buyer/MarketPage"
 import BuyerTrackingPage from "./pages/buyer/TrackingPage"
@@ -37,6 +37,9 @@ import BuyerDocumentsPage from "./pages/buyer/DocumentsPage"
 import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
 // Seller Pages
+import SellerEBOLDashboardPage from "./pages/seller/EBOLDashboardPage"
+import SellerArbitrationDashboardPage from "./pages/seller/ArbitrationDashboardPage"
+import SellerSecurityHotlineDashboardPage from "./pages/seller/SecurityHotlineDashboardPage"
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
@@ -95,9 +98,9 @@ function App() {
           <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
           <Route path="documents" element={<BuyerDocumentsPage />} />
           <Route path="payments" element={<BuyerPaymentsPage />} />
-          <Route path="ebol" element={<EBOLView />} />
-          <Route path="arbitration" element={<ArbitrationView />} />
-          <Route path="security-hotline" element={<SecurityHotlineView />} />
+          <Route path="ebol" element={<BuyerEBOLDashboardPage />} />
+          <Route path="arbitration" element={<BuyerArbitrationDashboardPage />} />
+          <Route path="security-hotline" element={<BuyerSecurityHotlineDashboardPage />} />
         </Route>
 
         {/* Seller Dashboard Routes */}
@@ -118,9 +121,9 @@ function App() {
           <Route path="documents" element={<SellerDocumentsPage />} />
           <Route path="payments" element={<SellerPaymentsPage />} />
           <Route path="sales" element={<SellerDashboardPage />} />
-          <Route path="ebol" element={<EBOLView />} />
-          <Route path="arbitration" element={<ArbitrationView />} />
-          <Route path="security-hotline" element={<SecurityHotlineView />} />
+          <Route path="ebol" element={<SellerEBOLDashboardPage />} />
+          <Route path="arbitration" element={<SellerArbitrationDashboardPage />} />
+          <Route path="security-hotline" element={<SellerSecurityHotlineDashboardPage />} />
         </Route>
 
         {/* Executive Dashboard Routes */}

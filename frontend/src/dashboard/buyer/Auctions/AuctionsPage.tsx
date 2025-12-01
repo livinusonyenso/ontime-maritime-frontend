@@ -1,0 +1,1 @@
+export default function BuyerAuctionsPage(){return (<div>buyer Auctions Placeholder</div>);}

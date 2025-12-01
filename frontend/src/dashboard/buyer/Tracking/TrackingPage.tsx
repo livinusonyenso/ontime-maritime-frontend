@@ -1,0 +1,1 @@
+export default function BuyerTrackingPage(){return (<div>buyer Tracking Placeholder</div>);}

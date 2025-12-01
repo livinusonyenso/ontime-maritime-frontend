@@ -1,0 +1,1 @@
+export default function BuyerSecurityHotlinePage(){return (<div>buyer SecurityHotline Placeholder</div>);}

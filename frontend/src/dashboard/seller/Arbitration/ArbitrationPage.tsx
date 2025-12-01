@@ -1,0 +1,1 @@
+export default function SellerArbitrationPage(){return (<div>seller Arbitration Placeholder</div>);}
