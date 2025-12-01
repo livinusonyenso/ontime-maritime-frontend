@@ -50,7 +50,7 @@ export function Header() {
       icon: Ship,
     },
     {
-      title: "Digital Bill of Lading",
+      title: "e-BOL (Digital Bill of Lading)",
       href: "/e-bol",
       description: "Blockchain-verified e-BOL system. $50 per BOL",
       icon: FileText,
