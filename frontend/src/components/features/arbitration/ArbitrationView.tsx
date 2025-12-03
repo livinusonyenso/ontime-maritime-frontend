@@ -1,29 +1,12 @@
+
 "use client"
 
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import {
   addDispute,
@@ -41,23 +24,84 @@ import {
   CheckCircle2,
   TrendingUp,
   DollarSign,
-  Send,
-  Eye,
   Loader2,
   Target,
   Brain,
 } from "lucide-react"
 
-export function ArbitrationView() {
+import DisputeCard from "./components/DisputeCard"
+import DisputeForm, { NewDispute } from "./components/DisputeForm"
+import AnalysisPanel from "./components/AnalysisPanel"
+import ResolutionPanel from "./components/ResolutionPanel"
+import EvidenceList from "./components/EvidenceList"
+
+export type DisputeStatus =
+  | "submitted"
+  | "ai_analysis"
+  | "under_review"
+  | "mediation"
+  | "resolved"
+  | "escalated"
+
+export type DisputeType =
+  | "shipment_delay"
+  | "cargo_damage"
+  | "cargo_loss"
+  | "payment_dispute"
+  | "contract_breach"
+  | "documentation"
+
+export interface EvidenceItem {
+  id: string
+  name: string
+  type: string
+  url: string
+}
+
+export interface AiAnalysis {
+  confidenceLevel: number
+  liabilityScore: number
+  riskScore: number
+  breachEvaluation: string
+  settlementRecommendation: string
+  deviationReport: string
+  analyzedAt: string | Date
+}
+
+export interface Resolution {
+  outcome: string
+  settlementAmount: number
+  terms: string
+}
+
+export interface Dispute {
+  id: string
+  caseNumber: string
+  type: DisputeType
+  complainantId: string
+  complainantName: string
+  respondentId: string
+  respondentName: string
+  transactionId?: string
+  bolNumber?: string
+  description: string
+  claimAmount: number
+  status: DisputeStatus
+  createdAt: string | Date
+  evidence: EvidenceItem[]
+  aiAnalysis?: AiAnalysis
+  resolution?: Resolution
+}
+
+export default function ArbitrationView() {
   const dispatch = useAppDispatch()
   const { disputes, selectedDispute, aiAnalysisInProgress } = useAppSelector((state) => state.arbitration)
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState<"overview" | "pending" | "resolved">("overview")
   const [showNewDisputeDialog, setShowNewDisputeDialog] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
-  // Form state
-  const [newDispute, setNewDispute] = useState({
-    type: "" as "shipment_delay" | "cargo_damage" | "cargo_loss" | "payment_dispute" | "contract_breach" | "documentation",
+  const [newDispute, setNewDispute] = useState<NewDispute>({
+    type: "" as any,
     complainantId: "user1",
     complainantName: "",
     respondentId: "user2",
@@ -66,7 +110,7 @@ export function ArbitrationView() {
     bolNumber: "",
     description: "",
     claimAmount: 0,
-    evidence: [] as { id: string; name: string; type: string; url: string }[],
+    evidence: [],
   })
 
   const handleSubmitDispute = () => {
@@ -74,12 +118,14 @@ export function ArbitrationView() {
       return
     }
 
-    dispatch(addDispute({
-      ...newDispute,
-      evidence: [
-        { id: "e1", name: "supporting-docs.pdf", type: "document", url: "/evidence/docs.pdf" },
-      ],
-    }))
+    dispatch(
+      addDispute({
+        ...newDispute,
+        evidence: [
+          { id: "e1", name: "supporting-docs.pdf", type: "document", url: "/evidence/docs.pdf" },
+        ],
+      })
+    )
 
     setShowNewDisputeDialog(false)
     setNewDispute({
@@ -99,8 +145,7 @@ export function ArbitrationView() {
   const handleRunAnalysis = (disputeId: string) => {
     setIsAnalyzing(true)
     dispatch(setAiAnalysisInProgress(true))
-    
-    // Simulate AI analysis
+
     setTimeout(() => {
       dispatch(runAiAnalysis(disputeId))
       setIsAnalyzing(false)
@@ -108,7 +153,7 @@ export function ArbitrationView() {
     }, 3000)
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: DisputeStatus) => {
     switch (status) {
       case "submitted":
         return "bg-blue-500"
@@ -127,7 +172,7 @@ export function ArbitrationView() {
     }
   }
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (type: DisputeType | string) => {
     switch (type) {
       case "shipment_delay":
         return "Shipment Delay"
@@ -157,11 +202,11 @@ export function ArbitrationView() {
               <span className="text-sm font-medium">Powered by Grok 4.1</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              AI Arbitration & Dispute Resolution
+              AI Arbitration &amp; Dispute Resolution
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Intelligent dispute resolution for maritime issues including shipment delays, 
-              cargo damage, and loss claims. Get AI-powered analysis, settlement recommendations, 
+              Intelligent dispute resolution for maritime issues including shipment delays,
+              cargo damage, and loss claims. Get AI-powered analysis, settlement recommendations,
               and risk assessments.
             </p>
 
@@ -178,7 +223,7 @@ export function ArbitrationView() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Feature Highlights */}
       <section className="py-12 border-b">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -186,28 +231,28 @@ export function ArbitrationView() {
               <Bot className="h-12 w-12 mx-auto text-purple-500 mb-4" />
               <h3 className="font-semibold mb-2">AI Analysis</h3>
               <p className="text-sm text-muted-foreground">
-                Grok 4.1 analyzes evidence and provides intelligent assessments
+                Grok 4.1 analyzes evidence and provides intelligent assessments.
               </p>
             </Card>
             <Card className="text-center p-6">
               <Scale className="h-12 w-12 mx-auto text-blue-500 mb-4" />
               <h3 className="font-semibold mb-2">Breach Evaluation</h3>
               <p className="text-sm text-muted-foreground">
-                Comprehensive evaluation of contract and duty breaches
+                Comprehensive evaluation of contract and duty breaches.
               </p>
             </Card>
             <Card className="text-center p-6">
               <Target className="h-12 w-12 mx-auto text-green-500 mb-4" />
               <h3 className="font-semibold mb-2">Risk Scoring</h3>
               <p className="text-sm text-muted-foreground">
-                Liability and risk scores to guide settlement decisions
+                Liability and risk scores to guide settlement decisions.
               </p>
             </Card>
             <Card className="text-center p-6">
               <DollarSign className="h-12 w-12 mx-auto text-yellow-500 mb-4" />
               <h3 className="font-semibold mb-2">Settlement Advice</h3>
               <p className="text-sm text-muted-foreground">
-                Data-driven settlement recommendations
+                Data-driven settlement recommendations.
               </p>
             </Card>
           </div>
@@ -217,7 +262,7 @@ export function ArbitrationView() {
       {/* Main Content */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
             <div className="flex items-center justify-between mb-8">
               <TabsList>
                 <TabsTrigger value="overview">All Disputes</TabsTrigger>
@@ -232,190 +277,142 @@ export function ArbitrationView() {
 
             <TabsContent value="overview">
               <div className="grid gap-6">
-                {disputes.map((dispute) => (
-                  <Card key={dispute.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="bg-purple-100 dark:bg-purple-950/30 p-2 rounded-lg">
-                              <Gavel className="h-5 w-5 text-purple-600" />
-                            </div>
-                            <div>
-                              <div className="font-mono text-sm text-muted-foreground">
-                                {dispute.caseNumber}
-                              </div>
-                              <h3 className="font-semibold">{getTypeLabel(dispute.type)}</h3>
-                            </div>
-                            <Badge className={`${getStatusColor(dispute.status)} text-white capitalize`}>
-                              {dispute.status.replace("_", " ")}
-                            </Badge>
-                          </div>
+                {disputes.map((dispute: Dispute) => (
+                  <DisputeCard
+                    key={dispute.id}
+                    dispute={dispute}
+                    getStatusColor={getStatusColor}
+                    getTypeLabel={getTypeLabel}
+                    onViewDetails={() => dispatch(selectDispute(dispute.id))}
+                    onRunAnalysis={() => handleRunAnalysis(dispute.id)}
+                    isAnalyzing={isAnalyzing || aiAnalysisInProgress}
+                  />
+                ))}
 
-                          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                            {dispute.description}
-                          </p>
-
-                          <div className="flex flex-wrap gap-6 text-sm">
-                            <div>
-                              <div className="text-muted-foreground">Complainant</div>
-                              <div className="font-medium">{dispute.complainantName}</div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">Respondent</div>
-                              <div className="font-medium">{dispute.respondentName}</div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">Claim Amount</div>
-                              <div className="font-medium text-primary">
-                                ${dispute.claimAmount.toLocaleString()}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">BOL Reference</div>
-                              <div className="font-medium">{dispute.bolNumber}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* AI Analysis Summary */}
-                        {dispute.aiAnalysis && (
-                          <div className="lg:w-80 bg-muted/50 p-4 rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                              <Brain className="h-5 w-5 text-purple-500" />
-                              <span className="font-semibold text-sm">AI Analysis</span>
-                              <Badge variant="outline" className="ml-auto">
-                                {dispute.aiAnalysis.confidenceLevel}% confidence
-                              </Badge>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                              <div>
-                                <div className="text-muted-foreground">Liability Score</div>
-                                <div className="flex items-center gap-2">
-                                  <Progress value={dispute.aiAnalysis.liabilityScore} className="h-2 flex-1" />
-                                  <span className="font-medium">{dispute.aiAnalysis.liabilityScore}%</span>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Risk Score</div>
-                                <div className="flex items-center gap-2">
-                                  <Progress value={dispute.aiAnalysis.riskScore} className="h-2 flex-1" />
-                                  <span className="font-medium">{dispute.aiAnalysis.riskScore}%</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex flex-col gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => dispatch(selectDispute(dispute.id))}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View Details
-                          </Button>
-                          {dispute.status === "submitted" && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleRunAnalysis(dispute.id)}
-                              disabled={isAnalyzing}
-                            >
-                              {isAnalyzing ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                                  Analyzing...
-                                </>
-                              ) : (
-                                <>
-                                  <Bot className="h-4 w-4 mr-1" />
-                                  Run AI Analysis
-                                </>
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      </div>
+                {disputes.length === 0 && (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Scale className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="font-semibold mb-2">No Disputes Yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        You haven&apos;t filed any disputes. Start by submitting your first case.
+                      </p>
+                      <Button onClick={() => setShowNewDisputeDialog(true)}>
+                        <Gavel className="h-4 w-4 mr-2" />
+                        File a Dispute
+                      </Button>
                     </CardContent>
                   </Card>
-                ))}
+                )}
               </div>
             </TabsContent>
 
             <TabsContent value="pending">
               <div className="grid gap-4">
                 {disputes
-                  .filter((d) => d.status === "submitted" || d.status === "ai_analysis")
-                  .map((dispute) => (
+                  .filter(
+                    (d: Dispute) =>
+                      d.status === "submitted" || d.status === "ai_analysis"
+                  )
+                  .map((dispute: Dispute) => (
                     <Card key={dispute.id}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="bg-purple-100 dark:bg-purple-950/30 p-2 rounded-lg">
-                              <Clock className="h-5 w-5 text-purple-600" />
+                      <CardContent className="p-6 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-purple-100 dark:bg-purple-950/30 p-2 rounded-lg">
+                            <Clock className="h-5 w-5 text-purple-600" />
+                          </div>
+                          <div>
+                            <div className="font-mono text-sm text-muted-foreground">
+                              {dispute.caseNumber}
                             </div>
-                            <div>
-                              <div className="font-mono text-sm text-muted-foreground">
-                                {dispute.caseNumber}
-                              </div>
-                              <div className="font-medium">{getTypeLabel(dispute.type)}</div>
+                            <div className="font-medium">
+                              {getTypeLabel(dispute.type)}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-primary">
-                              ${dispute.claimAmount.toLocaleString()}
-                            </div>
-                            <Badge className={`${getStatusColor(dispute.status)} text-white`}>
-                              {dispute.status.replace("_", " ")}
-                            </Badge>
+                        </div>
+                        <div className="text-right space-y-2">
+                          <div className="text-lg font-bold text-primary">
+                            ${dispute.claimAmount.toLocaleString()}
+                          </div>
+                          <Badge className={`${getStatusColor(dispute.status)} text-white`}>
+                            {dispute.status.replace("_", " ")}
+                          </Badge>
+                          <div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => dispatch(selectDispute(dispute.id))}
+                            >
+                              View Details
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
+
+                {disputes.filter((d: Dispute) => d.status === "submitted" || d.status === "ai_analysis").length === 0 && (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="font-semibold mb-2">No Pending Disputes</h3>
+                      <p className="text-muted-foreground">
+                        Disputes awaiting AI review will appear here.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </TabsContent>
 
             <TabsContent value="resolved">
               <div className="grid gap-4">
                 {disputes
-                  .filter((d) => d.status === "resolved")
-                  .map((dispute) => (
+                  .filter((d: Dispute) => d.status === "resolved")
+                  .map((dispute: Dispute) => (
                     <Card key={dispute.id}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="bg-green-100 dark:bg-green-950/30 p-2 rounded-lg">
-                              <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <CardContent className="p-6 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-green-100 dark:bg-green-950/30 p-2 rounded-lg">
+                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          </div>
+                          <div>
+                            <div className="font-mono text-sm text-muted-foreground">
+                              {dispute.caseNumber}
                             </div>
-                            <div>
-                              <div className="font-mono text-sm text-muted-foreground">
-                                {dispute.caseNumber}
-                              </div>
-                              <div className="font-medium">{getTypeLabel(dispute.type)}</div>
+                            <div className="font-medium">
+                              {getTypeLabel(dispute.type)}
                             </div>
                           </div>
-                          <div className="text-right">
-                            {dispute.resolution && (
-                              <div className="text-lg font-bold text-green-600">
-                                ${dispute.resolution.settlementAmount.toLocaleString()} settled
-                              </div>
-                            )}
-                            <Badge className="bg-green-500 text-white">Resolved</Badge>
+                        </div>
+                        <div className="text-right space-y-2">
+                          {dispute.resolution && (
+                            <div className="text-lg font-bold text-green-600">
+                              ${dispute.resolution.settlementAmount.toLocaleString()} settled
+                            </div>
+                          )}
+                          <Badge className="bg-green-500 text-white">Resolved</Badge>
+                          <div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => dispatch(selectDispute(dispute.id))}
+                            >
+                              View Details
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
 
-                {disputes.filter((d) => d.status === "resolved").length === 0 && (
+                {disputes.filter((d: Dispute) => d.status === "resolved").length === 0 && (
                   <Card>
                     <CardContent className="py-12 text-center">
                       <Scale className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                       <h3 className="font-semibold mb-2">No Resolved Disputes</h3>
                       <p className="text-muted-foreground">
-                        Resolved disputes will appear here.
+                        Resolved disputes will appear here once settlements are reached.
                       </p>
                     </CardContent>
                   </Card>
@@ -439,100 +436,7 @@ export function ArbitrationView() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Dispute Type *</Label>
-                <Select
-                  value={newDispute.type}
-                  onValueChange={(value: any) =>
-                    setNewDispute({ ...newDispute, type: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="shipment_delay">Shipment Delay</SelectItem>
-                    <SelectItem value="cargo_damage">Cargo Damage</SelectItem>
-                    <SelectItem value="cargo_loss">Cargo Loss</SelectItem>
-                    <SelectItem value="payment_dispute">Payment Dispute</SelectItem>
-                    <SelectItem value="contract_breach">Contract Breach</SelectItem>
-                    <SelectItem value="documentation">Documentation Issue</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Claim Amount ($) *</Label>
-                <Input
-                  type="number"
-                  value={newDispute.claimAmount || ""}
-                  onChange={(e) =>
-                    setNewDispute({ ...newDispute, claimAmount: Number(e.target.value) })
-                  }
-                  placeholder="Enter amount"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Your Company Name</Label>
-                <Input
-                  value={newDispute.complainantName}
-                  onChange={(e) =>
-                    setNewDispute({ ...newDispute, complainantName: e.target.value })
-                  }
-                  placeholder="Complainant name"
-                />
-              </div>
-              <div>
-                <Label>Respondent Company</Label>
-                <Input
-                  value={newDispute.respondentName}
-                  onChange={(e) =>
-                    setNewDispute({ ...newDispute, respondentName: e.target.value })
-                  }
-                  placeholder="Respondent name"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Transaction ID</Label>
-                <Input
-                  value={newDispute.transactionId}
-                  onChange={(e) =>
-                    setNewDispute({ ...newDispute, transactionId: e.target.value })
-                  }
-                  placeholder="Transaction reference"
-                />
-              </div>
-              <div>
-                <Label>BOL Number</Label>
-                <Input
-                  value={newDispute.bolNumber}
-                  onChange={(e) =>
-                    setNewDispute({ ...newDispute, bolNumber: e.target.value })
-                  }
-                  placeholder="Bill of Lading number"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label>Dispute Description *</Label>
-              <Textarea
-                value={newDispute.description}
-                onChange={(e) =>
-                  setNewDispute({ ...newDispute, description: e.target.value })
-                }
-                placeholder="Provide detailed description of the dispute, including timeline, damages, and desired outcome..."
-                rows={5}
-              />
-            </div>
-          </div>
+          <DisputeForm newDispute={newDispute} onChange={setNewDispute} />
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowNewDisputeDialog(false)}>
@@ -542,7 +446,7 @@ export function ArbitrationView() {
               onClick={handleSubmitDispute}
               disabled={!newDispute.type || !newDispute.description || !newDispute.claimAmount}
             >
-              <Send className="h-4 w-4 mr-2" />
+              <DollarSign className="h-4 w-4 mr-2" />
               Submit Dispute
             </Button>
           </DialogFooter>
@@ -575,7 +479,7 @@ export function ArbitrationView() {
               </div>
 
               {/* Parties */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2">Complainant</h4>
                   <div className="font-medium">{selectedDispute.complainantName}</div>
@@ -589,138 +493,32 @@ export function ArbitrationView() {
               {/* Description */}
               <div>
                 <h4 className="font-semibold mb-2">Dispute Description</h4>
-                <p className="text-muted-foreground">{selectedDispute.description}</p>
+                <p className="text-muted-foreground whitespace-pre-line">
+                  {selectedDispute.description}
+                </p>
               </div>
 
               {/* AI Analysis */}
               {selectedDispute.aiAnalysis && (
-                <div className="border-2 border-purple-200 dark:border-purple-800 rounded-lg p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Brain className="h-6 w-6 text-purple-500" />
-                    <h4 className="font-semibold text-lg">AI Analysis by Grok 4.1</h4>
-                    <Badge className="ml-auto bg-purple-500 text-white">
-                      {selectedDispute.aiAnalysis.confidenceLevel}% Confidence
-                    </Badge>
-                  </div>
-
-                  <div className="grid gap-4">
-                    {/* Scores */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-sm text-muted-foreground mb-1">Liability Score</div>
-                        <div className="flex items-center gap-3">
-                          <Progress
-                            value={selectedDispute.aiAnalysis.liabilityScore}
-                            className="h-3 flex-1"
-                          />
-                          <span className="font-bold text-lg">
-                            {selectedDispute.aiAnalysis.liabilityScore}%
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground mb-1">Risk Score</div>
-                        <div className="flex items-center gap-3">
-                          <Progress
-                            value={selectedDispute.aiAnalysis.riskScore}
-                            className="h-3 flex-1"
-                          />
-                          <span className="font-bold text-lg">
-                            {selectedDispute.aiAnalysis.riskScore}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Breach Evaluation */}
-                    <div>
-                      <h5 className="font-semibold mb-2 flex items-center gap-2">
-                        <Scale className="h-4 w-4" /> Breach Evaluation
-                      </h5>
-                      <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded">
-                        {selectedDispute.aiAnalysis.breachEvaluation}
-                      </p>
-                    </div>
-
-                    {/* Settlement Recommendation */}
-                    <div>
-                      <h5 className="font-semibold mb-2 flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" /> Settlement Recommendation
-                      </h5>
-                      <p className="text-sm text-muted-foreground bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200 dark:border-green-800">
-                        {selectedDispute.aiAnalysis.settlementRecommendation}
-                      </p>
-                    </div>
-
-                    {/* Deviation Report */}
-                    <div>
-                      <h5 className="font-semibold mb-2 flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4" /> Deviation Report
-                      </h5>
-                      <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded">
-                        {selectedDispute.aiAnalysis.deviationReport}
-                      </p>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground">
-                      Analysis completed: {new Date(selectedDispute.aiAnalysis.analyzedAt).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
+                <AnalysisPanel aiAnalysis={selectedDispute.aiAnalysis} />
               )}
 
               {/* Resolution */}
               {selectedDispute.resolution && (
-                <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
-                    <h4 className="font-semibold text-lg">Resolution</h4>
-                  </div>
-                  <div className="grid gap-3">
-                    <div>
-                      <div className="text-sm text-muted-foreground">Outcome</div>
-                      <div className="font-medium">{selectedDispute.resolution.outcome}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Settlement Amount</div>
-                      <div className="text-xl font-bold text-green-600">
-                        ${selectedDispute.resolution.settlementAmount.toLocaleString()}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Terms</div>
-                      <div>{selectedDispute.resolution.terms}</div>
-                    </div>
-                  </div>
-                </div>
+                <ResolutionPanel resolution={selectedDispute.resolution} />
               )}
 
               {/* Evidence */}
-              <div>
-                <h4 className="font-semibold mb-2">Evidence ({selectedDispute.evidence.length} files)</h4>
-                <div className="grid gap-2">
-                  {selectedDispute.evidence.map((e) => (
-                    <div
-                      key={e.id}
-                      className="flex items-center justify-between p-3 bg-muted/50 rounded"
-                    >
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{e.name}</span>
-                      </div>
-                      <Button variant="ghost" size="sm">
-                        View
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <EvidenceList evidence={selectedDispute.evidence} />
             </div>
 
             <DialogFooter>
               {selectedDispute.status === "submitted" && (
-                <Button onClick={() => handleRunAnalysis(selectedDispute.id)} disabled={isAnalyzing}>
-                  {isAnalyzing ? (
+                <Button
+                  onClick={() => handleRunAnalysis(selectedDispute.id)}
+                  disabled={isAnalyzing || aiAnalysisInProgress}
+                >
+                  {isAnalyzing || aiAnalysisInProgress ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Running Analysis...
