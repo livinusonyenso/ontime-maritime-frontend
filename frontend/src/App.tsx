@@ -21,33 +21,31 @@ import KnowledgePage from "./pages/features/KnowledgePage"
 
 // Feature Views
 
-// Buyer Pages
-import BuyerEBOLDashboardPage from "./pages/buyer/EBOLDashboardPage"
-import BuyerArbitrationDashboardPage from "./pages/buyer/ArbitrationDashboardPage"
-import BuyerSecurityHotlineDashboardPage from "./pages/buyer/SecurityHotlineDashboardPage"
+// Buyer Pages - Dashboard Placeholders
+import BuyerEBOLPage from "./dashboard/buyer/EBOL/EBOLPage"
+import BuyerArbitrationPage from "./dashboard/buyer/Arbitration/ArbitrationPage"
+import BuyerSecurityHotlinePage from "./dashboard/buyer/SecurityHotline/SecurityHotlinePage"
+import BuyerAuctionsPage from "./dashboard/buyer/Auctions/AuctionsPage"
+import BuyerTrackingPage from "./dashboard/buyer/Tracking/TrackingPage"
+import BuyerDocumentsPage from "./dashboard/buyer/Documents/DocumentsPage"
+import BuyersInsurance from "./dashboard/buyer/insurance/Insurance"
+// Buyer Pages - Keep from pages folder
 import BuyerDashboardPage from "./pages/buyer/BuyerDashboardPage"
 import BuyerMarketPage from "./pages/buyer/MarketPage"
-import BuyerTrackingPage from "./pages/buyer/TrackingPage"
-import BuyerDashboardTrackingPage from "./pages/buyer/DashboardTrackingPage"
-import BuyerAuctionsPage from "./pages/buyer/AuctionsPage"
-import BuyerDashboardAuctionsPage from "./pages/buyer/DashboardAuctionsPage"
 import BuyerInsurancePage from "./pages/buyer/InsurancePage"
-import BuyerDashboardInsurancePage from "./pages/buyer/DashboardInsurancePage"
-import BuyerDocumentsPage from "./pages/buyer/DocumentsPage"
 import BuyerPaymentsPage from "./pages/buyer/PaymentsPage"
 
-// Seller Pages
-import SellerEBOLDashboardPage from "./pages/seller/EBOLDashboardPage"
-import SellerArbitrationDashboardPage from "./pages/seller/ArbitrationDashboardPage"
-import SellerSecurityHotlineDashboardPage from "./pages/seller/SecurityHotlineDashboardPage"
+// Seller Pages - Dashboard Placeholders
+import SellerEBOLPage from "./dashboard/seller/EBOL/EBOLPage"
+import SellerArbitrationPage from "./dashboard/seller/Arbitration/ArbitrationPage"
+import SellerSecurityHotlinePage from "./dashboard/seller/SecurityHotline/SecurityHotlinePage"
+import SellerAuctionsPage from "./dashboard/seller/Auctions/AuctionsPage"
+import SellerTrackingPage from "./dashboard/seller/Tracking/TrackingPage"
+import SellerDocumentsPage from "./dashboard/seller/Documents/DocumentsPage"
+// Seller Pages - Keep from pages folder
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
-import SellerTrackingPage from "./pages/seller/TrackingPage"
-import SellerDashboardAuctionsPage from "./pages/seller/DashboardAuctionsPage"
-import SellerInsurancePage from "./pages/seller/InsurancePage"
-import SellerDocumentsPage from "./pages/seller/DocumentsPage"
-import SellerPaymentsPage from "./pages/seller/PaymentsPage"
 
 // Executive Corner Pages
 import ExecutiveDashboardPage from "./pages/executive-corner/ExecutiveDashboardPage"
@@ -93,14 +91,14 @@ function App() {
         >
           <Route index element={<BuyerMarketPage />} />
           <Route path="overview" element={<BuyerDashboardPage />} />
-          <Route path="tracking" element={<BuyerDashboardTrackingPage />} />
-          <Route path="auctions" element={<BuyerDashboardAuctionsPage />} />
-          <Route path="insurance" element={<BuyerDashboardInsurancePage />} />
+          <Route path="tracking" element={<BuyerTrackingPage />} />
+          <Route path="auctions" element={<BuyerAuctionsPage />} />
+          <Route path="insurance" element={<BuyersInsurance />} />
           <Route path="documents" element={<BuyerDocumentsPage />} />
           <Route path="payments" element={<BuyerPaymentsPage />} />
-          <Route path="ebol" element={<BuyerEBOLDashboardPage />} />
-          <Route path="arbitration" element={<BuyerArbitrationDashboardPage />} />
-          <Route path="security-hotline" element={<BuyerSecurityHotlineDashboardPage />} />
+          <Route path="ebol" element={<BuyerEBOLPage />} />
+          <Route path="arbitration" element={<BuyerArbitrationPage />} />
+          <Route path="security-hotline" element={<BuyerSecurityHotlinePage />} />
         </Route>
 
         {/* Seller Dashboard Routes */}
@@ -116,14 +114,12 @@ function App() {
           <Route path="overview" element={<SellerDashboardPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
           <Route path="tracking" element={<SellerTrackingPage />} />
-          <Route path="auctions" element={<SellerDashboardAuctionsPage />} />
-          <Route path="insurance" element={<SellerInsurancePage />} />
+          <Route path="auctions" element={<SellerAuctionsPage />} />
           <Route path="documents" element={<SellerDocumentsPage />} />
-          <Route path="payments" element={<SellerPaymentsPage />} />
           <Route path="sales" element={<SellerDashboardPage />} />
-          <Route path="ebol" element={<SellerEBOLDashboardPage />} />
-          <Route path="arbitration" element={<SellerArbitrationDashboardPage />} />
-          <Route path="security-hotline" element={<SellerSecurityHotlineDashboardPage />} />
+          <Route path="ebol" element={<SellerEBOLPage />} />
+          <Route path="arbitration" element={<SellerArbitrationPage />} />
+          <Route path="security-hotline" element={<SellerSecurityHotlinePage />} />
         </Route>
 
         {/* Executive Dashboard Routes */}
