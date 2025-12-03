@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { ArbitrationView } from "@/components/features/arbitration/ArbitrationView"
+import ArbitrationView from "@/components/features/arbitration/ArbitrationView"
 
 export default function ArbitrationPage() {
   return (

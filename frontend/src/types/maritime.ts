@@ -179,8 +179,8 @@ export interface DisputeCase {
   complainantName: string
   respondentId: string
   respondentName: string
-  transactionId: string
-  bolNumber: string
+  transactionId?: string
+  bolNumber?: string
   description: string
   claimAmount: number
   evidence: {

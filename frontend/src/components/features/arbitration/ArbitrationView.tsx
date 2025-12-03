@@ -118,14 +118,7 @@ export default function ArbitrationView() {
       return
     }
 
-    dispatch(
-      addDispute({
-        ...newDispute,
-        evidence: [
-          { id: "e1", name: "supporting-docs.pdf", type: "document", url: "/evidence/docs.pdf" },
-        ],
-      })
-    )
+    dispatch(addDispute(newDispute))
 
     setShowNewDisputeDialog(false)
     setNewDispute({
