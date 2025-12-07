@@ -83,7 +83,6 @@ export default function DisputeCard({
             </div>
           </div>
 
-          {/* Middle: Compact AI Summary (if exists) */}
           {dispute.aiAnalysis && (
             <div className="lg:w-80 bg-muted/50 p-4 rounded-lg">
               <AnalysisPanel aiAnalysis={dispute.aiAnalysis} compact />

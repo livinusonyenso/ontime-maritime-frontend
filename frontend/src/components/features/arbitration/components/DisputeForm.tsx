@@ -164,7 +164,6 @@ export default function DisputeForm({ newDispute, onChange }: DisputeFormProps) 
         />
       </div>
 
-      {/* Evidence Upload Section */}
       <div className="space-y-3">
         <Label>Supporting Evidence</Label>
         <div className="flex items-center gap-2">

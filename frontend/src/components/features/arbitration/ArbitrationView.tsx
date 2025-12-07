@@ -118,7 +118,10 @@ export default function ArbitrationView() {
       return
     }
 
-    dispatch(addDispute(newDispute))
+    dispatch(addDispute({
+  ...newDispute,
+  type: newDispute.type as DisputeType, 
+}))
 
     setShowNewDisputeDialog(false)
     setNewDispute({
