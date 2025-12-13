@@ -13,6 +13,8 @@ import {
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const trackingPlatforms = [
   {
@@ -49,8 +51,10 @@ const trackingPlatforms = [
 
 export default function BuyerListingsPage() {
   return (
+    
+  <>
+      <Header/>
     <div className="flex-1 px-4 py-6 md:px-6 lg:px-10 bg-muted/40">
-      
       {/* PAGE HEADER */}
       <div className="flex flex-col gap-3 mb-8">
         <div className="flex items-start gap-3">
@@ -91,7 +95,7 @@ export default function BuyerListingsPage() {
             </CardHeader>
 
             <CardContent className="space-y-3">
-              <p classname="text-sm text-muted-foreground">{platform.description}</p>
+              <p className="text-sm text-muted-foreground">{platform.description}</p>
 
               <Button
                 variant="outline"
@@ -106,5 +110,7 @@ export default function BuyerListingsPage() {
         ))}
       </div>
     </div>
+      <Footer/>
+  </>
   );
 }
