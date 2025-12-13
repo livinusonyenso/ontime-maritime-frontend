@@ -997,30 +997,28 @@ export default function LegalHubPage() {
         )}
 
         {/* Paystack Payment Component */}
-        {paymentConfig && (
-          <PaystackPayment
-            isOpen={isPaymentOpen}
-            setIsOpen={(open) => {
-              if (!open) {
-                closePayment()
-              } else {
-                setIsPaymentOpen(open)
-              }
-            }}
-            amount={paymentConfig.amount}
-            serviceName={paymentConfig.serviceName}
-            consultantName={paymentConfig.consultantName}
-            email={paymentConfig.email}
-            onSuccess={(reference) => {
-              console.log("Payment successful:", reference)
-              // Handle successful payment - e.g., create booking, send confirmation
-            }}
-            onClose={() => {
-              console.log("Payment closed")
+        <PaystackPayment
+          isOpen={isPaymentOpen}
+          setIsOpen={(open) => {
+            if (!open) {
               closePayment()
-            }}
-          />
-        )}
+            } else {
+              setIsPaymentOpen(open)
+            }
+          }}
+          amount={paymentConfig.amount}
+          serviceName={paymentConfig.serviceName}
+          consultantName={paymentConfig.consultantName}
+          email={paymentConfig.email}
+          onSuccess={(reference) => {
+            console.log("Payment successful:", reference)
+            // Handle successful payment - e.g., create booking, send confirmation
+          }}
+          onClose={() => {
+            console.log("Payment closed")
+            closePayment()
+          }}
+        />
       </main>
 
       <Footer />

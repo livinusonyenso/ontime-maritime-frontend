@@ -1,268 +1,51 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { usePaystackPayment as usePaystackHook } from "react-paystack"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CreditCard, Shield, CheckCircle2, Loader2 } from "lucide-react";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { CreditCard, CheckCircle2, XCircle, Loader2 } from "lucide-react"
 
-/* ===================== TYPES ===================== */
-
-interface PaystackPaymentProps {
-  amount: number;
-  email?: string;
-  serviceName: string;
-  consultantName?: string;
-  currency?: "NGN" | "USD";
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  onSuccess?: (reference: string) => void;
-  onClose?: () => void;
-}
-
-declare global {
-  interface Window {
-    PaystackPop?: {
-      setup: (config: PaystackConfig) => { openIframe: () => void };
-    };
-  }
-}
-
-interface PaystackConfig {
-  key: string;
-  email: string;
-  amount: number;
-  currency: string;
-  ref: string;
-  metadata: {
-    custom_fields: Array<{
-      display_name: string;
-      variable_name: string;
-      value: string;
-    }>;
-  };
-  callback: (response: { reference: string }) => void;
-  onClose: () => void;
-}
-
-/* ===================== COMPONENT ===================== */
-
-export function PaystackPayment({
-  amount,
-  email: initialEmail = "",
-  serviceName,
-  consultantName,
-  currency = "NGN",
-  isOpen,
-  setIsOpen,
-  onSuccess,
-  onClose,
-}: PaystackPaymentProps) {
-  const [email, setEmail] = useState(initialEmail);
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [reference, setReference] = useState("");
-
-  const PAYSTACK_PUBLIC_KEY =
-    import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
-
-  /* ===================== HELPERS ===================== */
-
-  const generateReference = () =>
-    `ONTIME-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat(currency === "USD" ? "en-US" : "en-NG", {
-      style: "currency",
-      currency,
-    }).format(value);
-
-  /* ===================== PAYSTACK ===================== */
-
-  const loadPaystack = () =>
-    new Promise<void>((resolve) => {
-      if (window.PaystackPop) return resolve();
-
-      const script = document.createElement("script");
-      script.src = "https://js.paystack.co/v1/inline.js";
-      script.async = true;
-      script.onload = () => resolve();
-      document.body.appendChild(script);
-    });
-
-  const handlePayment = async () => {
-    if (!email || !fullName || !PAYSTACK_PUBLIC_KEY) return;
-
-    setIsLoading(true);
-    await loadPaystack();
-
-    const ref = generateReference();
-
-    const handler = window.PaystackPop!.setup({
-      key: PAYSTACK_PUBLIC_KEY,
-      email,
-      amount: amount * 100,
-      currency,
-      ref,
-      metadata: {
-        custom_fields: [
-          { display_name: "Full Name", variable_name: "full_name", value: fullName },
-          { display_name: "Phone", variable_name: "phone", value: phone },
-          { display_name: "Service", variable_name: "service", value: serviceName },
-          ...(consultantName
-            ? [{ display_name: "Consultant", variable_name: "consultant", value: consultantName }]
-            : []),
-        ],
-      },
-      callback: (res) => {
-        setReference(res.reference);
-        setSuccess(true);
-        setIsLoading(false);
-        onSuccess?.(res.reference);
-      },
-      onClose: () => {
-        setIsLoading(false);
-        onClose?.();
-      },
-    });
-
-    handler.openIframe();
-  };
-
-  const resetAndClose = () => {
-    setIsOpen(false);
-    setSuccess(false);
-    setReference("");
-    setEmail(initialEmail);
-    setFullName("");
-    setPhone("");
-  };
-
-  /* ===================== UI ===================== */
-
-  return (
-    <Dialog open={isOpen} onOpenChange={resetAndClose}>
-      <DialogContent className="sm:max-w-md">
-        {!success ? (
-          <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-primary" />
-                Complete Payment
-              </DialogTitle>
-              <DialogDescription>
-                Secure payment via Paystack
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-6 py-4">
-              <div className="bg-slate-900 text-white p-4 rounded-xl">
-                <div className="text-sm text-slate-400">Service</div>
-                <div className="font-semibold">{serviceName}</div>
-                {consultantName && (
-                  <div className="text-sm mt-2">Consultant: {consultantName}</div>
-                )}
-                <div className="mt-4 flex justify-between border-t border-slate-700 pt-3">
-                  <span>Total</span>
-                  <span className="font-bold text-emerald-400">
-                    {formatCurrency(amount)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>Full Name</Label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
-
-                <Label>Email</Label>
-                <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-
-                <Label>Phone</Label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
-                <Shield className="h-4 w-4 text-green-600" />
-                SSL-secured payment
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={resetAndClose}>Cancel</Button>
-              <Button
-                onClick={handlePayment}
-                disabled={isLoading || !email || !fullName}
-                className="bg-emerald-600 hover:bg-emerald-700"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Processing…
-                  </>
-                ) : (
-                  <>Pay {formatCurrency(amount)}</>
-                )}
-              </Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-green-600">
-                <CheckCircle2 className="h-6 w-6" />
-                Payment Successful
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="py-6 text-center space-y-3">
-              <div className="font-mono bg-muted p-3 rounded">{reference}</div>
-              <p className="text-sm text-muted-foreground">
-                Confirmation sent to {email}
-              </p>
-            </div>
-
-            <DialogFooter>
-              <Button onClick={resetAndClose} className="w-full">Done</Button>
-            </DialogFooter>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-/* ===================== HOOK ===================== */
-
+// Payment configuration interface
 interface PaymentConfig {
-  amount: number;
-  serviceName: string;
-  consultantName?: string;
-  email?: string;
+  amount: number
+  serviceName: string
+  consultantName?: string
+  email?: string
 }
 
+// Hook for managing payment state
 export function usePaystackPayment() {
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-  const [paymentConfig, setPaymentConfig] = useState<PaymentConfig | null>(null);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+  const [paymentConfig, setPaymentConfig] = useState<PaymentConfig>({
+    amount: 0,
+    serviceName: "",
+    consultantName: "",
+    email: "",
+  })
 
   const openPayment = (config: PaymentConfig) => {
-    setPaymentConfig(config);
-    setIsPaymentOpen(true);
-  };
+    setPaymentConfig(config)
+    setIsPaymentOpen(true)
+  }
 
   const closePayment = () => {
-    setIsPaymentOpen(false);
-    setPaymentConfig(null);
-  };
+    setIsPaymentOpen(false)
+    setPaymentConfig({
+      amount: 0,
+      serviceName: "",
+      consultantName: "",
+      email: "",
+    })
+  }
 
   return {
     isPaymentOpen,
@@ -270,5 +53,278 @@ export function usePaystackPayment() {
     paymentConfig,
     openPayment,
     closePayment,
-  };
+  }
+}
+
+// Payment component props
+interface PaystackPaymentProps {
+  isOpen: boolean
+  setIsOpen: (open: boolean) => void
+  amount: number
+  serviceName: string
+  consultantName?: string
+  email?: string
+  onSuccess?: (reference: string) => void
+  onClose?: () => void
+}
+
+export function PaystackPayment({
+  isOpen,
+  setIsOpen,
+  amount,
+  serviceName,
+  consultantName,
+  email: initialEmail,
+  onSuccess,
+  onClose,
+}: PaystackPaymentProps) {
+  const [email, setEmail] = useState(initialEmail || "")
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
+
+  // Paystack public key from environment variables
+  const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || ""
+
+  // Convert amount to kobo (Paystack uses kobo for NGN)
+  const amountInKobo = Math.round(amount * 100)
+
+  const config = {
+    reference: `ref_${new Date().getTime()}_${Math.random().toString(36).substring(7)}`,
+    email: email,
+    amount: amountInKobo,
+    publicKey: publicKey,
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Service",
+          variable_name: "service",
+          value: serviceName,
+        },
+        {
+          display_name: "Consultant",
+          variable_name: "consultant",
+          value: consultantName || "N/A",
+        },
+        {
+          display_name: "Customer Name",
+          variable_name: "customer_name",
+          value: name,
+        },
+        {
+          display_name: "Phone",
+          variable_name: "phone",
+          value: phone,
+        },
+      ],
+    },
+  }
+
+  const initializePayment = usePaystackHook(config)
+
+  const handleSuccess = (reference: any) => {
+    setPaymentStatus("success")
+    console.log("Payment successful:", reference)
+    if (onSuccess) {
+      onSuccess(reference.reference)
+    }
+    setTimeout(() => {
+      handleClose()
+    }, 2000)
+  }
+
+  const handlePaystackClose = () => {
+    setPaymentStatus("error")
+    setErrorMessage("Payment was cancelled")
+     setIsOpen(false);
+    if (onClose) {
+      onClose()
+    }
+  }
+
+  const handleClose = () => {
+    setIsOpen(false)
+    setPaymentStatus("idle")
+    setErrorMessage("")
+    setEmail("")
+    setName("")
+    setPhone("")
+     setIsOpen(false);
+    if (onClose) {
+      onClose()
+    }
+  }
+
+  const handleInitiatePayment = () => {
+    if (!email || !name) {
+      setErrorMessage("Please fill in all required fields")
+      return
+    }
+
+    if (!publicKey) {
+      setErrorMessage("Payment configuration error. Please contact support.")
+      return
+    }
+
+    setPaymentStatus("processing")
+    setErrorMessage("")
+
+    initializePayment({
+      onSuccess: handleSuccess,
+      onClose: handlePaystackClose,
+    })
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-cyan-600" />
+            Payment Details
+          </DialogTitle>
+          <DialogDescription>
+            Complete your payment for {serviceName}
+            {consultantName && ` with ${consultantName}`}
+          </DialogDescription>
+        </DialogHeader>
+
+        {paymentStatus === "success" ? (
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-green-600" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Payment Successful!
+              </h3>
+              <p className="text-slate-600">
+                Your payment has been processed successfully.
+              </p>
+            </div>
+          </div>
+        ) : paymentStatus === "error" ? (
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <XCircle className="h-10 w-10 text-red-600" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Payment Failed
+              </h3>
+              <p className="text-slate-600">{errorMessage}</p>
+            </div>
+            <Button
+              onClick={() => {
+                setPaymentStatus("idle")
+                setErrorMessage("")
+              }}
+              className="bg-cyan-600 hover:bg-cyan-700"
+            >
+              Try Again
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6 py-4">
+            {/* Amount Display */}
+            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-6 rounded-xl border border-cyan-200">
+              <div className="text-sm text-slate-600 mb-1">Total Amount</div>
+              <div className="text-3xl font-bold text-slate-900">
+                ${amount.toLocaleString()}
+              </div>
+              <div className="text-sm text-slate-500 mt-1">{serviceName}</div>
+            </div>
+
+            {/* Form Fields */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">
+                  Full Name <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-12"
+                  disabled={paymentStatus === "processing"}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  Email Address <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12"
+                  disabled={paymentStatus === "processing"}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number (Optional)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="h-12"
+                  disabled={paymentStatus === "processing"}
+                />
+              </div>
+            </div>
+
+            {errorMessage && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {errorMessage}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 h-12"
+                disabled={paymentStatus === "processing"}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleInitiatePayment}
+                className="flex-1 h-12 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
+                disabled={paymentStatus === "processing"}
+              >
+                {paymentStatus === "processing" ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Pay ${amount.toLocaleString()}
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Security Notice */}
+            <div className="text-xs text-center text-slate-500 pt-2">
+              🔒 Secured by Paystack. Your payment information is encrypted and
+              secure.
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
 }
