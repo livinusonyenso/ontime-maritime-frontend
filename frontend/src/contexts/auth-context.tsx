@@ -1,6 +1,12 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import api from '../lib/api'
-import type { User } from '../types'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react"
+import api from "../lib/api"
+import type { User } from "../types"
 
 interface AuthContextType {
   user: User | null
@@ -8,7 +14,12 @@ interface AuthContextType {
   isAuthenticated: boolean
   loading: boolean
   error: string | null
-  signup: (email: string, phone: string, password: string, role: 'buyer' | 'seller') => Promise<void>
+  signup: (
+    email: string,
+    phone: string,
+    password: string,
+    role: "buyer" | "seller"
+  ) => Promise<void>
   verifyOtp: (userId: string, otp: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
   logout: () => void
@@ -23,68 +34,99 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Initialize auth state from localStorage
+  /* ------------------ INIT FROM STORAGE ------------------ */
   useEffect(() => {
-    const storedToken = localStorage.getItem('ontime_token')
-    const storedUser = localStorage.getItem('ontime_user')
+    const storedToken = localStorage.getItem("ontime_token")
+    const storedUser = localStorage.getItem("ontime_user")
 
     if (storedToken && storedUser) {
       setToken(storedToken)
       setUser(JSON.parse(storedUser))
     }
+
     setLoading(false)
   }, [])
 
-  const signup = async (email: string, phone: string, password: string, role: 'buyer' | 'seller') => {
+  /* ------------------ SIGNUP ------------------ */
+  const signup = async (
+    email: string,
+    phone: string,
+    password: string,
+    role: "buyer" | "seller"
+  ) => {
     try {
       setLoading(true)
       setError(null)
 
-      const response = await api.post('/auth/signup', {
+      const response = await api.post("/auth/signup", {
         email,
         phone,
         password,
         role,
       })
 
-      const { user: newUser } = response.data
+      /**
+       * EXPECTED BACKEND RESPONSE:
+       * {
+       *   access_token: string,
+       *   user: User
+       * }
+       */
+      const { access_token, user: newUser } = response.data
+
+      setToken(access_token)
       setUser(newUser)
-      localStorage.setItem('ontime_user', JSON.stringify(newUser))
+
+      localStorage.setItem("ontime_token", access_token)
+      localStorage.setItem("ontime_user", JSON.stringify(newUser))
     } catch (err: any) {
-      setError(err.message || 'Signup failed')
+      setError(err.message || "Signup failed")
       throw err
     } finally {
       setLoading(false)
     }
   }
 
+  /* ------------------ VERIFY OTP ------------------ */
   const verifyOtp = async (userId: string, otp: string) => {
     try {
       setLoading(true)
       setError(null)
 
-      const response = await api.post('/auth/verify-otp', {
+      const response = await api.post("/auth/verify-otp", {
         userId,
         otp,
       })
 
-      const { user: verifiedUser } = response.data
+      /**
+       * EXPECTED BACKEND RESPONSE:
+       * {
+       *   access_token: string,
+       *   user: User
+       * }
+       */
+      const { access_token, user: verifiedUser } = response.data
+
+      setToken(access_token)
       setUser(verifiedUser)
-      localStorage.setItem('ontime_user', JSON.stringify(verifiedUser))
+
+      localStorage.setItem("ontime_token", access_token)
+      localStorage.setItem("ontime_user", JSON.stringify(verifiedUser))
     } catch (err: any) {
-      setError(err.message || 'OTP verification failed')
+      setError(err.message || "OTP verification failed")
       throw err
     } finally {
       setLoading(false)
     }
   }
 
+  /* ------------------ LOGIN ------------------ */
   const login = async (email: string, password: string) => {
     try {
       setLoading(true)
       setError(null)
 
-      const response = await api.post('/auth/login', {
+      const response = await api.post("/auth/login", {
         email,
         password,
       })
@@ -93,35 +135,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setToken(access_token)
       setUser(loggedInUser)
-      localStorage.setItem('ontime_token', access_token)
-      localStorage.setItem('ontime_user', JSON.stringify(loggedInUser))
+
+      localStorage.setItem("ontime_token", access_token)
+      localStorage.setItem("ontime_user", JSON.stringify(loggedInUser))
     } catch (err: any) {
-      setError(err.message || 'Login failed')
+      setError(err.message || "Login failed")
       throw err
     } finally {
       setLoading(false)
     }
   }
 
+  /* ------------------ LOGOUT ------------------ */
   const logout = () => {
     setUser(null)
     setToken(null)
-    localStorage.removeItem('ontime_token')
-    localStorage.removeItem('ontime_user')
+
+    localStorage.removeItem("ontime_token")
+    localStorage.removeItem("ontime_user")
   }
 
+  /* ------------------ REFRESH PROFILE ------------------ */
   const refreshProfile = async () => {
     if (!token) return
 
     try {
       setLoading(true)
-      const response = await api.get('/users/profile')
+
+      const response = await api.get("/users/profile")
       const updatedUser = response.data
 
       setUser(updatedUser)
-      localStorage.setItem('ontime_user', JSON.stringify(updatedUser))
+      localStorage.setItem("ontime_user", JSON.stringify(updatedUser))
     } catch (err: any) {
-      setError(err.message || 'Failed to refresh profile')
+      setError(err.message || "Failed to refresh profile")
       throw err
     } finally {
       setLoading(false)
@@ -133,7 +180,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         token,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated: Boolean(user && token),
         loading,
         error,
         signup,
@@ -148,10 +195,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
+/* ------------------ HOOK ------------------ */
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
   }
   return context
 }

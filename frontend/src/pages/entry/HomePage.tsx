@@ -386,50 +386,77 @@ export default function HomePage() {
         </section>
 
         {/* Why Choose Us */}
-        <section className="py-20 relative overflow-hidden">
-          <div className="absolute inset-0">
-            <img
-              src="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1920&q=80"
-              alt="Maritime operations"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-slate-950/85" />
-          </div>
-          <div className="relative container mx-auto px-4 text-white">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Ontime Maritime</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                The most comprehensive and secure maritime platform in the industry
-              </p>
-            </div>
+     <section className="relative py-24 overflow-hidden">
+  {/* Background */}
+  <div className="absolute inset-0">
+    <img
+      src="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1920&q=80"
+      alt="Maritime operations"
+      className="w-full h-full object-cover"
+    />
+    {/* Stronger overlay for contrast */}
+    <div className="absolute inset-0 bg-slate-950/90" />
+  </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              <div className="glass border-slate-700 p-6 rounded-xl space-y-3 backdrop-blur-lg">
-                <Lock className="h-10 w-10 text-primary" />
-                <h3 className="font-semibold text-xl">Bank-Level Security</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  256-bit encryption and blockchain verification for all transactions and documents
-                </p>
-              </div>
+  {/* Content */}
+  <div className="relative container mx-auto px-4 text-white">
+    {/* Heading */}
+    <div className="text-center mb-16">
+      <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+        Why Choose Ontime Maritime
+      </h2>
+      <p className="text-slate-300 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+        The most comprehensive and secure maritime platform in the industry
+      </p>
+    </div>
 
-              <div className="glass border-slate-700 p-6 rounded-xl space-y-3 backdrop-blur-lg">
-                <Clock className="h-10 w-10 text-secondary" />
-                <h3 className="font-semibold text-xl">24/7 Reliability</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  99.9% uptime guarantee with round-the-clock technical support
-                </p>
-              </div>
+    {/* Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {/* Card */}
+      <div className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-primary/15">
+          <Lock className="h-6 w-6 text-primary" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">
+          Bank-Level Security
+        </h3>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          256-bit encryption and blockchain verification for all transactions
+          and mission-critical documents.
+        </p>
+      </div>
 
-              <div className="glass border-slate-700 p-6 rounded-xl space-y-3 backdrop-blur-lg">
-                <Globe className="h-10 w-10 text-accent" />
-                <h3 className="font-semibold text-xl">Global Reach</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Operating in 150+ countries with multilingual support
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* Card */}
+      <div className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-secondary/15">
+          <Clock className="h-6 w-6 text-secondary" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">
+          24/7 Reliability
+        </h3>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          99.9% uptime SLA backed by round-the-clock monitoring and
+          technical support.
+        </p>
+      </div>
+
+      {/* Card */}
+      <div className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-accent/15">
+          <Globe className="h-6 w-6 text-accent" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">
+          Global Reach
+        </h3>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          Active in 150+ countries with multilingual support and
+          region-aware compliance.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
         {/* Testimonials */}
         <section className="py-20 bg-background">
