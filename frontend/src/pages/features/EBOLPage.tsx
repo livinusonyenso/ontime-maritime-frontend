@@ -10,6 +10,7 @@ import {
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import { useNavigate } from "react-router-dom"
 
 import {
   FileText,
@@ -59,6 +60,7 @@ export default function EBOLPage() {
   const [showQuoteDialog, setShowQuoteDialog] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isValidating, setIsValidating] = useState(false)
+  const navigate = useNavigate()
 
   const filteredBols = (billsOfLading || []).filter((bol) =>
     [
@@ -104,6 +106,10 @@ export default function EBOLPage() {
     }, 1500)
   }
 
+  const handleNavigate = () => {
+    navigate("/login")
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -126,12 +132,12 @@ export default function EBOLPage() {
           </p>
 
           <div className="flex justify-center gap-4">
-            <Button onClick={() => setShowCreateDialog(true)}>
+            <Button onClick={() => handleNavigate()}>
               <Plus className="h-4 w-4 mr-1" />
               Create BOL
             </Button>
 
-            <Button variant="outline" onClick={() => setShowQuoteDialog(true)}>
+            <Button variant="outline" onClick={() => handleNavigate()}>
               <DollarSign className="h-4 w-4 mr-1" />
               Request Quote
             </Button>
