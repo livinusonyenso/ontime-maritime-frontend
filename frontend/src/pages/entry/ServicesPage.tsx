@@ -113,7 +113,7 @@ export default function ServicesPage() {
                       <span className="text-sm">Secure cloud storage with version control</span>
                     </li>
                   </ul>
-                  <Link to="/dashboard/documents">
+                  <Link to="/e-bol">
                     <Button variant="secondary" className="w-full">
                       Manage Documents <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -227,11 +227,9 @@ export default function ServicesPage() {
                       <span className="text-sm">Custom reports and data exports</span>
                     </li>
                   </ul>
-                  <Link to="/dashboard">
-                    <Button variant="secondary" className="w-full">
-                      View Analytics <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
+                  <Button variant="default" className="w-full bg-accent hover:bg-accent/90" disabled>
+                    Coming Soon
+                  </Button>
                 </CardContent>
               </Card>
 

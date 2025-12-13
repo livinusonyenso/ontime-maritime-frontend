@@ -24,6 +24,8 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 
 type AuctionStatus = "live" | "upcoming" | "closed";
 
@@ -128,6 +130,8 @@ export default function BuyerAuctionsPage() {
   const closed = mockAuctions.filter((a) => a.status === "closed").length;
 
   return (
+   <>
+   <Header/>
     <div className="flex-1 px-4 py-6 md:px-6 lg:px-10 bg-muted/40">
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
@@ -612,6 +616,8 @@ export default function BuyerAuctionsPage() {
         </div>
       </div>
     </div>
+    <Footer/>
+   </>
   );
 }
 
