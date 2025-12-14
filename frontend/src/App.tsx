@@ -54,6 +54,13 @@ import AdminUsersPage from "./pages/executive-corner/AdminUsersPage"
 import AdminAuctionsPage from "./pages/executive-corner/AdminAuctionsPage"
 import AdminDocumentsPage from "./pages/executive-corner/AdminDocumentsPage"
 import AdminInsurancePage from "./pages/executive-corner/AdminInsurancePage"
+import MaritimeSalesAdmin from "./pages/seller/MaritimeSalesAdmin"
+import InsuranceAdmin from "./pages/seller/UserInsuranceDashboard"
+import UserInsuranceDashboard from "./pages/seller/UserInsuranceDashboard"
+import UserSecurityHotlineDashboard from "./dashboard/seller/SecurityHotline/SecurityHotlinePage"
+import TrackingUserDashboard from "./dashboard/seller/Tracking/TrackingPage"
+import UserAuctionsDashboard from "./dashboard/seller/Auctions/AuctionsPage"
+import UserDocumentsDashboard from "./dashboard/seller/Documents/DocumentsPage"
 
 function App() {
   return (
@@ -113,13 +120,14 @@ function App() {
           <Route index element={<SellerMarketPage />} />
           <Route path="overview" element={<SellerDashboardPage />} />
           <Route path="listings" element={<SellerListingsPage />} />
-          <Route path="tracking" element={<SellerTrackingPage />} />
-          <Route path="auctions" element={<SellerAuctionsPage />} />
-          <Route path="documents" element={<SellerDocumentsPage />} />
-          <Route path="sales" element={<SellerDashboardPage />} />
+          <Route path="insurance" element={<UserInsuranceDashboard/>} />
+          <Route path="tracking" element={<TrackingUserDashboard/>} />
+          <Route path="auctions" element={<UserAuctionsDashboard/>} />
+          <Route path="documents" element={<UserDocumentsDashboard/>} />
+          <Route path="sales" element={<MaritimeSalesAdmin/>} />
           <Route path="ebol" element={<SellerEBOLPage />} />
           <Route path="arbitration" element={<SellerArbitrationPage />} />
-          <Route path="security-hotline" element={<SellerSecurityHotlinePage />} />
+          <Route path="security-hotline" element={<UserSecurityHotlineDashboard/>} />
         </Route>
 
         {/* Executive Dashboard Routes */}
