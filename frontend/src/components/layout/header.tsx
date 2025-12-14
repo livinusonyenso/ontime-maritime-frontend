@@ -50,6 +50,10 @@ export function Header() {
           <Link to="/legal-hub">
             <Button variant="ghost">MarineTech Associate</Button>
           </Link>
+
+          <Link to="/security-hotline">
+            <Button variant="ghost">Security Hotline</Button>
+          </Link>
         </nav>
 
         {/* Actions */}
@@ -110,6 +114,12 @@ export function Header() {
             <Link to="/legal-hub" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">
                 MarineTech Associate
+              </Button>
+            </Link>
+
+            <Link to="/security-hotline" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">
+                Security Hotline
               </Button>
             </Link>
 
