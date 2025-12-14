@@ -76,9 +76,7 @@ export default function SellerDashboardPage() {
             <Button size="lg" className="shadow-sm" onClick={() => setCreateModalOpen(true)}>
               <Plus className="mr-2 h-5 w-5" /> Create New Listing
             </Button>
-            <Button variant="outline" size="icon" onClick={logout} title="Logout">
-              <LogOut className="h-4 w-4" />
-            </Button>
+           
           </div>
         </div>
 
