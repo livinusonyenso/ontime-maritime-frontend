@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent } from "@/components/ui/card";
+import { FloatingChatButton } from "@/components/features/security-hotline/FloatingChatButton";
 import { Badge } from "@/components/ui/badge";
 import { Target, Eye, Award, Users, Globe, TrendingUp } from "lucide-react";
 
@@ -429,6 +430,7 @@ export default function AboutPage() {
       </main>
 
       <Footer />
+      <FloatingChatButton />
     </div>
   );
 }

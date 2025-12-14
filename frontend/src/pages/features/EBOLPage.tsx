@@ -10,6 +10,7 @@ import {
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import { FloatingChatButton } from "@/components/features/security-hotline/FloatingChatButton"
 import { useNavigate } from "react-router-dom"
 
 import {
@@ -270,6 +271,7 @@ export default function EBOLPage() {
       )}
 
       <Footer />
+      <FloatingChatButton />
     </div>
   )
 }

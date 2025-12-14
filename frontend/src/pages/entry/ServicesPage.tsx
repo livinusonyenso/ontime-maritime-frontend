@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import { FloatingChatButton } from "@/components/features/security-hotline/FloatingChatButton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -320,6 +321,7 @@ export default function ServicesPage() {
       </main>
 
       <Footer />
+      <FloatingChatButton />
     </div>
   )
 }

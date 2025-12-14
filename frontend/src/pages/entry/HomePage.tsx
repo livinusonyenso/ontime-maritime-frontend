@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { HeroCarousel } from "@/components/hero-carousel"
+import { FloatingChatButton } from "@/components/features/security-hotline/FloatingChatButton"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Link } from "react-router-dom"
@@ -580,6 +581,7 @@ export default function HomePage() {
       </main>
 
       <Footer />
+      <FloatingChatButton />
     </div>
   )
 }
