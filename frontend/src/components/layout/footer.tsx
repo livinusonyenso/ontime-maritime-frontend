@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Ship, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
+import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
   return (
@@ -8,12 +8,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About Company */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary p-2 rounded-lg">
-                <Ship className="h-6 w-6 text-primary-foreground" />
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src="/logo.png"
+                alt="Ontime Maritime Logo"
+                className="h-12 w-auto object-contain"
+              />
               <div className="flex flex-col">
-                <span className="font-bold text-lg leading-none text-white">ONTIME</span>
+                <span className="font-bold text-lg leading-none text-white">MARITIME</span>
                 <span className="text-xs text-slate-400">Tech Meet Cargo</span>
               </div>
             </div>
@@ -59,17 +61,17 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-slate-400">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
                 <span>123 Maritime Plaza, Lagos, Nigeria</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-slate-400">
-                <Mail className="h-4 w-4 flex-shrink-0 text-primary" />
+                <Mail className="h-4 w-4 shrink-0 text-primary" />
                 <a href="mailto:info@ontimemaritime.com" className="hover:text-primary transition-colors">
                   info@ontimemaritime.com
                 </a>
               </li>
               <li className="flex items-center gap-2 text-sm text-slate-400">
-                <Phone className="h-4 w-4 flex-shrink-0 text-primary" />
+                <Phone className="h-4 w-4 shrink-0 text-primary" />
                 <a href="tel:+2341234567890" className="hover:text-primary transition-colors">
                   +234 808984499
                 </a>

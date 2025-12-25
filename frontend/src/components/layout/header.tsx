@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import {
   Menu,
   X,
-  Ship,
 } from "lucide-react"
 
 export function Header() {
@@ -15,13 +14,15 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="bg-primary p-2 rounded-lg">
-            <Ship className="h-6 w-6 text-primary-foreground" />
-          </div>
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src="/logo.png"
+            alt="Ontime Maritime Logo"
+            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
           <div className="flex flex-col">
             <span className="font-bold text-lg leading-none">
-              ONTIME MARITIME
+              MARITIME
             </span>
             <span className="text-xs text-muted-foreground">
               Tech Meet Cargo
