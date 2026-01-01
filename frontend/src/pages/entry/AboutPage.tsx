@@ -374,27 +374,27 @@ export default function AboutPage() {
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
               {[
-                {
-                  name: "Dr. James Anderson",
-                  role: "CEO & Co-Founder",
-                  img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=700&q=80",
-                },
-                {
-                  name: "Sarah Chen",
-                  role: "CTO & Co-Founder",
-                  img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=700&q=80",
-                },
-                {
-                  name: "Mohammed Osman",
-                  role: "Head of Operations",
-                  img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=80",
-                },
-                {
-                  name: "Lisa Martinez",
-                  role: "Head of Customer Success",
-                  img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=700&q=80",
-                },
-              ].map((m) => (
+  {
+    name: "Barr. Enemuo Chinedu Christopher",
+    role: "CEO & Co-Founder",
+    img: "https://scontent.fabb1-3.fna.fbcdn.net/v/t39.30808-6/493835122_10231003411883375_5354022043640026632_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeG8VD3yyspirFpkgDANVEDDXa_4ygSUq81dr_jKBJSrzVp7nsAbJ4YK5xTXQJVU77EGItocS8slNvyNG8QO6VyR&_nc_ohc=oZY0R3rTkVsQ7kNvwH-OPBt&_nc_oc=AdmFLjqu6SMNBsVF8WGzjXKoFReUpo3Umu3dcYRBwX0UiatWGZID626q_excO_QTo_0&_nc_zt=23&_nc_ht=scontent.fabb1-3.fna&_nc_gid=MuF_mv-LemF9c9XpP8N-RQ&oh=00_AfrBhHIJ2hiltCyFIzKCabslEMEBoxTiwoN2BhPRASYNfQ&oe=695CA157",
+  },
+  {
+    name: "Chioma Adeyemi",
+    role: "CTO & Co-Founder",
+    img: "https://images.unsplash.com/photo-1611432579402-7037e3e2c1e4?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    name: "Oluwaseun Okafor",
+    role: "Head of Operations",
+    img: "https://plus.unsplash.com/premium_photo-1748215161407-b4d48ab8b090?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    name: "Amaka Nwankwo",
+    role: "Head of Customer Success",
+    img: "https://plus.unsplash.com/premium_photo-1661544595808-849629f20b38?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+].map((m) => (
                 <Card
                   key={m.name}
                   className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
