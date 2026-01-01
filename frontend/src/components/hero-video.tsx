@@ -78,16 +78,12 @@ export function HeroVideo() {
           loop
           muted={isMuted}
           playsInline
-          preload="auto"
+          preload="metadata"
           poster="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=1920&q=80"
         >
-          {/* Multiple video sources for better compatibility */}
+          {/* Local video source with optimizations */}
           <source
-            src="https://videos.pexels.com/video-files/7710243/7710243-uhd_2560_1440_25fps.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://videos.pexels.com/video-files/7710243/7710243-hd_1920_1080_25fps.mp4"
+            src="/hero_video.mp4"
             type="video/mp4"
           />
           {/* Fallback for browsers that don't support video */}
