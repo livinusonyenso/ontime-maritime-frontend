@@ -411,8 +411,8 @@ export default function HomePage() {
               <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
-                    alt="John Smith"
+                    src="https://images.pexels.com/photos/31538020/pexels-photo-31538020.jpeg"
+                    alt="Chukwuemeka Okafor"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
@@ -429,7 +429,7 @@ export default function HomePage() {
                     us countless hours."
                   </p>
                   <div>
-                    <p className="font-semibold">John Smith</p>
+                    <p className="font-semibold">Chukwuemeka Okafor</p>
                     <p className="text-sm text-muted-foreground">CEO, Global Freight Ltd</p>
                   </div>
                 </CardContent>
@@ -438,8 +438,8 @@ export default function HomePage() {
               <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80"
-                    alt="Maria Chen"
+                    src="https://images.unsplash.com/photo-1507152832244-10d45c7eda57?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Amina Bello"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
@@ -456,7 +456,7 @@ export default function HomePage() {
                     excellent support."
                   </p>
                   <div>
-                    <p className="font-semibold">Maria Chen</p>
+                    <p className="font-semibold">Amina Bello</p>
                     <p className="text-sm text-muted-foreground">Director, Pacific Shipping Co</p>
                   </div>
                 </CardContent>
@@ -465,8 +465,8 @@ export default function HomePage() {
               <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80"
-                    alt="Ahmed Okonkwo"
+                    src="https://images.unsplash.com/photo-1533108165347-036ec233d7ec?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Oluwaseun Adeyemi"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
@@ -483,7 +483,7 @@ export default function HomePage() {
                     Highly recommended!"
                   </p>
                   <div>
-                    <p className="font-semibold">Ahmed Okonkwo</p>
+                    <p className="font-semibold">Oluwaseun Adeyemi</p>
                     <p className="text-sm text-muted-foreground">Manager, Lagos Trade Hub</p>
                   </div>
                 </CardContent>
