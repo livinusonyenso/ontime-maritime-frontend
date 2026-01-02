@@ -18,9 +18,9 @@ export function Header() {
           <img
             src="/logo.png"
             alt="Ontime Maritime Logo"
-            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="flex flex-col">
+          <div className="hidden md:flex flex-col">
             <span className="font-bold text-lg leading-none">
               MARITIME
             </span>

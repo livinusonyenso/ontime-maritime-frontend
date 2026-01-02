@@ -20,9 +20,9 @@ export function Footer() {
               <img
                 src="/logo.png"
                 alt="Ontime Maritime Logo"
-                className="h-12 w-auto object-contain"
+                className="h-16 md:h-20 w-auto object-contain"
               />
-              <div className="flex flex-col">
+              <div className="hidden md:flex flex-col">
                 <span className="font-bold text-lg leading-none text-white">MARITIME</span>
                 <span className="text-xs text-slate-400">Tech Meet Cargo</span>
               </div>
