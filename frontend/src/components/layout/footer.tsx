@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
+  const navigate = useNavigate()
+
+  const handleLinkClick = (path: string) => {
+    navigate(path)
+    // Smooth scroll to top after navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <footer className="bg-slate-950 text-slate-200 border-t border-slate-800">
       <div className="container mx-auto px-4 py-12">
@@ -29,29 +37,44 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-sm text-slate-400 hover:text-primary transition-colors">
+                <button
+                  onClick={() => handleLinkClick('/about')}
+                  className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
+                >
                   About Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/services" className="text-sm text-slate-400 hover:text-primary transition-colors">
+                <button
+                  onClick={() => handleLinkClick('/services')}
+                  className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
+                >
                   Services
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/tracking" className="text-sm text-slate-400 hover:text-primary transition-colors">
+                <button
+                  onClick={() => handleLinkClick('/tracking')}
+                  className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
+                >
                   Tracking
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/auctions" className="text-sm text-slate-400 hover:text-primary transition-colors">
+                <button
+                  onClick={() => handleLinkClick('/auctions')}
+                  className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
+                >
                   Auctions
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/insurance" className="text-sm text-slate-400 hover:text-primary transition-colors">
+                <button
+                  onClick={() => handleLinkClick('/insurance')}
+                  className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
+                >
                   Insurance
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
