@@ -91,24 +91,12 @@ export function HeroVideo() {
         </video>
 
         {/* Gradient Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/70" />
+        <div className="absolute inset-0 bg-linear-to-r from-slate-950/85 via-slate-950/60 to-slate-950/40" />
 
         {/* Additional bottom gradient for better text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/75 via-transparent to-transparent" />
       </div>
 
-      {/* Mute/Unmute Toggle */}
-      <button
-        onClick={toggleMute}
-        className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full transition-all duration-300 group"
-        aria-label={isMuted ? "Unmute video" : "Mute video"}
-      >
-        {isMuted ? (
-          <VolumeX className="h-5 w-5 text-white" />
-        ) : (
-          <Volume2 className="h-5 w-5 text-white" />
-        )}
-      </button>
 
       {/* Content Container */}
       <div className="relative h-full container mx-auto px-4 flex items-center">
@@ -195,7 +183,7 @@ export function HeroVideo() {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-2 text-white/60 animate-bounce">
         <span className="text-xs uppercase tracking-wider">Scroll</span>
-        <div className="w-px h-12 bg-gradient-to-b from-white/60 to-transparent" />
+        <div className="w-px h-12 bg-linear-to-b from-white/60 to-transparent" />
       </div>
     </section>
   )
