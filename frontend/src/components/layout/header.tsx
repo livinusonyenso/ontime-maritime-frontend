@@ -83,61 +83,100 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t glass max-h-[80vh] overflow-y-auto">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
-            <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                Home
-              </Button>
+      {/* Mobile Sidebar Menu - Slides from Right */}
+      <div
+        className={`fixed top-0 right-0 h-screen w-80 sm:w-96 bg-background border-l shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out ${
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full overflow-hidden">
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 border-b shrink-0">
+            <Link to="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+              <img
+                src="/logo.png"
+                alt="Ontime Maritime Logo"
+                className="h-12 w-auto object-contain"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-base leading-none">MARITIME</span>
+                <span className="text-xs text-muted-foreground">Tech Meet Cargo</span>
+              </div>
             </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
 
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                About
-              </Button>
-            </Link>
+          {/* Sidebar Navigation - Scrollable */}
+          <nav className="flex-1 overflow-y-auto p-4">
+            <div className="flex flex-col gap-1">
+              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  Home
+                </Button>
+              </Link>
 
-            <Link to="/services" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                Services
-              </Button>
-            </Link>
+              <Link to="/about" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  About
+                </Button>
+              </Link>
 
-            <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                Marketplace
-              </Button>
-            </Link>
+              <Link to="/services" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  Services
+                </Button>
+              </Link>
 
-            <Link to="/legal-hub" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                MarineTech Associate
-              </Button>
-            </Link>
+              <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  Marketplace
+                </Button>
+              </Link>
 
-            <Link to="/security-hotline" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                Security Hotline
-              </Button>
-            </Link>
+              <Link to="/legal-hub" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  MarineTech Associate
+                </Button>
+              </Link>
 
+              <Link to="/security-hotline" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-base h-12">
+                  Security Hotline
+                </Button>
+              </Link>
+            </div>
+          </nav>
+
+          {/* Sidebar Footer Actions */}
+          <div className="p-4 border-t space-y-3 shrink-0 bg-background">
             <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start text-base h-12">
                 Login
               </Button>
             </Link>
 
             <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full justify-start">
+              <Button className="w-full justify-start text-base h-12">
                 Register
               </Button>
             </Link>
-          </nav>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }
