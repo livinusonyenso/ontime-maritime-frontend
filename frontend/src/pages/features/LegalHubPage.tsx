@@ -118,7 +118,7 @@ export default function LegalHubPage() {
           {/* Background Image with Overlay */}
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070"
+              src="https://plus.unsplash.com/premium_photo-1698084059560-9a53de7b816b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bGF3eWVyfGVufDB8fDB8fHww"
               alt="Maritime Law Background"
               className="absolute inset-0 w-full h-full object-cover"
             />
