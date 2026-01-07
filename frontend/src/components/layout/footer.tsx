@@ -103,26 +103,52 @@ export function Footer() {
           </div>
 
           {/* Social & Newsletter */}
-          <div>
-            <h3 className="font-semibold text-white mb-4">Follow Us</h3>
-            <div className="flex gap-3 mb-6">
-              <a href="#" className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-            </div>
-            <p className="text-sm text-slate-400">
-              Stay updated with the latest maritime technology innovations and cargo solutions.
-            </p>
-          </div>
+        <div>
+  <h3 className="font-semibold text-white mb-4">Follow Us</h3>
+  <div className="flex gap-3 mb-6">
+    <a
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors"
+    >
+      <Facebook className="h-5 w-5" />
+    </a>
+
+    <a
+      href="https://x.com/ontimemaritime"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors"
+    >
+      <Twitter className="h-5 w-5" />
+    </a>
+
+    <a
+      href="https://www.linkedin.com/in/ontime-maritime-b921a73a5/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors"
+    >
+      <Linkedin className="h-5 w-5" />
+    </a>
+
+    <a
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-slate-800 hover:bg-primary p-2 rounded-lg transition-colors"
+    >
+      <Instagram className="h-5 w-5" />
+    </a>
+  </div>
+
+  <p className="text-sm text-slate-400">
+    Stay updated with the latest maritime technology innovations and cargo solutions.
+  </p>
+</div>
+
+      
         </div>
 
         {/* Bottom Bar */}
