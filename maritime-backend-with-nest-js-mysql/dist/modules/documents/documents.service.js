@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
+const enums_1 = require("../../common/enums");
 const crypto = __importStar(require("crypto"));
 let DocumentsService = class DocumentsService {
     constructor(prisma) {
@@ -103,7 +104,7 @@ let DocumentsService = class DocumentsService {
     }
     async generateBillOfLading(transactionId) {
         const document = await this.create({
-            type: 'bill_of_lading',
+            type: enums_1.DocumentType.bill_of_lading,
             transaction_id: transactionId,
             listing_id: null,
             file_url: `https://ontime-maritime.s3.amazonaws.com/documents/bl-${transactionId}.pdf`,
@@ -112,7 +113,7 @@ let DocumentsService = class DocumentsService {
     }
     async generateInvoice(transactionId) {
         const document = await this.create({
-            type: 'invoice',
+            type: enums_1.DocumentType.invoice,
             transaction_id: transactionId,
             listing_id: null,
             file_url: `https://ontime-maritime.s3.amazonaws.com/documents/invoice-${transactionId}.pdf`,
@@ -121,7 +122,7 @@ let DocumentsService = class DocumentsService {
     }
     async generatePackingList(transactionId) {
         const document = await this.create({
-            type: 'packing_list',
+            type: enums_1.DocumentType.packing_list,
             transaction_id: transactionId,
             listing_id: null,
             file_url: `https://ontime-maritime.s3.amazonaws.com/documents/packing-${transactionId}.pdf`,

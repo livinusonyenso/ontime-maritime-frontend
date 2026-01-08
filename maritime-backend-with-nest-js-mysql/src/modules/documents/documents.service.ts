@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common"
 import { PrismaService } from "../../prisma/prisma.service"
-import { Document, DocumentType } from "@prisma/client"
+import { Document } from "@prisma/client"
+import { DocumentType } from "../../common/enums"
 import { CreateDocumentDto } from "./dto/create-document.dto"
 import * as crypto from "crypto"
 
@@ -73,7 +74,7 @@ export class DocumentsService {
 
   async generateBillOfLading(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: 'bill_of_lading' as DocumentType,
+      type: DocumentType.bill_of_lading,
       transaction_id: transactionId,
       listing_id: null, // Not associated with a listing directly
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/bl-${transactionId}.pdf`,
@@ -84,7 +85,7 @@ export class DocumentsService {
 
   async generateInvoice(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: 'invoice' as DocumentType,
+      type: DocumentType.invoice,
       transaction_id: transactionId,
       listing_id: null,
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/invoice-${transactionId}.pdf`,
@@ -95,7 +96,7 @@ export class DocumentsService {
 
   async generatePackingList(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: 'packing_list' as DocumentType,
+      type: DocumentType.packing_list,
       transaction_id: transactionId,
       listing_id: null,
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/packing-${transactionId}.pdf`,

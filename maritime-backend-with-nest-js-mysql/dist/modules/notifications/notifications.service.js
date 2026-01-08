@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
-const client_1 = require("@prisma/client");
+const enums_1 = require("../../common/enums");
 let NotificationsService = class NotificationsService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -21,7 +21,7 @@ let NotificationsService = class NotificationsService {
         return this.prisma.notification.create({
             data: {
                 ...createNotificationDto,
-                status: client_1.NotificationStatus.pending,
+                status: enums_1.NotificationStatus.pending,
             },
         });
     }
@@ -39,19 +39,19 @@ let NotificationsService = class NotificationsService {
     async markAsSent(id) {
         return this.prisma.notification.update({
             where: { id },
-            data: { status: client_1.NotificationStatus.sent },
+            data: { status: enums_1.NotificationStatus.sent },
         });
     }
     async markAsFailed(id) {
         return this.prisma.notification.update({
             where: { id },
-            data: { status: client_1.NotificationStatus.failed },
+            data: { status: enums_1.NotificationStatus.failed },
         });
     }
     async sendSms(userId, title, message) {
         const notification = await this.create({
             user_id: userId,
-            type: client_1.NotificationType.sms,
+            type: enums_1.NotificationType.sms,
             title,
             body: message,
         });
@@ -61,7 +61,7 @@ let NotificationsService = class NotificationsService {
     async sendEmail(userId, title, message) {
         const notification = await this.create({
             user_id: userId,
-            type: client_1.NotificationType.email,
+            type: enums_1.NotificationType.email,
             title,
             body: message,
         });
@@ -71,7 +71,7 @@ let NotificationsService = class NotificationsService {
     async sendPush(userId, title, message) {
         const notification = await this.create({
             user_id: userId,
-            type: client_1.NotificationType.push,
+            type: enums_1.NotificationType.push,
             title,
             body: message,
         });
