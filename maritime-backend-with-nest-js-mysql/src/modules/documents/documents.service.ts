@@ -73,7 +73,7 @@ export class DocumentsService {
 
   async generateBillOfLading(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: DocumentType.bill_of_lading,
+      type: 'bill_of_lading' as DocumentType,
       transaction_id: transactionId,
       listing_id: null, // Not associated with a listing directly
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/bl-${transactionId}.pdf`,
@@ -84,7 +84,7 @@ export class DocumentsService {
 
   async generateInvoice(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: DocumentType.invoice,
+      type: 'invoice' as DocumentType,
       transaction_id: transactionId,
       listing_id: null,
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/invoice-${transactionId}.pdf`,
@@ -95,7 +95,7 @@ export class DocumentsService {
 
   async generatePackingList(transactionId: string): Promise<Document> {
     const document = await this.create({
-      type: DocumentType.packing_list,
+      type: 'packing_list' as DocumentType,
       transaction_id: transactionId,
       listing_id: null,
       file_url: `https://ontime-maritime.s3.amazonaws.com/documents/packing-${transactionId}.pdf`,

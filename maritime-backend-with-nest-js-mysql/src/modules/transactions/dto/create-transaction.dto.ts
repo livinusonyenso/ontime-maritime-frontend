@@ -1,5 +1,5 @@
 import { IsUUID, IsNumber, IsEnum, IsString, IsOptional, Min } from "class-validator"
-import { TransactionType } from "@prisma/client"
+import { TransactionType } from "../../../common/enums"
 
 export class CreateTransactionDto {
   @IsUUID()

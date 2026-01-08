@@ -1,4 +1,4 @@
-import { ListingCategory } from "@prisma/client";
+import { ListingCategory } from "../../../common/enums";
 export declare class CreateListingDto {
     category: ListingCategory;
     title: string;

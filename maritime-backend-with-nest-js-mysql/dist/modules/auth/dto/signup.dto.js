@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignupDto = void 0;
 const class_validator_1 = require("class-validator");
-const client_1 = require("@prisma/client");
+const enums_1 = require("../../../common/enums");
 class SignupDto {
 }
 exports.SignupDto = SignupDto;
@@ -32,7 +32,7 @@ __decorate([
     __metadata("design:type", String)
 ], SignupDto.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(client_1.UserRole),
+    (0, class_validator_1.IsEnum)(enums_1.UserRole),
     __metadata("design:type", String)
 ], SignupDto.prototype, "role", void 0);
 //# sourceMappingURL=signup.dto.js.map

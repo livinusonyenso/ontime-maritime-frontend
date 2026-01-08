@@ -1,4 +1,4 @@
-import { TransactionType } from "@prisma/client";
+import { TransactionType } from "../../../common/enums";
 export declare class CreateTransactionDto {
     buyer_id: string;
     seller_id: string;

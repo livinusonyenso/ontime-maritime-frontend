@@ -1,5 +1,5 @@
 import { IsEnum, IsString, IsUUID, IsOptional } from "class-validator"
-import { DocumentType } from "@prisma/client"
+import { DocumentType } from "../../../common/enums"
 
 export class CreateDocumentDto {
   @IsEnum(DocumentType)

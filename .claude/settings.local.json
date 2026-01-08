@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(git config:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npx nest build)"
     ]
   }
 }

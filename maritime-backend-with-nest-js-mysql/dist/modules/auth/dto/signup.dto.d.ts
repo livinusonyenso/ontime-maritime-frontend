@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../../common/enums";
 export declare class SignupDto {
     email: string;
     phone: string;

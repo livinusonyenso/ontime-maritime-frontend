@@ -10,7 +10,7 @@ import {
   MinLength,
   MaxLength,
 } from "class-validator"
-import { ListingCategory } from "@prisma/client"
+import { ListingCategory } from "../../../common/enums"
 
 export class CreateListingDto {
   @IsEnum(ListingCategory)

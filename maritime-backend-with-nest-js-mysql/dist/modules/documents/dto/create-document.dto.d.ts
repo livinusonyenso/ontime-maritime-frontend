@@ -1,4 +1,4 @@
-import { DocumentType } from "@prisma/client";
+import { DocumentType } from "../../../common/enums";
 export declare class CreateDocumentDto {
     type: DocumentType;
     file_url: string;

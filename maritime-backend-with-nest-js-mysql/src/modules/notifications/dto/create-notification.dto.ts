@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsUUID } from "class-validator"
-import { NotificationType } from "@prisma/client"
+import { NotificationType } from "../../../common/enums"
 
 export class CreateNotificationDto {
   @IsUUID()

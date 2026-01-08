@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateTransactionDto = void 0;
 const class_validator_1 = require("class-validator");
-const client_1 = require("@prisma/client");
+const enums_1 = require("../../../common/enums");
 class CreateTransactionDto {
 }
 exports.CreateTransactionDto = CreateTransactionDto;
@@ -33,7 +33,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateTransactionDto.prototype, "amount", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(client_1.TransactionType),
+    (0, class_validator_1.IsEnum)(enums_1.TransactionType),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "transaction_type", void 0);
 __decorate([
