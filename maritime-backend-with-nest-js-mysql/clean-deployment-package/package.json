@@ -6,6 +6,7 @@
   "license": "UNLICENSED",
   "author": "OnTime Maritime Team",
   "scripts": {
+    "postinstall": "prisma generate",
     "prebuild": "prisma generate",
     "build": "nest build",
     "start": "node dist/main.js",
@@ -25,7 +26,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
   "jest": {

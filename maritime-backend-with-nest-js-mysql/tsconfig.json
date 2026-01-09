@@ -10,6 +10,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "rootDir": "./src",   // ← ADD THIS LINE (critical!)
     "ignoreDeprecations": "5.0",
     "incremental": true,
     "skipLibCheck": true,

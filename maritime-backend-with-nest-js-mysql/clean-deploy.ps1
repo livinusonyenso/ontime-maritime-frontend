@@ -41,6 +41,10 @@ if (Test-Path $zipPath) {
 }
 Compress-Archive -Path "$deployFolder\*" -DestinationPath $zipPath
 
+# Restore dev dependencies for local work
+Write-Host "Step 7: Restoring dev dependencies..." -ForegroundColor Yellow
+npm install --silent
+
 Write-Host ""
 Write-Host "=== DONE ===" -ForegroundColor Green
 Write-Host "File: $zipPath" -ForegroundColor Yellow
