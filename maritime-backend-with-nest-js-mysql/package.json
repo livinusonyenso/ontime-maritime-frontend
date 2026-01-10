@@ -6,8 +6,6 @@
   "license": "UNLICENSED",
   "author": "OnTime Maritime Team",
   "scripts": {
-    "postinstall": "prisma generate",
-    "prebuild": "prisma generate",
     "build": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",

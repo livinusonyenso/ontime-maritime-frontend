@@ -6,6 +6,9 @@ import { SecurityMiddleware } from './common/middleware/security.middleware'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // Set global prefix for all routes
+  app.setGlobalPrefix('api')
+
   app.use(new SecurityMiddleware().use)
 
   // Added global pipes for validation

@@ -6,6 +6,7 @@ const app_module_1 = require("./app.module");
 const security_middleware_1 = require("./common/middleware/security.middleware");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.setGlobalPrefix('api');
     app.use(new security_middleware_1.SecurityMiddleware().use);
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
