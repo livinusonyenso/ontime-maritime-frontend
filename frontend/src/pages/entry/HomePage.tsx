@@ -71,6 +71,13 @@ const platformModules = [
     color: "bg-orange-500/10 text-orange-600",
   },
   {
+    title: "OnTime Store",
+    description: "Imported marine equipment, generators, radar systems & hydraulic parts",
+    href: "/store",
+    icon: Store,
+    color: "bg-emerald-500/10 text-emerald-600",
+  },
+  {
     title: "Knowledge Center",
     description: "PDF guides, training materials, IMO standards & customs resources",
     href: "/knowledge",

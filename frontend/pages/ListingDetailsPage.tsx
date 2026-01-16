@@ -1,1 +1,0 @@
-<listingdetails page omitted>

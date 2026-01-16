@@ -9,6 +9,8 @@ import AboutPage from "./pages/entry/AboutPage"
 import LoginPage from "./pages/entry/LoginPage"
 import RegisterPage from "./pages/entry/RegisterPage"
 import ServicesPage from "./pages/entry/ServicesPage"
+import OntimeStorePage from "./pages/entry/OntimeStorePage"
+import ProductDetailPage from "./pages/entry/ProductDetailPage"
 
 // Feature Pages - Maritime Platform Modules
 import VesselTrackingPage from "./pages/features/VesselTrackingPage"
@@ -72,6 +74,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/store" element={<OntimeStorePage />} />
+        <Route path="/store/product/:productId" element={<ProductDetailPage />} />
         
         {/* Feature Routes - Maritime Platform Modules (Public) */}
         <Route path="/vessel-tracking" element={<VesselTrackingPage />} />
