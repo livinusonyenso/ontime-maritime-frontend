@@ -1,10 +1,10 @@
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Link, useParams, Navigate } from "react-router-dom"
-import { getProductById, getRelatedProducts } from "@/data/products"
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Link, useParams, Navigate } from "react-router-dom";
+import { getProductById, getRelatedProducts } from "@/data/products";
 import {
   ArrowRight,
   ArrowLeft,
@@ -14,17 +14,17 @@ import {
   Lightbulb,
   Mail,
   Phone,
-} from "lucide-react"
+} from "lucide-react";
 
 export default function ProductDetailPage() {
-  const { productId } = useParams<{ productId: string }>()
+  const { productId } = useParams<{ productId: string }>();
 
-  if (!productId) return <Navigate to="/store" replace />
+  if (!productId) return <Navigate to="/store" replace />;
 
-  const product = getProductById(productId)
-  const relatedProducts = getRelatedProducts(productId)
+  const product = getProductById(productId);
+  const relatedProducts = getRelatedProducts(productId);
 
-  if (!product) return <Navigate to="/store" replace />
+  if (!product) return <Navigate to="/store" replace />;
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
@@ -35,9 +35,13 @@ export default function ProductDetailPage() {
         <div className="border-b bg-white">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center gap-2 text-sm text-slate-600">
-              <Link to="/" className="hover:text-blue-600">Home</Link>
+              <Link to="/" className="hover:text-blue-600">
+                Home
+              </Link>
               <span>/</span>
-              <Link to="/store" className="hover:text-blue-600">OnTime Store</Link>
+              <Link to="/store" className="hover:text-blue-600">
+                OnTime Store
+              </Link>
               <span>/</span>
               <span className="text-slate-900">{product.name}</span>
             </div>
@@ -90,17 +94,25 @@ export default function ProductDetailPage() {
                 )}
 
                 <div className="mb-8 flex flex-wrap gap-3">
-                  <Button size="lg" asChild>
-                    <Link to="/contact">
-                      <Mail className="mr-2 h-5 w-5" />
-                      Request Quote
-                    </Link>
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      window.location.href = `mailto:ontimemaritime@gmail.com?subject=Request%20for%20Quote%20-%20${encodeURIComponent(product.name)}&body=Hello%20OnTime%20Maritime%2C%0A%0AI%20would%20like%20to%20request%20a%20quote%20for%3A%0A%0AProduct%3A%20${encodeURIComponent(product.name)}%0A%0AThank%20you.`;
+                    }}
+                  >
+                    <Mail className="mr-2 h-5 w-5" />
+                    Request Quote
                   </Button>
-                  <Button size="lg" variant="outline" asChild>
-                    <Link to="/contact">
-                      <Phone className="mr-2 h-5 w-5" />
-                      Contact Sales
-                    </Link>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => {
+                      window.location.href = "tel:+2348089844699";
+                    }}
+                  >
+                    <Phone className="mr-2 h-5 w-5" />
+                    Call Sales
                   </Button>
                 </div>
 
@@ -185,7 +197,7 @@ export default function ProductDetailPage() {
               </h2>
 
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {relatedProducts.map(p => (
+                {relatedProducts.map((p) => (
                   <RelatedProductCard key={p.id} product={p} />
                 ))}
               </div>
@@ -196,17 +208,17 @@ export default function ProductDetailPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
 
 interface RelatedProductCardProps {
   product: {
-    id: string
-    name: string
-    shortDescription: string
-    image: string
-    price?: string
-  }
+    id: string;
+    name: string;
+    shortDescription: string;
+    image: string;
+    price?: string;
+  };
 }
 
 function RelatedProductCard({ product }: RelatedProductCardProps) {
@@ -236,5 +248,5 @@ function RelatedProductCard({ product }: RelatedProductCardProps) {
         </CardContent>
       </Card>
     </Link>
-  )
+  );
 }

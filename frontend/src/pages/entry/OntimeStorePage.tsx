@@ -1,19 +1,19 @@
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Badge } from "@/components/ui/badge"
-import { getProductsByCategory } from "@/data/products"
-import { Zap } from "lucide-react"
-import { 
-  ProductCarousel, 
-  ProductCard, 
-  StoreHero, 
-  StoreCTA 
-} from "@/components/Ontime-store"
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { Badge } from "@/components/ui/badge";
+import { getProductsByCategory } from "@/data/products";
+import { Zap } from "lucide-react";
+import {
+  ProductCarousel,
+  ProductCard,
+  StoreHero,
+  StoreCTA,
+} from "@/components/Ontime-store";
 
 export default function OntimeStorePage() {
-  const recentProducts = getProductsByCategory('recent')
-  const popularProducts = getProductsByCategory('popular')
-  const equipmentProducts = getProductsByCategory('equipment')
+  const recentProducts = getProductsByCategory("recent");
+  const popularProducts = getProductsByCategory("popular");
+  const equipmentProducts = getProductsByCategory("equipment");
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -27,7 +27,10 @@ export default function OntimeStorePage() {
         <section id="recent-products" className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
-              <Badge className="mb-3 bg-green-500/10 text-green-500 border-green-500/30" variant="outline">
+              <Badge
+                className="mb-3 bg-green-500/10 text-green-500 border-green-500/30"
+                variant="outline"
+              >
                 <Zap className="h-4 w-4 mr-2" />
                 Recently Imported
               </Badge>
@@ -35,7 +38,8 @@ export default function OntimeStorePage() {
                 Latest Arrivals
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Newly imported premium marine equipment now available for purchase
+                Newly imported premium marine equipment now available for
+                purchase
               </p>
             </div>
 
@@ -51,7 +55,8 @@ export default function OntimeStorePage() {
                 Popular Products
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                High-quality marine equipment trusted by professionals worldwide
+                High-quality products trusted across marine, industrial, energy,
+                and consumer sectors
               </p>
             </div>
 
@@ -71,7 +76,8 @@ export default function OntimeStorePage() {
                 Marine Equipment & Parts
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Complete range of equipment, parts, and accessories for maritime operations
+                Complete range of equipment, parts, and accessories for maritime
+                operations
               </p>
             </div>
 
@@ -89,5 +95,5 @@ export default function OntimeStorePage() {
 
       <Footer />
     </div>
-  )
+  );
 }
