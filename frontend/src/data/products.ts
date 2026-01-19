@@ -5,7 +5,7 @@ export interface Product {
   shortDescription: string
   fullDescription: string
   price?: string
-  image: string
+  images: string[] // Array of image URLs - first image is the primary
   features: string[]
   specifications: Record<string, string>
   applications: string[]
@@ -23,7 +23,7 @@ export const products: Product[] = [
   price: 'Contact for Quote',
 
   // Cement image
-image: '/polymer-repair-mortar.jpeg',
+images: ['/polymer-repair-mortar.jpeg',],
 
   features: [
     'Polymer-modified for superior adhesion',
@@ -71,7 +71,7 @@ image: '/polymer-repair-mortar.jpeg',
   shortDescription: 'High-performance epoxy quartz flooring with excellent wear and chemical resistance',
   fullDescription: 'Self-leveling epoxy color quartz flooring is a high-performance flooring system composed of epoxy resin, curing agents, and selected natural colored quartz sand. It provides excellent wear resistance, strong chemical resistance, and a decorative stone-like finish. Once applied, the surface delivers both aesthetic appeal and long-term practical durability, making it suitable for demanding industrial and commercial environments.',
   price: 'Contact for Quote',
-  image: '/self-leveling-epoxy-quartz-flooring.jpeg',
+  images: ['/self-leveling-epoxy-quartz-flooring.jpeg',"https://centraltexas.globalgarageflooring.com/wp-content/uploads/2023/04/IMG_7202_13_11zon-scaled-e1685536365717.jpg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_Mw613to50ErlDqrNmRQdkD_pKug4y7AtDQ&s", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3-lwlYW3Zu1c4Uz4pWf4-IpQ1sk7VlCXNJg&s","https://s.alicdn.com/@sc04/kf/H5bb8a393fe544720ac97a5bce7c96370b/One-Stop-Service-E8308-Epoxy-Terrazzo-Colored-Sand-Self-Leveling-Floor-Paint-System-Color-Quartz-Sand-Epoxy-Floor-Coating.png_300x300.jpg"],
   features: [
     'Self-leveling smooth finish',
     'High wear and abrasion resistance',
@@ -116,7 +116,7 @@ image: '/polymer-repair-mortar.jpeg',
   shortDescription: 'Pure and refreshing natural spring water available in sachet and bottled formats',
   fullDescription: 'Rock Tama Natural Spring Water is sourced from protected natural springs and processed under strict hygienic conditions to preserve its natural purity and mineral balance. It delivers a clean, refreshing taste suitable for everyday hydration and large-scale distribution. Available in both sachet and bottled water formats to meet retail, wholesale, and event supply needs.',
   price: 'Contact for Wholesale & Retail Pricing',
-  image: '/rock-tama-natural-spring-water.jpeg',
+  images: ['/rock-tama-natural-spring-water.jpeg'],
   features: [
     'Sourced from natural springs',
     'Safe, clean, and hygienically processed',
@@ -159,7 +159,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'Heavy-duty screw air compressor for shipboard pneumatic systems',
     fullDescription: 'Marine-certified rotary screw air compressor designed to provide reliable compressed air for ship operations, including starting main engines, pneumatic tools, and control systems. Built to withstand vibration, moisture, and salt corrosion.',
     price: 'Contact for Quote',
-    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80'],
     features: [
       'Oil-injected rotary screw technology',
       'Automatic start/stop control',
@@ -197,7 +197,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'Multi-function navigation display with GPS, charts, and sonar integration',
     fullDescription: 'Professional-grade marine chartplotter featuring high-resolution touchscreen, preloaded charts, GPS/GLONASS positioning, and support for radar, AIS, and fishfinder integration. Perfect for safe and efficient navigation.',
     price: 'Contact for Quote',
-    image: '/marine-gps-chartplotter.gif',
+    images: ['/marine-gps-chartplotter.gif'],
     features: [
       'High-resolution touchscreen display',
       'Preloaded worldwide charts',
@@ -235,7 +235,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'DSC-equipped VHF marine radio with GPS and emergency features',
     fullDescription: 'Professional marine VHF radio with Digital Selective Calling (DSC) for distress alerts, GPS integration, and all international marine channels. Essential safety equipment for vessel communication and emergency situations.',
     price: 'Contact for Quote',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqGn2RoGlmvi_sIoNtC5H4ZpETa5Y6lG3J2g&s',
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqGn2RoGlmvi_sIoNtC5H4ZpETa5Y6lG3J2g&s'],
     features: [
       'DSC (Digital Selective Calling) Class D',
       'Built-in GPS receiver',
@@ -273,7 +273,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'Heavy-duty galvanized wire rope slings for cargo and lifting operations',
     fullDescription: 'High-strength wire rope slings manufactured from galvanized steel for superior corrosion resistance. Available in various configurations including single-leg, multi-leg, and endless slings for safe cargo handling and lifting.',
     price: 'Contact for Quote',
-    image: 'https://images.unsplash.com/photo-1565731333791-0c685879d4b1?w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1565731333791-0c685879d4b1?w=800&q=80'],
     features: [
       'Galvanized steel construction',
       'Various configurations available',
@@ -311,7 +311,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'Compact marine hydraulic power pack for deck machinery and winches',
     fullDescription: 'Self-contained hydraulic power unit designed for marine applications. Features electric or diesel-driven pump, reservoir, filtration system, and control valves in a compact skid-mounted package.',
     price: 'Contact for Quote',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2FlWPoD5xy3eMSGew0oXDRN27XtlYS9nleg&s',
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2FlWPoD5xy3eMSGew0oXDRN27XtlYS9nleg&s'],
     features: [
       'Electric or diesel-driven options',
       'Variable displacement pump',
@@ -349,7 +349,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: 'Advanced autopilot system for automatic steering and course keeping',
     fullDescription: 'Professional marine autopilot with GPS and compass integration for precise automatic steering. Features adaptive algorithms, wind compensation, and integration with chartplotters for waypoint navigation.',
     price: 'Contact for Quote',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZbe5DUVj8nkusLbnee4qfvbz0TZ5Jdg8fvg&s',
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZbe5DUVj8nkusLbnee4qfvbz0TZ5Jdg8fvg&s'],
     features: [
       'GPS and compass integration',
       'Adaptive steering algorithms',
@@ -387,7 +387,7 @@ image: '/polymer-repair-mortar.jpeg',
     shortDescription: '406 MHz EPIRB for maritime distress alerting and search & rescue',
     fullDescription: 'Satellite-linked Emergency Position Indicating Radio Beacon (EPIRB) that transmits distress signals to search and rescue authorities via the Cospas-Sarsat satellite system. Essential SOLAS safety equipment.',
     price: 'Contact for Quote',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6SAgTDDEvhGMmQZFtqunTdrY1X7pdBuu87A&s',
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6SAgTDDEvhGMmQZFtqunTdrY1X7pdBuu87A&s'],
     features: [
       '406 MHz satellite transmission',
       '121.5 MHz homing signal',

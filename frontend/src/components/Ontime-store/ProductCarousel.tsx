@@ -129,7 +129,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                     {/* Image */}
                     <div className="relative h-full bg-slate-100">
                       <img
-                        src={product.image}
+                        src={product.images[0]}
                         alt={product.name}
                         className="
                           absolute inset-0 h-full w-full

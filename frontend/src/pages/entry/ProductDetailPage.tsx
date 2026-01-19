@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,14 @@ import {
   Lightbulb,
   Mail,
   Phone,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>();
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   if (!productId) return <Navigate to="/store" replace />;
 
@@ -59,21 +64,74 @@ export default function ProductDetailPage() {
             </Button>
 
             <div className="grid gap-12 lg:grid-cols-2">
-              {/* Image */}
+              {/* Image Gallery */}
               <div className="relative">
                 <div className="sticky top-24">
-                  <div className="rounded-3xl border border-slate-200 bg-white shadow-lg">
+                  {/* Main Image */}
+                  <div className="relative rounded-3xl border border-slate-200 bg-white shadow-lg">
                     <img
-                      src={product.image}
+                      src={product.images[selectedImageIndex]}
                       alt={product.name}
                       className="h-[420px] w-full object-contain p-6 transition-transform duration-300 hover:scale-[1.02]"
                     />
+
+                    {product.category === "recent" && (
+                      <Badge className="absolute right-4 top-4 bg-emerald-600 text-white shadow">
+                        New Arrival
+                      </Badge>
+                    )}
+
+                    {/* Navigation Arrows (only show if multiple images) */}
+                    {product.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() =>
+                            setSelectedImageIndex((prev) =>
+                              prev === 0 ? product.images.length - 1 : prev - 1
+                            )
+                          }
+                          className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition"
+                          aria-label="Previous image"
+                        >
+                          <ChevronLeft className="h-5 w-5 text-slate-700" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setSelectedImageIndex((prev) =>
+                              prev === product.images.length - 1 ? 0 : prev + 1
+                            )
+                          }
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition"
+                          aria-label="Next image"
+                        >
+                          <ChevronRight className="h-5 w-5 text-slate-700" />
+                        </button>
+                      </>
+                    )}
                   </div>
 
-                  {product.category === "recent" && (
-                    <Badge className="absolute right-4 top-4 bg-emerald-600 text-white shadow">
-                      New Arrival
-                    </Badge>
+                  {/* Thumbnail Gallery (only show if multiple images) */}
+                  {product.images.length > 1 && (
+                    <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+                      {product.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImageIndex(index)}
+                          className={cn(
+                            "flex-shrink-0 rounded-xl border-2 bg-white p-1 transition",
+                            selectedImageIndex === index
+                              ? "border-blue-600 shadow-md"
+                              : "border-slate-200 hover:border-slate-300"
+                          )}
+                        >
+                          <img
+                            src={image}
+                            alt={`${product.name} - View ${index + 1}`}
+                            className="h-16 w-16 object-contain"
+                          />
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
@@ -216,7 +274,7 @@ interface RelatedProductCardProps {
     id: string;
     name: string;
     shortDescription: string;
-    image: string;
+    images: string[];
     price?: string;
   };
 }
@@ -227,7 +285,7 @@ function RelatedProductCard({ product }: RelatedProductCardProps) {
       <Card className="group rounded-2xl border bg-white hover:-translate-y-1 hover:shadow-xl transition">
         <div className="h-[200px] bg-slate-50">
           <img
-            src={product.image}
+            src={product.images[0]}
             alt={product.name}
             className="h-full w-full object-contain p-4 group-hover:scale-105 transition"
           />
