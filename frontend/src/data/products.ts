@@ -13,45 +13,57 @@ export interface Product {
 }
 
 export const products: Product[] = [
-  // Recent Imported Products
   {
-    id: 'marine-diesel-generator',
-    name: 'Marine Diesel Generator Set',
-    category: 'recent',
-    shortDescription: 'High-performance marine diesel generator for vessels and offshore platforms',
-    fullDescription: 'Premium quality marine diesel generator designed for reliable power generation in harsh marine environments. Built with corrosion-resistant materials and featuring advanced cooling systems for continuous operation.',
-    price: 'Contact for Quote',
-    image: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&q=80',
-    features: [
-      'Heavy-duty marine-grade construction',
-      'Automatic voltage regulation (AVR)',
-      'Low fuel consumption technology',
-      'Vibration dampening system',
-      'Weatherproof enclosure',
-      'Digital control panel with remote monitoring',
-      'Emergency shutdown protection',
-      'Meets IMO MARPOL regulations'
-    ],
-    specifications: {
-      'Power Output': '50kW - 2000kW',
-      'Voltage': '220V/380V/440V',
-      'Frequency': '50Hz/60Hz',
-      'Fuel Type': 'Marine Diesel Oil (MDO)',
-      'Cooling': 'Water-cooled with heat exchanger',
-      'Starting System': 'Electric start with backup manual',
-      'Noise Level': '70-85 dB(A)',
-      'Certification': 'Lloyd\'s Register, DNV-GL, ABS'
-    },
-    applications: [
-      'Cargo vessels and tankers',
-      'Offshore oil & gas platforms',
-      'Fishing vessels',
-      'Naval and military ships',
-      'Ferry and passenger vessels',
-      'Emergency backup power for ports'
-    ],
-    relatedProducts: ['ship-navigation-radar', 'marine-hydraulic-winch', 'marine-air-compressor']
+  id: 'polymer-repair-mortar',
+  name: 'Polymer-Modified Concrete Repair Mortar',
+  category: 'recent',
+  shortDescription: 'High-strength polymer-modified repair mortar for concrete patching and structural repairs',
+  fullDescription:
+    'Premium polymer-modified cementitious repair mortar designed for restoring damaged concrete surfaces. Suitable for vertical, horizontal, and overhead repairs, offering excellent bonding strength, low shrinkage, and long-term durability in harsh environments.',
+  price: 'Contact for Quote',
+
+  // Cement image
+image: '/polymer-repair-mortar.jpeg',
+
+  features: [
+    'Polymer-modified for superior adhesion',
+    'High compressive and flexural strength',
+    'Low shrinkage and crack resistance',
+    'Excellent workability',
+    'Fast setting and early strength gain',
+    'Suitable for vertical and overhead repairs',
+    'Water and weather resistant',
+    'Compatible with reinforced concrete'
+  ],
+
+  specifications: {
+    'Material Type': 'Polymer-modified cementitious mortar',
+    'Bag Weight': '25 kg',
+    'Compressive Strength': '≥ 40 MPa (28 days)',
+    'Bond Strength': '≥ 1.5 MPa',
+    'Application Thickness': '5 – 50 mm per layer',
+    'Setting Time': 'Initial: 30–60 minutes',
+    'Curing Time': '24–48 hours (depending on conditions)',
+    'Color': 'Grey',
+    'Standards': 'EN 1504-3, ASTM C928'
   },
+
+  applications: [
+    'Concrete surface repair',
+    'Bridge and highway maintenance',
+    'Industrial floor patching',
+    'Structural edge and corner repairs',
+    'Precast concrete repair',
+    'Marine and coastal structures'
+  ],
+
+  relatedProducts: [
+    'cement-bonding-agent',
+    'concrete-curing-compound',
+    'reinforcement-corrosion-inhibitor'
+  ]
+},
+
   {
     id: 'ship-navigation-radar',
     name: 'Ship Navigation Radar System',
