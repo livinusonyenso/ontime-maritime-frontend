@@ -377,7 +377,7 @@ export default function AboutPage() {
   {
     name: "Barr. Enemuo Chinedu Christopher",
     role: "CEO & Co-Founder",
-    img: "https://scontent.fabb1-3.fna.fbcdn.net/v/t39.30808-6/493835122_10231003411883375_5354022043640026632_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeG8VD3yyspirFpkgDANVEDDXa_4ygSUq81dr_jKBJSrzVp7nsAbJ4YK5xTXQJVU77EGItocS8slNvyNG8QO6VyR&_nc_ohc=oZY0R3rTkVsQ7kNvwH-OPBt&_nc_oc=AdmFLjqu6SMNBsVF8WGzjXKoFReUpo3Umu3dcYRBwX0UiatWGZID626q_excO_QTo_0&_nc_zt=23&_nc_ht=scontent.fabb1-3.fna&_nc_gid=MuF_mv-LemF9c9XpP8N-RQ&oh=00_AfrBhHIJ2hiltCyFIzKCabslEMEBoxTiwoN2BhPRASYNfQ&oe=695CA157",
+    img: "/ceo.jpg",
   },
   {
     name: "Chioma Adeyemi",
