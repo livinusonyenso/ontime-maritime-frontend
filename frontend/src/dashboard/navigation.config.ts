@@ -9,6 +9,10 @@ import {
   User,
   CreditCard,
   Store,
+  Shield,
+  UserCheck,
+  ScrollText,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -75,8 +79,13 @@ export const navigationConfig: NavigationConfig = {
   admin: [
     { href: "/admin", label: "Overview", icon: LayoutDashboard },
     { href: "/admin/users", label: "Users", icon: User },
+    { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/admin/auctions", label: "Auctions", icon: Gavel },
     { href: "/admin/documents", label: "Documents", icon: FileText },
+    { href: "/admin/insurance", label: "Insurance", icon: Shield },
+    { href: "/admin/kyc", label: "KYC", icon: UserCheck },
+    { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
+    { href: "/admin/settings", label: "Settings", icon: Settings },
   ],
   executive: [
     { href: "/dashboard/executive", label: "Overview", icon: LayoutDashboard },

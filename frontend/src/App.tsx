@@ -7,6 +7,7 @@ import { DashboardLayout } from "./components/layout/dashboard-layout"
 import HomePage from "./pages/entry/HomePage"
 import AboutPage from "./pages/entry/AboutPage"
 import LoginPage from "./pages/entry/LoginPage"
+import AdminLoginPage from "./pages/entry/AdminLoginPage"
 import RegisterPage from "./pages/entry/RegisterPage"
 import ServicesPage from "./pages/entry/ServicesPage"
 import OntimeStorePage from "./pages/entry/OntimeStorePage"
@@ -56,6 +57,10 @@ import AdminUsersPage from "./pages/executive-corner/AdminUsersPage"
 import AdminAuctionsPage from "./pages/executive-corner/AdminAuctionsPage"
 import AdminDocumentsPage from "./pages/executive-corner/AdminDocumentsPage"
 import AdminInsurancePage from "./pages/executive-corner/AdminInsurancePage"
+import AdminAnalyticsPage from "./pages/executive-corner/AdminAnalyticsPage"
+import AdminKYCPage from "./pages/executive-corner/AdminKYCPage"
+import AdminAuditLogsPage from "./pages/executive-corner/AdminAuditLogsPage"
+import AdminSettingsPage from "./pages/executive-corner/AdminSettingsPage"
 import MaritimeSalesAdmin from "./pages/seller/MaritimeSalesAdmin"
 import InsuranceAdmin from "./pages/seller/UserInsuranceDashboard"
 import UserInsuranceDashboard from "./pages/seller/UserInsuranceDashboard"
@@ -72,11 +77,12 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/store" element={<OntimeStorePage />} />
         <Route path="/store/product/:productId" element={<ProductDetailPage />} />
-        
+
         {/* Feature Routes - Maritime Platform Modules (Public) */}
         <Route path="/vessel-tracking" element={<VesselTrackingPage />} />
         <Route path="/e-bol" element={<EBOLPage />} />
@@ -155,9 +161,13 @@ function App() {
         >
           <Route index element={<AdminPage />} />
           <Route path="users" element={<AdminUsersPage />} />
+          <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="auctions" element={<AdminAuctionsPage />} />
           <Route path="documents" element={<AdminDocumentsPage />} />
           <Route path="insurance" element={<AdminInsurancePage />} />
+          <Route path="kyc" element={<AdminKYCPage />} />
+          <Route path="audit-logs" element={<AdminAuditLogsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
 
         {/* Redirect legacy/unknown routes */}
