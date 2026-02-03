@@ -154,6 +154,10 @@ export default function AdminLoginPage() {
             </CardContent>
           </Card>
 
+          <p className="text-center text-xs text-muted-foreground">
+            Demo: admin@ontimemaritime.com / any password
+          </p>
+
           <div className="text-center">
             <Link
               to="/"

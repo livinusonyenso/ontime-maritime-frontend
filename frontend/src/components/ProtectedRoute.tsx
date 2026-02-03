@@ -10,6 +10,13 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const { user, isAuthenticated, loading } = useAuth()
   const location = useLocation()
 
+  // Check localStorage as synchronous fallback for when React state hasn't caught up yet
+  const storedToken = localStorage.getItem("ontime_token")
+  const storedUserRaw = localStorage.getItem("ontime_user")
+  const storedUser = storedUserRaw ? JSON.parse(storedUserRaw) : null
+  const hasAuth = isAuthenticated || Boolean(storedToken && storedUser)
+  const effectiveUser = user || storedUser
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -18,17 +25,15 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     )
   }
 
-  if (!isAuthenticated) {
+  if (!hasAuth) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role as any)) {
+  if (allowedRoles && effectiveUser && !allowedRoles.includes(effectiveUser.role as any)) {
     // Redirect to appropriate dashboard based on role
-    if (user.role === 'buyer') return <Navigate to="/dashboard/buyer" replace />
-    if (user.role === 'seller') return <Navigate to="/dashboard/seller" replace />
-    if (user.role === 'admin') return <Navigate to="/admin" replace />
-    // 'executive' might be a specific role or permission, handling it if it exists in user.role
-    // If the user role doesn't match any specific dashboard, fallback to main dashboard or home
+    if (effectiveUser.role === 'buyer') return <Navigate to="/dashboard/buyer" replace />
+    if (effectiveUser.role === 'seller') return <Navigate to="/dashboard/seller" replace />
+    if (effectiveUser.role === 'admin') return <Navigate to="/admin" replace />
     return <Navigate to="/dashboard" replace />
   }
 
