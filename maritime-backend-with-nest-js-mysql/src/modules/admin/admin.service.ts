@@ -1,10 +1,12 @@
-import { Injectable, BadRequestException } from "@nestjs/common"
+import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common"
 import { PrismaService } from "../../prisma/prisma.service"
-import { User, UserRole, Listing, ListingStatus, Transaction, AuditLog, Prisma } from "@prisma/client"
+import { User, UserRole, Listing, ListingStatus, Transaction, AuditLog, Kyc, KycStatus, Prisma } from "@prisma/client"
 
 @Injectable()
 export class AdminService {
   constructor(private prisma: PrismaService) {}
+
+  // ==================== USER MANAGEMENT ====================
 
   async getAllUsers(skip = 0, take = 20): Promise<User[]> {
     return this.prisma.user.findMany({
@@ -14,13 +16,178 @@ export class AdminService {
     })
   }
 
+  async getUserById(id: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        kyc: true,
+        listings: {
+          take: 5,
+          orderBy: { created_at: "desc" },
+        },
+      },
+    })
+
+    if (!user) {
+      throw new NotFoundException("User not found")
+    }
+
+    return user
+  }
+
   async getUserStats(): Promise<any> {
     const totalUsers = await this.prisma.user.count()
     const buyers = await this.prisma.user.count({ where: { role: UserRole.buyer } })
     const sellers = await this.prisma.user.count({ where: { role: UserRole.seller } })
+    const admins = await this.prisma.user.count({ where: { role: UserRole.admin } })
+    const verifiedUsers = await this.prisma.user.count({ where: { is_email_verified: true } })
 
-    return { totalUsers, buyers, sellers }
+    return { totalUsers, buyers, sellers, admins, verifiedUsers }
   }
+
+  async updateUserRole(userId: string, role: UserRole, adminId: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException("User not found")
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+    })
+
+    await this.logAction("UPDATED_USER_ROLE", "user", userId, adminId, {
+      previousRole: user.role,
+      newRole: role,
+    })
+
+    return updatedUser
+  }
+
+  async updateUserSubscription(
+    userId: string,
+    subscriptionStatus: string,
+    subscriptionExpiry: Date | null,
+    adminId: string
+  ): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException("User not found")
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscription_status: subscriptionStatus,
+        subscription_expiry: subscriptionExpiry,
+      },
+    })
+
+    await this.logAction("UPDATED_SUBSCRIPTION", "user", userId, adminId, {
+      previousStatus: user.subscription_status,
+      newStatus: subscriptionStatus,
+      expiry: subscriptionExpiry,
+    })
+
+    return updatedUser
+  }
+
+  async suspendUser(userId: string, adminId: string, reason: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException("User not found")
+    }
+
+    // Update subscription status to "suspended"
+    const suspendedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { subscription_status: "suspended" },
+    })
+
+    await this.logAction("SUSPENDED_USER", "user", userId, adminId, { reason })
+
+    return suspendedUser
+  }
+
+  async deleteUser(userId: string, adminId: string, reason: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException("User not found")
+    }
+
+    // Log before deletion
+    await this.logAction("DELETED_USER", "user", userId, adminId, {
+      reason,
+      deletedUserEmail: user.email,
+    })
+
+    // Actually delete the user (cascade will handle related records)
+    await this.prisma.user.delete({ where: { id: userId } })
+  }
+
+  // ==================== KYC MANAGEMENT ====================
+
+  async getPendingKyc(skip = 0, take = 20): Promise<Kyc[]> {
+    return this.prisma.kyc.findMany({
+      where: { status: KycStatus.pending },
+      skip,
+      take,
+      include: { user: true },
+      orderBy: { created_at: "desc" },
+    })
+  }
+
+  async approveKyc(kycId: string, adminId: string, comment?: string): Promise<Kyc> {
+    const kyc = await this.prisma.kyc.findUnique({ where: { id: kycId } })
+
+    if (!kyc) {
+      throw new NotFoundException("KYC record not found")
+    }
+
+    const approvedKyc = await this.prisma.kyc.update({
+      where: { id: kycId },
+      data: {
+        status: KycStatus.approved,
+        admin_comment: comment || "Approved",
+      },
+    })
+
+    // Also update user verification status
+    await this.prisma.user.update({
+      where: { id: kyc.user_id },
+      data: { is_email_verified: true },
+    })
+
+    await this.logAction("APPROVED_KYC", "kyc", kycId, adminId, { comment })
+
+    return approvedKyc
+  }
+
+  async rejectKyc(kycId: string, adminId: string, comment: string): Promise<Kyc> {
+    const kyc = await this.prisma.kyc.findUnique({ where: { id: kycId } })
+
+    if (!kyc) {
+      throw new NotFoundException("KYC record not found")
+    }
+
+    const rejectedKyc = await this.prisma.kyc.update({
+      where: { id: kycId },
+      data: {
+        status: KycStatus.rejected,
+        admin_comment: comment,
+      },
+    })
+
+    await this.logAction("REJECTED_KYC", "kyc", kycId, adminId, { comment })
+
+    return rejectedKyc
+  }
+
+  // ==================== LISTING MANAGEMENT ====================
 
   async getAllListings(skip = 0, take = 20): Promise<Listing[]> {
     return this.prisma.listing.findMany({
@@ -44,7 +211,7 @@ export class AdminService {
     const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
 
     if (!listing) {
-      throw new BadRequestException("Listing not found")
+      throw new NotFoundException("Listing not found")
     }
 
     const updatedListing = await this.prisma.listing.update({
@@ -61,7 +228,7 @@ export class AdminService {
     const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
 
     if (!listing) {
-      throw new BadRequestException("Listing not found")
+      throw new NotFoundException("Listing not found")
     }
 
     const updatedListing = await this.prisma.listing.update({
@@ -73,6 +240,8 @@ export class AdminService {
 
     return updatedListing
   }
+
+  // ==================== TRANSACTION MANAGEMENT ====================
 
   async getAllTransactions(skip = 0, take = 20): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
@@ -102,6 +271,39 @@ export class AdminService {
       totalVolume: aggregations._sum.amount || 0,
     }
   }
+
+  // ==================== DASHBOARD STATS ====================
+
+  async getDashboardStats(): Promise<any> {
+    const [
+      totalUsers,
+      totalListings,
+      totalTransactions,
+      pendingKyc,
+      activeAuctions,
+      revenueData,
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.listing.count({ where: { status: ListingStatus.active } }),
+      this.prisma.transaction.count(),
+      this.prisma.kyc.count({ where: { status: KycStatus.pending } }),
+      this.prisma.auction.count({ where: { status: "active" } }),
+      this.prisma.transaction.aggregate({
+        _sum: { commission_amount: true },
+      }),
+    ])
+
+    return {
+      total_users: totalUsers,
+      total_listings: totalListings,
+      total_transactions: totalTransactions,
+      total_revenue: revenueData._sum.commission_amount || 0,
+      pending_kyc: pendingKyc,
+      active_auctions: activeAuctions,
+    }
+  }
+
+  // ==================== AUDIT LOGS ====================
 
   async logAction(
     action: string,
@@ -139,25 +341,20 @@ export class AdminService {
     })
   }
 
-  async suspendUser(userId: string, adminId: string, reason: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+  // ==================== FRAUD MANAGEMENT ====================
 
-    if (!user) {
-      throw new BadRequestException("User not found")
-    }
-
-    await this.logAction("SUSPENDED_USER", "user", userId, adminId, { reason })
-
-    return user
+  async getFraudFlags(skip = 0, take = 20) {
+    return this.prisma.fraudFlag.findMany({
+      skip,
+      take,
+      orderBy: { created_at: "desc" },
+    })
   }
 
-  async deleteUser(userId: string, adminId: string, reason: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } })
-
-    if (!user) {
-      throw new BadRequestException("User not found")
-    }
-
-    await this.logAction("DELETED_USER", "user", userId, adminId, { reason })
+  async getUserFraudScore(userId: string) {
+    const flags = await this.prisma.fraudFlag.findMany({
+      where: { user_id: userId },
+    })
+    return { userId, flags, count: flags.length }
   }
 }

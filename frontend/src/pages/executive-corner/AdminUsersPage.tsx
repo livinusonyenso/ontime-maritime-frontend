@@ -35,7 +35,8 @@ function UserSkeleton() {
   )
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString?: string): string {
+  if (!dateString) return "N/A"
   const date = new Date(dateString)
   return date.toLocaleDateString("en-US", {
     year: "numeric",
@@ -44,21 +45,18 @@ function formatDate(dateString: string): string {
   })
 }
 
-function getUserDisplayName(user: User): string {
-  if (user.first_name && user.last_name) {
-    return `${user.first_name} ${user.last_name}`
-  }
-  if (user.first_name) {
-    return user.first_name
-  }
-  return user.email.split("@")[0]
+function getUserDisplayName(user?: User): string {
+  if (!user) return "Unknown"
+  if (user.first_name && user.last_name) return `${user.first_name} ${user.last_name}`
+  if (user.first_name) return user.first_name
+  return user.email?.split("@")[0] ?? "Unknown"
 }
 
-function getUserInitials(user: User): string {
+function getUserInitials(user?: User): string {
   const displayName = getUserDisplayName(user)
   return displayName
     .split(" ")
-    .map((n) => n[0])
+    .map((n) => n?.[0] ?? "")
     .join("")
     .toUpperCase()
     .slice(0, 2)
@@ -69,23 +67,22 @@ export default function AdminUsersPage() {
   const { users, loading, error, getAllUsers } = useAdmin()
 
   useEffect(() => {
-    getAllUsers().catch(() => {})
-  }, [])
+    getAllUsers?.().catch(() => {})
+  }, [getAllUsers])
 
   const filteredUsers = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return users
-    }
+    const safeUsers = users ?? []
+    if (!searchQuery.trim()) return safeUsers
     const query = searchQuery.toLowerCase()
-    return users.filter(
+    return safeUsers.filter(
       (u) =>
-        getUserDisplayName(u).toLowerCase().includes(query) ||
-        u.email.toLowerCase().includes(query)
+        getUserDisplayName(u)?.toLowerCase()?.includes(query) ||
+        u?.email?.toLowerCase()?.includes(query)
     )
   }, [users, searchQuery])
 
   const handleRefresh = () => {
-    getAllUsers().catch(() => {})
+    getAllUsers?.().catch(() => {})
   }
 
   return (
@@ -94,7 +91,9 @@ export default function AdminUsersPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground mt-1">Manage platform users and permissions</p>
+          <p className="text-muted-foreground mt-1">
+            Manage platform users and permissions
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleRefresh} disabled={loading}>
@@ -143,13 +142,13 @@ export default function AdminUsersPage() {
       <Card className="glass">
         <CardHeader>
           <CardTitle>
-            {loading ? "Loading users..." : `All Users (${filteredUsers.length})`}
+            {loading ? "Loading users..." : `All Users (${filteredUsers?.length ?? 0})`}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {/* Loading State */}
-            {loading && users.length === 0 && (
+            {loading && (!users || users.length === 0) && (
               <>
                 <UserSkeleton />
                 <UserSkeleton />
@@ -160,7 +159,7 @@ export default function AdminUsersPage() {
             )}
 
             {/* Empty State */}
-            {!loading && users.length === 0 && !error && (
+            {!loading && (!users || users.length === 0) && !error && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Users className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold">No users found</h3>
@@ -171,7 +170,7 @@ export default function AdminUsersPage() {
             )}
 
             {/* No Search Results */}
-            {!loading && users.length > 0 && filteredUsers.length === 0 && (
+            {!loading && (users?.length ?? 0) > 0 && (filteredUsers?.length ?? 0) === 0 && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Search className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold">No results found</h3>
@@ -185,9 +184,9 @@ export default function AdminUsersPage() {
             )}
 
             {/* User List */}
-            {filteredUsers.map((usr) => (
+            {filteredUsers?.map((usr) => (
               <div
-                key={usr.id}
+                key={usr?.id ?? Math.random()}
                 className="flex items-center justify-between p-4 border rounded-lg hover:border-primary/50 transition-all"
               >
                 <div className="flex items-center gap-4">
@@ -197,8 +196,11 @@ export default function AdminUsersPage() {
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="font-semibold">{getUserDisplayName(usr)}</p>
-                      {usr.role === "admin" && (
-                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
+                      {usr?.role === "admin" && (
+                        <Badge
+                          variant="outline"
+                          className="bg-accent/10 text-accent border-accent/30"
+                        >
                           <Shield className="h-3 w-3 mr-1" />
                           Admin
                         </Badge>
@@ -206,36 +208,36 @@ export default function AdminUsersPage() {
                       <Badge
                         variant="outline"
                         className={
-                          usr.is_email_verified
+                          usr?.is_email_verified
                             ? "bg-green-500/10 text-green-500 border-green-500/30"
                             : "bg-slate-500/10 text-slate-500 border-slate-500/30"
                         }
                       >
-                        {usr.is_email_verified ? "verified" : "unverified"}
+                        {usr?.is_email_verified ? "verified" : "unverified"}
                       </Badge>
                       <Badge
                         variant="outline"
                         className={
-                          usr.subscription_status === "premium"
+                          usr?.subscription_status === "premium"
                             ? "bg-amber-500/10 text-amber-500 border-amber-500/30"
-                            : usr.subscription_status === "enterprise"
-                              ? "bg-purple-500/10 text-purple-500 border-purple-500/30"
-                              : "bg-slate-500/10 text-slate-500 border-slate-500/30"
+                            : usr?.subscription_status === "enterprise"
+                            ? "bg-purple-500/10 text-purple-500 border-purple-500/30"
+                            : "bg-slate-500/10 text-slate-500 border-slate-500/30"
                         }
                       >
-                        {usr.subscription_status}
+                        {usr?.subscription_status ?? "N/A"}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 mt-1 flex-wrap">
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
                         <Mail className="h-3 w-3" />
-                        {usr.email}
+                        {usr?.email ?? "N/A"}
                       </p>
                       <span className="text-muted-foreground hidden sm:inline">•</span>
-                      <p className="text-sm text-muted-foreground capitalize">{usr.role}</p>
+                      <p className="text-sm text-muted-foreground capitalize">{usr?.role ?? "N/A"}</p>
                       <span className="text-muted-foreground hidden sm:inline">•</span>
                       <p className="text-sm text-muted-foreground">
-                        Joined {formatDate(usr.created_at)}
+                        Joined {formatDate(usr?.created_at)}
                       </p>
                     </div>
                   </div>
