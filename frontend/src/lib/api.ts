@@ -2,7 +2,8 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -11,7 +12,9 @@ const api: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000,
+  withCredentials: true, // ✅ allow cookies / session
 })
+
 
 // Request interceptor - Add auth token to requests
 api.interceptors.request.use(
@@ -39,12 +42,16 @@ api.interceptors.response.use(
       switch (status) {
         case 401:
           // Unauthorized - clear token and redirect to login
-          // But don't redirect if we're already on the login or register page
+          // But don't redirect if we're already on a login or register page
           const currentPath = window.location.pathname
-          if (currentPath !== '/login' && currentPath !== '/register') {
+          const isOnAuthPage = ['/login', '/register', '/admin/login'].includes(currentPath)
+
+          if (!isOnAuthPage) {
             localStorage.removeItem('ontime_token')
             localStorage.removeItem('ontime_user')
-            window.location.href = '/login'
+            // Redirect to appropriate login page based on current path
+            const isAdminRoute = currentPath.startsWith('/admin')
+            window.location.href = isAdminRoute ? '/admin/login' : '/login'
           }
           break
         case 403:

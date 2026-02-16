@@ -26,7 +26,10 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (!hasAuth) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    // Redirect admin routes to admin login, others to regular login
+    const isAdminRoute = location.pathname.startsWith('/admin')
+    const loginPath = isAdminRoute ? '/admin/login' : '/login'
+    return <Navigate to={loginPath} state={{ from: location }} replace />
   }
 
   if (allowedRoles && effectiveUser && !allowedRoles.includes(effectiveUser.role as any)) {

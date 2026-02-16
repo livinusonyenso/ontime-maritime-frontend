@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import api from '../lib/api'
 import type { DashboardStats, User, KYC, AuditLog } from '../types'
 
@@ -41,7 +41,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const getDashboardStats = async (): Promise<DashboardStats> => {
+  const getDashboardStats = useCallback(async (): Promise<DashboardStats> => {
     try {
       setLoading(true)
       setError(null)
@@ -58,9 +58,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getAllUsers = async (skip = 0, take = 20): Promise<User[]> => {
+  const getAllUsers = useCallback(async (skip = 0, take = 20): Promise<User[]> => {
     try {
       setLoading(true)
       setError(null)
@@ -79,9 +79,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getUserDetails = async (id: string): Promise<User> => {
+  const getUserDetails = useCallback(async (id: string): Promise<User> => {
     try {
       setLoading(true)
       setError(null)
@@ -97,9 +97,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateUserRole = async (id: string, role: string): Promise<User> => {
+  const updateUserRole = useCallback(async (id: string, role: string): Promise<User> => {
     try {
       setLoading(true)
       setError(null)
@@ -116,9 +116,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateSubscription = async (
+  const updateSubscription = useCallback(async (
     id: string,
     status: string,
     expiry: string | null
@@ -142,9 +142,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getUserStats = async (): Promise<UserStats> => {
+  const getUserStats = useCallback(async (): Promise<UserStats> => {
     try {
       setLoading(true)
       setError(null)
@@ -161,9 +161,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const suspendUser = async (id: string, reason: string): Promise<User> => {
+  const suspendUser = useCallback(async (id: string, reason: string): Promise<User> => {
     try {
       setLoading(true)
       setError(null)
@@ -180,9 +180,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const deleteUser = async (id: string, reason: string): Promise<void> => {
+  const deleteUser = useCallback(async (id: string, reason: string): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -197,9 +197,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getPendingKyc = async (skip = 0, take = 20): Promise<KYC[]> => {
+  const getPendingKyc = useCallback(async (skip = 0, take = 20): Promise<KYC[]> => {
     try {
       setLoading(true)
       setError(null)
@@ -218,9 +218,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const approveKyc = async (id: string, comment: string): Promise<KYC> => {
+  const approveKyc = useCallback(async (id: string, comment: string): Promise<KYC> => {
     try {
       setLoading(true)
       setError(null)
@@ -237,9 +237,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const rejectKyc = async (id: string, comment: string): Promise<KYC> => {
+  const rejectKyc = useCallback(async (id: string, comment: string): Promise<KYC> => {
     try {
       setLoading(true)
       setError(null)
@@ -256,9 +256,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getAuditLogs = async (skip = 0, take = 20): Promise<AuditLog[]> => {
+  const getAuditLogs = useCallback(async (skip = 0, take = 20): Promise<AuditLog[]> => {
     try {
       setLoading(true)
       setError(null)
@@ -277,7 +277,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return (
     <AdminContext.Provider

@@ -6,6 +6,21 @@ import { SecurityMiddleware } from './common/middleware/security.middleware'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // Enable CORS FIRST before any other middleware
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://ontime-maritime.onrender.com',
+      'https://ontime-maritime-1.onrender.com',
+      ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+
   // Set global prefix for all routes
   app.setGlobalPrefix('api')
 
@@ -22,18 +37,6 @@ async function bootstrap() {
       },
     }),
   )
-
-  app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://ontime-maritime.onrender.com',
-      'https://ontime-maritime-1.onrender.com',
-      ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
 
   const PORT = process.env.PORT || 3001
   await app.listen(PORT)
