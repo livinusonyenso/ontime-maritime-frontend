@@ -187,7 +187,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       setLoading(true)
       setError(null)
 
-      await api.post(`/admin/users/${id}/delete`, { reason })
+      await api.delete(`/admin/users/${id}`, { data: { reason } })
 
       setUsers((prev) => prev.filter((user) => user.id !== id))
     } catch (err: any) {
