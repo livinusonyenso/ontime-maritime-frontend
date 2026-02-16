@@ -99,13 +99,12 @@ export class AuthService {
       role: user.role,
     })
 
+    // Return full user object (excluding password_hash)
+    const { password_hash, ...userWithoutPassword } = user
+
     return {
       access_token: token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
+      user: userWithoutPassword,
     }
   }
 
@@ -132,13 +131,12 @@ export class AuthService {
       role: user.role,
     })
 
+    // Return full user object (excluding password_hash)
+    const { password_hash, ...userWithoutPassword } = user
+
     return {
       access_token: token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
+      user: userWithoutPassword,
     }
   }
 }

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 import api from '../lib/api'
 import type { User, KYC } from '../types'
+import { useEffect } from 'react'
 
 interface UsersContextType {
   profile: User | null
@@ -59,6 +60,20 @@ export function UsersProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     }
   }
+
+  // Only sync profile to localStorage when it's explicitly updated (not on initial null)
+  const [hasInitialized, setHasInitialized] = useState(false)
+
+  useEffect(() => {
+    if (hasInitialized && profile) {
+      localStorage.setItem("ontime_user", JSON.stringify(profile))
+    }
+  }, [profile, hasInitialized])
+
+  // Mark as initialized after first render
+  useEffect(() => {
+    setHasInitialized(true)
+  }, [])
 
   const submitKyc = async (
     kycData: Omit<KYC, 'id' | 'user_id' | 'status' | 'admin_comment' | 'created_at' | 'updated_at'>

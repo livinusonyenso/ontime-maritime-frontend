@@ -24,46 +24,45 @@ export default function AdminLoginPage() {
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
+  setError(null)
 
-    try {
-      await login(email, password)
+  try {
+    // Login should return user object
+    const user = await login(email, password) 
 
-      const storedUser = localStorage.getItem("ontime_user")
-      if (storedUser) {
-        const user = JSON.parse(storedUser)
-        if (user.role === "admin") {
-          toast({
-            title: "Welcome back, Admin",
-            description: "You've successfully signed in to the admin portal.",
-          })
-          navigate("/admin")
-        } else {
-          logout()
-          setError("Access denied. Admin credentials required.")
-          toast({
-            title: "Access denied",
-            description: "This portal is restricted to administrators.",
-            variant: "destructive",
-          })
-        }
-      } else {
-        setError("Login failed. Please try again.")
-      }
-    } catch (error: any) {
-      setError(error.message || "Invalid email or password. Please try again.")
+    if (user.role === "admin") {
+      // Save to localStorage after successful admin login
+      localStorage.setItem("ontime_user", JSON.stringify(user))
+
       toast({
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
+        title: "Welcome back, Admin",
+        description: "You've successfully signed in to the admin portal.",
+      })
+      navigate("/admin")
+    } else {
+      setError("Access denied. Admin credentials required.")
+      toast({
+        title: "Access denied",
+        description: "This portal is restricted to administrators.",
         variant: "destructive",
       })
-    } finally {
-      setLoading(false)
+      logout()
     }
+  } catch (error: any) {
+    setError(error.message || "Invalid email or password. Please try again.")
+    toast({
+      title: "Login failed",
+      description: "Please check your credentials and try again.",
+      variant: "destructive",
+    })
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <div className="min-h-screen flex">
@@ -155,7 +154,7 @@ export default function AdminLoginPage() {
           </Card>
 
           <p className="text-center text-xs text-muted-foreground">
-            Demo: admin@ontimemaritime.com / any password
+            Admin: admin@ontimemaritime.com / admin123
           </p>
 
           <div className="text-center">

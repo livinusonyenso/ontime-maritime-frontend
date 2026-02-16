@@ -21,7 +21,7 @@ interface AuthContextType {
     role: "buyer" | "seller"
   ) => Promise<void>
   verifyOtp: (userId: string, otp: string) => Promise<void>
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<User>
   logout: () => void
   refreshProfile: () => Promise<void>
 }
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   /* ------------------ LOGIN ------------------ */
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     try {
       setLoading(true)
       setError(null)
@@ -138,6 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       localStorage.setItem("ontime_token", access_token)
       localStorage.setItem("ontime_user", JSON.stringify(loggedInUser))
+
+      return loggedInUser
     } catch (err: any) {
       // Demo fallback – when backend is unavailable, allow demo logins
       const demoRole = email.toLowerCase().includes("admin")
@@ -167,6 +169,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       localStorage.setItem("ontime_token", demoToken)
       localStorage.setItem("ontime_user", JSON.stringify(demoUser))
+
+      return demoUser
     } finally {
       setLoading(false)
     }

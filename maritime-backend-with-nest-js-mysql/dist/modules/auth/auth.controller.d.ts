@@ -13,16 +13,34 @@ export declare class AuthController {
         access_token: string;
         user: {
             id: string;
-            email: string;
             role: import(".prisma/client").$Enums.UserRole;
+            email: string;
+            phone: string;
+            is_phone_verified: boolean;
+            is_email_verified: boolean;
+            subscription_status: string;
+            subscription_expiry: Date | null;
+            first_name: string | null;
+            last_name: string | null;
+            created_at: Date;
+            updated_at: Date;
         };
     }>;
     login(loginDto: LoginDto): Promise<{
         access_token: string;
         user: {
             id: string;
-            email: string;
             role: import(".prisma/client").$Enums.UserRole;
+            email: string;
+            phone: string;
+            is_phone_verified: boolean;
+            is_email_verified: boolean;
+            subscription_status: string;
+            subscription_expiry: Date | null;
+            first_name: string | null;
+            last_name: string | null;
+            created_at: Date;
+            updated_at: Date;
         };
     }>;
 }

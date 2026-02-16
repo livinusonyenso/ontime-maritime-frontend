@@ -119,13 +119,10 @@ let AuthService = class AuthService {
             email: user.email,
             role: user.role,
         });
+        const { password_hash, ...userWithoutPassword } = user;
         return {
             access_token: token,
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-            },
+            user: userWithoutPassword,
         };
     }
     async login(loginDto) {
@@ -145,13 +142,10 @@ let AuthService = class AuthService {
             email: user.email,
             role: user.role,
         });
+        const { password_hash, ...userWithoutPassword } = user;
         return {
             access_token: token,
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-            },
+            user: userWithoutPassword,
         };
     }
 };

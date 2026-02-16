@@ -1,7 +1,7 @@
 // User Types
 export interface User {
   id: string
-  role: 'buyer' | 'seller' | 'admin'
+  role: 'buyer' | 'seller' | 'admin' | 'executive' | 'expert'
   email: string
   phone: string
   is_phone_verified: boolean
