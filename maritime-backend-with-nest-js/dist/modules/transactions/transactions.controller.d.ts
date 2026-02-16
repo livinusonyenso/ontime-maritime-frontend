@@ -25,14 +25,14 @@ export declare class TransactionsController {
             updated_at: Date;
         };
         buyer: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -71,14 +71,14 @@ export declare class TransactionsController {
             updated_at: Date;
         };
         buyer: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -117,8 +117,8 @@ export declare class TransactionsController {
             updated_at: Date;
         };
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -157,8 +157,8 @@ export declare class TransactionsController {
             updated_at: Date;
         };
         buyer: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -197,14 +197,14 @@ export declare class TransactionsController {
             updated_at: Date;
         };
         buyer: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };

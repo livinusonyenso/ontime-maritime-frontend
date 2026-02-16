@@ -26,8 +26,8 @@ export declare class ListingsController {
     }>;
     findAll(skip?: number, take?: number): Promise<({
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -53,8 +53,8 @@ export declare class ListingsController {
     })[]>;
     search(query: string, skip?: number, take?: number): Promise<({
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -80,8 +80,8 @@ export declare class ListingsController {
     })[]>;
     findByCategory(category: string, skip?: number, take?: number): Promise<({
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
@@ -107,11 +107,21 @@ export declare class ListingsController {
     })[]>;
     findById(id: string): Promise<{
         seller: {
-            email: string;
             id: string;
+            email: string;
             first_name: string;
             last_name: string;
         };
+        documents: {
+            id: string;
+            type: import(".prisma/client").$Enums.DocumentType;
+            listing_id: string | null;
+            transaction_id: string | null;
+            file_url: string;
+            qr_hash: string | null;
+            is_revoked: boolean;
+            created_at: Date;
+        }[];
         auctions: {
             id: string;
             listing_id: string;
@@ -124,16 +134,6 @@ export declare class ListingsController {
             winner_id: string | null;
             created_at: Date;
             updated_at: Date;
-        }[];
-        documents: {
-            id: string;
-            type: import(".prisma/client").$Enums.DocumentType;
-            listing_id: string | null;
-            transaction_id: string | null;
-            file_url: string;
-            qr_hash: string | null;
-            is_revoked: boolean;
-            created_at: Date;
         }[];
     } & {
         id: string;
