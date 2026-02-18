@@ -141,36 +141,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return loggedInUser
     } catch (err: any) {
-      // Demo fallback – when backend is unavailable, allow demo logins
-      const demoRole = email.toLowerCase().includes("admin")
-        ? "admin"
-        : email.toLowerCase().includes("seller")
-          ? "seller"
-          : "buyer"
-
-      const demoUser: User = {
-        id: "demo-" + demoRole,
-        role: demoRole as User["role"],
-        email,
-        phone: "+1000000000",
-        is_phone_verified: true,
-        is_email_verified: true,
-        subscription_status: "enterprise",
-        subscription_expiry: null,
-        first_name: demoRole === "admin" ? "Admin" : demoRole === "seller" ? "Seller" : "Buyer",
-        last_name: "Demo",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      const demoToken = "demo-token-" + demoRole
-
-      setToken(demoToken)
-      setUser(demoUser)
-
-      localStorage.setItem("ontime_token", demoToken)
-      localStorage.setItem("ontime_user", JSON.stringify(demoUser))
-
-      return demoUser
+      const errorMessage = err.message || "Login failed. Please check your credentials."
+      setError(errorMessage)
+      throw err
     } finally {
       setLoading(false)
     }
