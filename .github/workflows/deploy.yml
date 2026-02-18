@@ -1,0 +1,65 @@
+name: Deploy ONTIME-MARITIME
+
+on:
+  push:
+    branches:
+      - production-phase-1
+
+jobs:
+  deploy-frontend:
+    name: Build & Deploy React Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install & Build Frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy Frontend via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./frontend/dist/
+          server-dir: /public_html/
+
+  deploy-backend:
+    name: Build & Deploy NestJS Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install & Build Backend
+        working-directory: ./maritime-backend-with-nest-js-mysql
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy Backend via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./maritime-backend-with-nest-js-mysql/
+          server-dir: /ontime-api/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
