@@ -59,91 +59,89 @@ let AuthService = AuthService_1 = class AuthService {
     async signup(signupDto) {
         const { email, phone, password, role } = signupDto;
         const existingUser = await this.prisma.user.findFirst({
-            where: {
-                OR: [{ email }, { phone }],
-            },
+            where: { OR: [{ email }, { phone }] },
         });
         if (existingUser) {
-            throw new common_1.BadRequestException("User with this email or phone already exists");
+            throw new common_1.BadRequestException("An account with this email or phone already exists.");
         }
+        await this.prisma.pendingRegistration.deleteMany({
+            where: { OR: [{ email }, { phone }] },
+        });
         const password_hash = await bcrypt.hash(password, 10);
-        const user = await this.prisma.user.create({
+        const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
+        const pending = await this.prisma.pendingRegistration.create({
             data: {
                 email,
                 phone,
                 password_hash,
-                role: role || "buyer",
-            },
-        });
-        const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
-        await this.prisma.otpToken.create({
-            data: {
-                user_id: user.id,
-                email: user.email,
+                role,
                 otp_code,
-                purpose: "signup",
                 expires_at: new Date(Date.now() + 10 * 60 * 1000),
             },
         });
-        const sent = await this.mailService.sendOtpEmail(user.email, otp_code);
+        const sent = await this.mailService.sendOtpEmail(email, otp_code);
         if (!sent) {
-            this.logger.error(`Failed to deliver OTP email to ${user.email} for user ${user.id}`);
+            this.logger.error(`OTP email failed to deliver to ${email}`);
         }
-        return {
-            userId: user.id,
-            message: "OTP sent to your email",
-        };
+        return { pendingId: pending.id, message: "OTP sent to your email." };
     }
-    async verifyOtp(userId, otpCode) {
-        const otpToken = await this.prisma.otpToken.findFirst({
+    async verifyOtp(pendingId, otpCode) {
+        const pending = await this.prisma.pendingRegistration.findFirst({
             where: {
-                user_id: userId,
+                id: pendingId,
                 otp_code: otpCode,
-                is_used: false,
-                expires_at: {
-                    gt: new Date(),
-                },
+                expires_at: { gt: new Date() },
             },
         });
-        if (!otpToken) {
-            throw new common_1.BadRequestException("Invalid or expired OTP");
+        if (!pending) {
+            throw new common_1.BadRequestException("Invalid or expired OTP.");
         }
-        await this.prisma.otpToken.update({
-            where: { id: otpToken.id },
-            data: { is_used: true },
-        });
-        await this.prisma.user.update({
-            where: { id: userId },
+        const user = await this.prisma.user.create({
             data: {
+                email: pending.email,
+                phone: pending.phone,
+                password_hash: pending.password_hash,
+                role: pending.role,
                 is_email_verified: true,
                 is_phone_verified: true,
             },
         });
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
-        });
+        await this.prisma.pendingRegistration.delete({ where: { id: pending.id } });
+        this.mailService.sendWelcomeEmail(user.email).catch((err) => this.logger.error(`Welcome email failed for ${user.email}: ${err.message}`));
         const token = this.jwtService.sign({
             sub: user.id,
             email: user.email,
             role: user.role,
         });
         const { password_hash, ...userWithoutPassword } = user;
-        return {
-            access_token: token,
-            user: userWithoutPassword,
-        };
+        return { access_token: token, user: userWithoutPassword };
     }
     async login(loginDto) {
         const { email, password } = loginDto;
-        const user = await this.prisma.user.findUnique({
-            where: { email },
-        });
+        const user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
-            throw new common_1.UnauthorizedException("Invalid credentials");
+            const pending = await this.prisma.pendingRegistration.findUnique({
+                where: { email },
+            });
+            if (pending) {
+                throw new common_1.HttpException({
+                    message: "Your registration is not complete. Please verify your email to continue.",
+                    code: "EMAIL_NOT_VERIFIED",
+                    email,
+                }, common_1.HttpStatus.UNAUTHORIZED);
+            }
+            throw new common_1.UnauthorizedException("Invalid credentials.");
         }
         const isPasswordValid = await bcrypt.compare(password, user.password_hash);
         if (!isPasswordValid) {
-            throw new common_1.UnauthorizedException("Invalid credentials");
+            throw new common_1.UnauthorizedException("Invalid credentials.");
+        }
+        if (!user.is_email_verified) {
+            throw new common_1.HttpException({
+                message: "Your email address is not verified. Please verify your email to continue.",
+                code: "EMAIL_NOT_VERIFIED",
+                email,
+            }, common_1.HttpStatus.UNAUTHORIZED);
         }
         const token = this.jwtService.sign({
             sub: user.id,
@@ -151,10 +149,28 @@ let AuthService = AuthService_1 = class AuthService {
             role: user.role,
         });
         const { password_hash, ...userWithoutPassword } = user;
-        return {
-            access_token: token,
-            user: userWithoutPassword,
-        };
+        return { access_token: token, user: userWithoutPassword };
+    }
+    async resendOtp(email) {
+        const pending = await this.prisma.pendingRegistration.findUnique({
+            where: { email },
+        });
+        if (!pending) {
+            return { message: "If a pending registration exists, a new OTP has been sent." };
+        }
+        const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
+        const updated = await this.prisma.pendingRegistration.update({
+            where: { id: pending.id },
+            data: {
+                otp_code,
+                expires_at: new Date(Date.now() + 10 * 60 * 1000),
+            },
+        });
+        const sent = await this.mailService.sendOtpEmail(email, otp_code);
+        if (!sent) {
+            this.logger.error(`Resend OTP email failed for ${email}`);
+        }
+        return { pendingId: updated.id, message: "A new OTP has been sent to your email." };
     }
 };
 exports.AuthService = AuthService;

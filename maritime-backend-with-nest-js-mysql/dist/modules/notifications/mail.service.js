@@ -80,6 +80,48 @@ let MailService = MailService_1 = class MailService {
         }
         return false;
     }
+    async sendWelcomeEmail(to) {
+        const subject = "Welcome to OnTime Maritime!";
+        const loginUrl = `${process.env.FRONTEND_URL || "https://ontimemaritime.com"}/login`;
+        const html = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+        <div style="background:#1a3c5e;padding:32px 24px;text-align:center">
+          <h1 style="color:#ffffff;margin:0;font-size:24px;letter-spacing:1px">ONTIME MARITIME</h1>
+          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Tech Meet Cargo</p>
+        </div>
+        <div style="padding:32px 24px">
+          <h2 style="color:#1a3c5e;margin-top:0">Welcome aboard! 🎉</h2>
+          <p style="color:#333;line-height:1.6">
+            Congratulations! Your OnTime Maritime account has been successfully created and verified.
+            You now have access to our full suite of maritime operations tools.
+          </p>
+          <ul style="color:#555;line-height:2;padding-left:20px">
+            <li>Real-time cargo &amp; vessel tracking</li>
+            <li>Digital Bill of Lading (e-BOL)</li>
+            <li>Auction marketplace</li>
+            <li>Document management</li>
+            <li>Insurance &amp; arbitration services</li>
+          </ul>
+          <div style="text-align:center;margin:32px 0">
+            <a href="${loginUrl}"
+               style="background:#1a3c5e;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">
+              Sign In to Your Account
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px;line-height:1.6">
+            If you did not create this account, please contact us immediately at
+            <a href="mailto:support@ontimemaritime.com" style="color:#1a3c5e">support@ontimemaritime.com</a>.
+          </p>
+        </div>
+        <div style="background:#f4f8fc;padding:16px 24px;text-align:center">
+          <p style="color:#aaa;font-size:11px;margin:0">
+            &copy; ${new Date().getFullYear()} OnTime Maritime. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `;
+        return this.sendMail(to, subject, html);
+    }
     async sendOtpEmail(to, otpCode) {
         const subject = "Your OnTime Maritime verification code";
         const html = `

@@ -462,3 +462,20 @@ model OtpToken {
   @@index([expires_at])
   @@map("otp_tokens")
 }
+
+// Holds registration data while the user completes OTP verification.
+// Deleted and converted to a real User record on successful verification.
+model PendingRegistration {
+  id            String   @id @default(uuid()) @db.VarChar(36)
+  email         String   @unique @db.VarChar(255)
+  phone         String   @unique @db.VarChar(20)
+  password_hash String   @db.VarChar(255)
+  role          String   @db.VarChar(20)
+  otp_code      String   @db.VarChar(10)
+  expires_at    DateTime
+  created_at    DateTime @default(now())
+
+  @@index([email])
+  @@index([expires_at])
+  @@map("pending_registrations")
+}

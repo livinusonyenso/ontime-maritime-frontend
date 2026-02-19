@@ -20,7 +20,8 @@ interface AuthContextType {
     password: string,
     role: "buyer" | "seller"
   ) => Promise<string>
-  verifyOtp: (userId: string, otp: string) => Promise<void>
+  verifyOtp: (pendingId: string, otp: string) => Promise<void>
+  resendOtp: (email: string) => Promise<{ pendingId?: string; message: string }>
   login: (email: string, password: string) => Promise<User>
   logout: () => void
   refreshProfile: () => Promise<void>
@@ -66,10 +67,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
 
       /**
-       * BACKEND RESPONSE: { userId: string, message: string }
-       * Token/user are NOT set here — they are set after OTP verification.
+       * BACKEND RESPONSE: { pendingId: string, message: string }
+       * No account exists yet — only a PendingRegistration record.
+       * Token/user are set only after OTP verification.
        */
-      return response.data.userId as string
+      return response.data.pendingId as string
     } catch (err: any) {
       setError(err.message || "Signup failed")
       throw err
@@ -79,22 +81,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   /* ------------------ VERIFY OTP ------------------ */
-  const verifyOtp = async (userId: string, otp: string) => {
+  const verifyOtp = async (pendingId: string, otp: string) => {
     try {
       setLoading(true)
       setError(null)
 
       const response = await api.post("/auth/verify-otp", {
-        userId,
+        pendingId,
         otp,
       })
 
       /**
-       * EXPECTED BACKEND RESPONSE:
-       * {
-       *   access_token: string,
-       *   user: User
-       * }
+       * BACKEND RESPONSE: { access_token: string, user: User }
+       * Account is created here for the first time.
        */
       const { access_token, user: verifiedUser } = response.data
 
@@ -105,6 +104,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("ontime_user", JSON.stringify(verifiedUser))
     } catch (err: any) {
       setError(err.message || "OTP verification failed")
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /* ------------------ RESEND OTP ------------------ */
+  const resendOtp = async (email: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await api.post("/auth/resend-otp", { email })
+      return response.data as { pendingId?: string; message: string }
+    } catch (err: any) {
+      setError(err.message || "Failed to resend OTP")
       throw err
     } finally {
       setLoading(false)
@@ -179,6 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         signup,
         verifyOtp,
+        resendOtp,
         login,
         logout,
         refreshProfile,

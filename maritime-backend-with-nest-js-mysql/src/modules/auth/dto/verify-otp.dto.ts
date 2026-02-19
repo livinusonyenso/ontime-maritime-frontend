@@ -2,7 +2,7 @@ import { IsString, IsUUID } from "class-validator"
 
 export class VerifyOtpDto {
   @IsUUID()
-  userId: string
+  pendingId: string
 
   @IsString()
   otp: string

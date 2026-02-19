@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
-const EXPIRY_SECONDS = 10 * 60 // 10 minutes
+const EXPIRY_SECONDS = 10 * 60
 
 function formatTime(s: number) {
   const m = Math.floor(s / 60)
@@ -23,19 +23,20 @@ function formatTime(s: number) {
 export default function VerifyOtpPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { verifyOtp, user } = useAuth()
+  const { verifyOtp, resendOtp } = useAuth()
   const { toast } = useToast()
 
-  const { userId, email } = (location.state as { userId: string; email: string }) ?? {}
+  const { pendingId, email } = (location.state as { pendingId: string; email: string }) ?? {}
 
   const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [secondsLeft, setSecondsLeft] = useState(EXPIRY_SECONDS)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Guard: if landed here without a userId, send back to register
-  if (!userId) {
+  // Guard: if landed here without a pendingId, send back to register
+  if (!pendingId) {
     navigate("/register", { replace: true })
     return null
   }
@@ -62,7 +63,7 @@ export default function VerifyOtpPage() {
       return
     }
     if (expired) {
-      setError("The code has expired. Please register again to get a new code.")
+      setError("The code has expired. Please request a new one.")
       return
     }
 
@@ -70,33 +71,54 @@ export default function VerifyOtpPage() {
     setLoading(true)
 
     try {
-      await verifyOtp(userId, otp)
-
+      await verifyOtp(pendingId, otp)
       clearInterval(timerRef.current!)
-
-      toast({
-        title: "Email verified!",
-        description: "Welcome to OnTime Maritime.",
-      })
-
-      // verifyOtp sets user in context; redirect based on role
-      setTimeout(() => {
-        const role = user?.role
-        if (role === "seller") navigate("/dashboard/seller", { replace: true })
-        else if (role === "admin") navigate("/admin", { replace: true })
-        else navigate("/dashboard/buyer", { replace: true })
-      }, 100)
+      // Account is now created — navigate to congratulations page
+      navigate("/welcome", { replace: true, state: { email } })
     } catch (err: any) {
-      const msg =
-        err?.response?.data?.message || err.message || "Invalid or expired OTP."
+      const msg = err?.data?.message || err.message || "Invalid or expired OTP."
       setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    if (!email) return
+    setResending(true)
+    setError(null)
+
+    try {
+      const result = await resendOtp(email)
+
+      // Reset countdown
+      clearInterval(timerRef.current!)
+      setSecondsLeft(EXPIRY_SECONDS)
+      setOtp("")
+      timerRef.current = setInterval(() => {
+        setSecondsLeft((s) => {
+          if (s <= 1) { clearInterval(timerRef.current!); return 0 }
+          return s - 1
+        })
+      }, 1000)
+
+      toast({ title: "New code sent!", description: result.message })
+
+      // Update pendingId in state if backend rotated it
+      if (result.pendingId && result.pendingId !== pendingId) {
+        navigate("/verify-otp", {
+          replace: true,
+          state: { pendingId: result.pendingId, email },
+        })
+      }
+    } catch (err: any) {
       toast({
-        title: "Verification failed",
-        description: msg,
+        title: "Failed to resend",
+        description: err?.data?.message || err.message || "Please try again.",
         variant: "destructive",
       })
     } finally {
-      setLoading(false)
+      setResending(false)
     }
   }
 
@@ -124,7 +146,7 @@ export default function VerifyOtpPage() {
             <p className="text-muted-foreground mt-1">
               We sent a 6-digit code to{" "}
               <span className="font-medium text-foreground">{email ?? "your email"}</span>.
-              Enter it below to complete your registration.
+              Enter it below — your account will only be created once verified.
             </p>
           </div>
 
@@ -141,7 +163,7 @@ export default function VerifyOtpPage() {
                 <Alert variant="destructive" className="py-2">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Your code has expired. Please go back and register again.
+                    Your code has expired. Request a new one below.
                   </AlertDescription>
                 </Alert>
               )}
@@ -174,7 +196,7 @@ export default function VerifyOtpPage() {
                   }`}
                 >
                   <Clock className="h-4 w-4" />
-                  {expired ? "Code expired" : `Code expires in ${formatTime(secondsLeft)}`}
+                  {expired ? "Code expired" : `Expires in ${formatTime(secondsLeft)}`}
                 </div>
               </div>
 
@@ -184,7 +206,7 @@ export default function VerifyOtpPage() {
                 onClick={handleVerify}
                 disabled={loading || otp.length !== 6 || expired}
               >
-                {loading ? "Verifying…" : "Verify & Continue"}
+                {loading ? "Verifying…" : "Verify & Create Account"}
               </Button>
             </CardContent>
           </Card>
@@ -193,10 +215,11 @@ export default function VerifyOtpPage() {
             Didn't receive the code?{" "}
             <button
               type="button"
-              className="text-primary font-semibold hover:underline"
-              onClick={() => navigate("/register")}
+              className="text-primary font-semibold hover:underline disabled:opacity-50"
+              onClick={handleResend}
+              disabled={resending}
             >
-              Go back and try again
+              {resending ? "Sending…" : "Resend code"}
             </button>
           </p>
         </div>

@@ -1,7 +1,7 @@
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../../prisma/prisma.service";
-import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
+import { SignupDto } from "./dto/signup.dto";
+import { LoginDto } from "./dto/login.dto";
 import { MailService } from "../notifications/mail.service";
 export declare class AuthService {
     private prisma;
@@ -10,10 +10,10 @@ export declare class AuthService {
     private readonly logger;
     constructor(prisma: PrismaService, jwtService: JwtService, mailService: MailService);
     signup(signupDto: SignupDto): Promise<{
-        userId: string;
+        pendingId: string;
         message: string;
     }>;
-    verifyOtp(userId: string, otpCode: string): Promise<{
+    verifyOtp(pendingId: string, otpCode: string): Promise<{
         access_token: string;
         user: {
             id: string;
@@ -46,5 +46,12 @@ export declare class AuthService {
             created_at: Date;
             updated_at: Date;
         };
+    }>;
+    resendOtp(email: string): Promise<{
+        message: string;
+        pendingId?: undefined;
+    } | {
+        pendingId: string;
+        message: string;
     }>;
 }

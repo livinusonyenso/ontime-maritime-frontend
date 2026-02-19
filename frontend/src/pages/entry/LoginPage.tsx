@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react"
+import { Ship, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff, MailWarning } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
@@ -21,8 +21,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { login } = useAuth()
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null)
+  const { login, resendOtp } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -30,40 +32,58 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setUnverifiedEmail(null)
 
     try {
-      await login(email, password)
+      const user = await login(email, password)
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in.",
       })
 
-      const storedUser = localStorage.getItem("ontime_user")
-      if (storedUser) {
-        const user = JSON.parse(storedUser)
-        if (user.role === "buyer") {
-          navigate("/dashboard/buyer")
-        } else if (user.role === "seller") {
-          navigate("/dashboard/seller")
-        } else if (user.role === "executive") {
-          navigate("/dashboard/executive")
-        } else if (user.role === "admin") {
-          navigate("/admin")
-        } else {
-          navigate("/dashboard")
-        }
+      if (user.role === "buyer") navigate("/dashboard/buyer")
+      else if (user.role === "seller") navigate("/dashboard/seller")
+      else if (user.role === "executive") navigate("/dashboard/executive")
+      else if (user.role === "admin") navigate("/admin")
+      else navigate("/dashboard/buyer")
+    } catch (err: any) {
+      // err.data comes from the api.ts interceptor rejection shape
+      const code = err?.data?.code
+      if (code === "EMAIL_NOT_VERIFIED") {
+        setUnverifiedEmail(err?.data?.email || email)
       } else {
-        navigate("/dashboard")
+        setError(err.message || "Invalid email or password. Please try again.")
       }
-    } catch (error: any) {
-      setError(error.message || "Invalid email or password. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail) return
+    setResending(true)
+
+    try {
+      const result = await resendOtp(unverifiedEmail)
       toast({
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
+        title: "Verification email sent!",
+        description: result.message,
+      })
+
+      // Navigate to OTP page with the pendingId if returned
+      if (result.pendingId) {
+        navigate("/verify-otp", {
+          state: { pendingId: result.pendingId, email: unverifiedEmail },
+        })
+      }
+    } catch (err: any) {
+      toast({
+        title: "Failed to resend",
+        description: err?.data?.message || err.message || "Please try again.",
         variant: "destructive",
       })
     } finally {
-      setLoading(false)
+      setResending(false)
     }
   }
 
@@ -89,6 +109,32 @@ export default function LoginPage() {
               <h1 className="text-3xl font-bold">Welcome back</h1>
               <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
             </div>
+
+            {/* Unverified email persistent banner */}
+            {unverifiedEmail && (
+              <Alert className="border-orange-300 bg-orange-50 dark:bg-orange-950/20">
+                <MailWarning className="h-4 w-4 text-orange-600" />
+                <AlertTitle className="text-orange-800 dark:text-orange-400">
+                  Email not verified
+                </AlertTitle>
+                <AlertDescription className="text-orange-700 dark:text-orange-300 space-y-3">
+                  <p>
+                    Your email address{" "}
+                    <span className="font-medium">{unverifiedEmail}</span> is not
+                    verified. You must verify your email to access the platform.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-orange-400 text-orange-700 hover:bg-orange-100 dark:text-orange-300"
+                    onClick={handleResendVerification}
+                    disabled={resending}
+                  >
+                    {resending ? "Sending…" : "Resend Verification Email"}
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
 
             <Card className="glass border-2">
               <CardContent className="p-6">
@@ -164,8 +210,6 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
-
-            <p className="text-center text-xs text-muted-foreground">Demo: Use any email (add "admin" for admin role)</p>
           </div>
         </div>
 

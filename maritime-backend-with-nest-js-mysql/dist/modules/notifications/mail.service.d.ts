@@ -3,5 +3,6 @@ export declare class MailService {
     private readonly transporter;
     constructor();
     sendMail(to: string, subject: string, html: string): Promise<boolean>;
+    sendWelcomeEmail(to: string): Promise<boolean>;
     sendOtpEmail(to: string, otpCode: string): Promise<boolean>;
 }
