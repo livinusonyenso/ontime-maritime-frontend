@@ -41,16 +41,20 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var AuthService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const bcrypt = __importStar(require("bcryptjs"));
-let AuthService = class AuthService {
-    constructor(prisma, jwtService) {
+const mail_service_1 = require("../notifications/mail.service");
+let AuthService = AuthService_1 = class AuthService {
+    constructor(prisma, jwtService, mailService) {
         this.prisma = prisma;
         this.jwtService = jwtService;
+        this.mailService = mailService;
+        this.logger = new common_1.Logger(AuthService_1.name);
     }
     async signup(signupDto) {
         const { email, phone, password, role } = signupDto;
@@ -81,6 +85,10 @@ let AuthService = class AuthService {
                 expires_at: new Date(Date.now() + 10 * 60 * 1000),
             },
         });
+        const sent = await this.mailService.sendOtpEmail(user.email, otp_code);
+        if (!sent) {
+            this.logger.error(`Failed to deliver OTP email to ${user.email} for user ${user.id}`);
+        }
         return {
             userId: user.id,
             message: "OTP sent to your email",
@@ -150,9 +158,10 @@ let AuthService = class AuthService {
     }
 };
 exports.AuthService = AuthService;
-exports.AuthService = AuthService = __decorate([
+exports.AuthService = AuthService = AuthService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        mail_service_1.MailService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

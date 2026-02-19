@@ -1,9 +1,12 @@
 import { PrismaService } from "../../prisma/prisma.service";
 import { Notification } from "@prisma/client";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
+import { MailService } from "./mail.service";
 export declare class NotificationsService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private mailService;
+    private readonly logger;
+    constructor(prisma: PrismaService, mailService: MailService);
     create(createNotificationDto: CreateNotificationDto): Promise<Notification>;
     findById(id: string): Promise<Notification | null>;
     findByUser(userId: string, skip?: number, take?: number): Promise<Notification[]>;

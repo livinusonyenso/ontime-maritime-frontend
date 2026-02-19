@@ -16,6 +16,7 @@ const jwt_strategy_1 = require("./jwt.strategy");
 const users_module_1 = require("../users/users.module");
 const kyc_module_1 = require("../kyc/kyc.module");
 const prisma_module_1 = require("../../prisma/prisma.module");
+const notifications_module_1 = require("../notifications/notifications.module");
 const config_1 = require("@nestjs/config");
 let AuthModule = class AuthModule {
 };
@@ -35,6 +36,7 @@ exports.AuthModule = AuthModule = __decorate([
             users_module_1.UsersModule,
             kyc_module_1.KycModule,
             prisma_module_1.PrismaModule,
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
