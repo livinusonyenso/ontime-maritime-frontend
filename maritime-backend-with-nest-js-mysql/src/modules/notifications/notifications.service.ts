@@ -1,12 +1,18 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { PrismaService } from "../../prisma/prisma.service"
 import { Notification } from "@prisma/client"
 import { NotificationStatus, NotificationType } from "../../common/enums"
 import { CreateNotificationDto } from "./dto/create-notification.dto"
+import { MailService } from "./mail.service"
 
 @Injectable()
 export class NotificationsService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(NotificationsService.name)
+
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
     return this.prisma.notification.create({
@@ -64,8 +70,14 @@ export class NotificationsService {
       body: message,
     })
 
-    console.log(`[EMAIL] ${userId}: ${message}`)
-    return this.markAsSent(notification.id)
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
+    if (!user?.email) {
+      this.logger.warn(`sendEmail: no email address found for user ${userId}`)
+      return this.markAsFailed(notification.id)
+    }
+
+    const sent = await this.mailService.sendMail(user.email, title, `<p>${message}</p>`)
+    return sent ? this.markAsSent(notification.id) : this.markAsFailed(notification.id)
   }
 
   async sendPush(userId: string, title: string, message: string): Promise<Notification> {

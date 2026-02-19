@@ -1,15 +1,19 @@
-import { Injectable, UnauthorizedException, BadRequestException } from "@nestjs/common"
+import { Injectable, UnauthorizedException, BadRequestException, Logger } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { PrismaService } from "../../prisma/prisma.service"
 import * as bcrypt from "bcryptjs"
 import {  SignupDto  } from './dto/signup.dto'
 import {  LoginDto  } from './dto/login.dto'
+import { MailService } from "../notifications/mail.service"
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name)
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async signup(signupDto: SignupDto) {
@@ -51,6 +55,11 @@ export class AuthService {
         expires_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
       },
     })
+
+    const sent = await this.mailService.sendOtpEmail(user.email, otp_code)
+    if (!sent) {
+      this.logger.error(`Failed to deliver OTP email to ${user.email} for user ${user.id}`)
+    }
 
     return {
       userId: user.id,
