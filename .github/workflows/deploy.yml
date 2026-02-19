@@ -32,6 +32,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./frontend/dist/
           server-dir: /public_html/
+          protocol: ftps
+          port: 21
 
   deploy-backend:
     name: Build & Deploy NestJS Backend
@@ -59,6 +61,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./maritime-backend-with-nest-js-mysql/
           server-dir: /ontime-api/
+          protocol: ftps
+          port: 21
           exclude: |
             **/.git*
             **/.git*/**
