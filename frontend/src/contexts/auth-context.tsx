@@ -19,7 +19,7 @@ interface AuthContextType {
     phone: string,
     password: string,
     role: "buyer" | "seller"
-  ) => Promise<void>
+  ) => Promise<string>
   verifyOtp: (userId: string, otp: string) => Promise<void>
   login: (email: string, password: string) => Promise<User>
   logout: () => void
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     phone: string,
     password: string,
     role: "buyer" | "seller"
-  ) => {
+  ): Promise<string> => {
     try {
       setLoading(true)
       setError(null)
@@ -66,19 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
 
       /**
-       * EXPECTED BACKEND RESPONSE:
-       * {
-       *   access_token: string,
-       *   user: User
-       * }
+       * BACKEND RESPONSE: { userId: string, message: string }
+       * Token/user are NOT set here — they are set after OTP verification.
        */
-      const { access_token, user: newUser } = response.data
-
-      setToken(access_token)
-      setUser(newUser)
-
-      localStorage.setItem("ontime_token", access_token)
-      localStorage.setItem("ontime_user", JSON.stringify(newUser))
+      return response.data.userId as string
     } catch (err: any) {
       setError(err.message || "Signup failed")
       throw err

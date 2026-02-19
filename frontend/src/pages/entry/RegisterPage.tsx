@@ -48,15 +48,12 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      await signup(email, phone, password, role)
+      const userId = await signup(email, phone, password, role)
       toast({
         title: "Account created!",
-        description: "Redirecting to login page...",
+        description: "Check your email for the verification code.",
       })
-      // Redirect to login page after successful signup
-      setTimeout(() => {
-        navigate("/login")
-      }, 1500)
+      navigate("/verify-otp", { state: { userId, email } })
     } catch (error: any) {
       setError(error.message || "Registration failed. Please try again.")
       toast({

@@ -9,6 +9,7 @@ import AboutPage from "./pages/entry/AboutPage"
 import LoginPage from "./pages/entry/LoginPage"
 import AdminLoginPage from "./pages/entry/AdminLoginPage"
 import RegisterPage from "./pages/entry/RegisterPage"
+import VerifyOtpPage from "./pages/entry/VerifyOtpPage"
 import ServicesPage from "./pages/entry/ServicesPage"
 import OntimeStorePage from "./pages/entry/OntimeStorePage"
 import ProductDetailPage from "./pages/entry/ProductDetailPage"
@@ -79,6 +80,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-otp" element={<VerifyOtpPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/store" element={<OntimeStorePage />} />
         <Route path="/store/product/:productId" element={<ProductDetailPage />} />

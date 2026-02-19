@@ -2,8 +2,8 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
