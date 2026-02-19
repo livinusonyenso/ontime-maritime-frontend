@@ -9,17 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerifyOtpDto = void 0;
+exports.ResendOtpDto = void 0;
 const class_validator_1 = require("class-validator");
-class VerifyOtpDto {
+class ResendOtpDto {
 }
-exports.VerifyOtpDto = VerifyOtpDto;
+exports.ResendOtpDto = ResendOtpDto;
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], VerifyOtpDto.prototype, "pendingId", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], VerifyOtpDto.prototype, "otp", void 0);
-//# sourceMappingURL=verify-otp.dto.js.map
+], ResendOtpDto.prototype, "email", void 0);
+//# sourceMappingURL=resend-otp.dto.js.map

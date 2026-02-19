@@ -11,7 +11,7 @@ async function bootstrap() {
             'http://localhost:3000',
             'http://localhost:5173',
             'http://localhost:5174',
-            'https://www.ontimemaritime.com/',
+            'https://ontimemaritime.com',
             'https://www.ontimemaritime.com',
             'https://ontime-maritime.onrender.com',
             'https://ontime-maritime-1.onrender.com',

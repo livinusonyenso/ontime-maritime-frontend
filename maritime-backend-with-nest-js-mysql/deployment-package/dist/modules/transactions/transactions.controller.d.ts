@@ -4,18 +4,6 @@ export declare class TransactionsController {
     private transactionsService;
     constructor(transactionsService: TransactionsService);
     create(createTransactionDto: CreateTransactionDto): Promise<{
-        buyer: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
-        seller: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
         listing: {
             id: string;
             seller_id: string;
@@ -35,6 +23,18 @@ export declare class TransactionsController {
             status: import(".prisma/client").$Enums.ListingStatus;
             created_at: Date;
             updated_at: Date;
+        };
+        buyer: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
+        };
+        seller: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
         };
     } & {
         id: string;
@@ -50,18 +50,6 @@ export declare class TransactionsController {
         updated_at: Date;
     }>;
     findAll(skip?: number, take?: number): Promise<({
-        buyer: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
-        seller: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
         listing: {
             id: string;
             seller_id: string;
@@ -81,6 +69,18 @@ export declare class TransactionsController {
             status: import(".prisma/client").$Enums.ListingStatus;
             created_at: Date;
             updated_at: Date;
+        };
+        buyer: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
+        };
+        seller: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
         };
     } & {
         id: string;
@@ -96,12 +96,6 @@ export declare class TransactionsController {
         updated_at: Date;
     })[]>;
     getMyPurchases(req: any, skip?: number, take?: number): Promise<({
-        seller: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
         listing: {
             id: string;
             seller_id: string;
@@ -121,6 +115,12 @@ export declare class TransactionsController {
             status: import(".prisma/client").$Enums.ListingStatus;
             created_at: Date;
             updated_at: Date;
+        };
+        seller: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
         };
     } & {
         id: string;
@@ -136,12 +136,6 @@ export declare class TransactionsController {
         updated_at: Date;
     })[]>;
     getMySales(req: any, skip?: number, take?: number): Promise<({
-        buyer: {
-            email: string;
-            id: string;
-            first_name: string;
-            last_name: string;
-        };
         listing: {
             id: string;
             seller_id: string;
@@ -162,6 +156,12 @@ export declare class TransactionsController {
             created_at: Date;
             updated_at: Date;
         };
+        buyer: {
+            email: string;
+            id: string;
+            first_name: string;
+            last_name: string;
+        };
     } & {
         id: string;
         buyer_id: string;
@@ -176,6 +176,26 @@ export declare class TransactionsController {
         updated_at: Date;
     })[]>;
     findById(id: string): Promise<{
+        listing: {
+            id: string;
+            seller_id: string;
+            category: import(".prisma/client").$Enums.ListingCategory;
+            title: string;
+            description: string;
+            price_usd: import("@prisma/client/runtime/library").Decimal;
+            origin_port: string;
+            destination_port: string;
+            container_number: string | null;
+            eta: Date;
+            photos: import(".prisma/client").Prisma.JsonValue | null;
+            certificates: import(".prisma/client").Prisma.JsonValue | null;
+            is_perishable: boolean;
+            is_dangerous: boolean;
+            is_high_value: boolean;
+            status: import(".prisma/client").$Enums.ListingStatus;
+            created_at: Date;
+            updated_at: Date;
+        };
         buyer: {
             email: string;
             id: string;
@@ -198,26 +218,6 @@ export declare class TransactionsController {
             is_revoked: boolean;
             created_at: Date;
         }[];
-        listing: {
-            id: string;
-            seller_id: string;
-            category: import(".prisma/client").$Enums.ListingCategory;
-            title: string;
-            description: string;
-            price_usd: import("@prisma/client/runtime/library").Decimal;
-            origin_port: string;
-            destination_port: string;
-            container_number: string | null;
-            eta: Date;
-            photos: import(".prisma/client").Prisma.JsonValue | null;
-            certificates: import(".prisma/client").Prisma.JsonValue | null;
-            is_perishable: boolean;
-            is_dangerous: boolean;
-            is_high_value: boolean;
-            status: import(".prisma/client").$Enums.ListingStatus;
-            created_at: Date;
-            updated_at: Date;
-        };
     } & {
         id: string;
         buyer_id: string;

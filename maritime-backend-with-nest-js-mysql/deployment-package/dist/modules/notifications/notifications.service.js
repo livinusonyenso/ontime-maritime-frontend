@@ -8,14 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var NotificationsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const enums_1 = require("../../common/enums");
-let NotificationsService = class NotificationsService {
-    constructor(prisma) {
+const mail_service_1 = require("./mail.service");
+let NotificationsService = NotificationsService_1 = class NotificationsService {
+    constructor(prisma, mailService) {
         this.prisma = prisma;
+        this.mailService = mailService;
+        this.logger = new common_1.Logger(NotificationsService_1.name);
     }
     async create(createNotificationDto) {
         return this.prisma.notification.create({
@@ -65,8 +69,13 @@ let NotificationsService = class NotificationsService {
             title,
             body: message,
         });
-        console.log(`[EMAIL] ${userId}: ${message}`);
-        return this.markAsSent(notification.id);
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user?.email) {
+            this.logger.warn(`sendEmail: no email address found for user ${userId}`);
+            return this.markAsFailed(notification.id);
+        }
+        const sent = await this.mailService.sendMail(user.email, title, `<p>${message}</p>`);
+        return sent ? this.markAsSent(notification.id) : this.markAsFailed(notification.id);
     }
     async sendPush(userId, title, message) {
         const notification = await this.create({
@@ -94,8 +103,9 @@ let NotificationsService = class NotificationsService {
     }
 };
 exports.NotificationsService = NotificationsService;
-exports.NotificationsService = NotificationsService = __decorate([
+exports.NotificationsService = NotificationsService = NotificationsService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        mail_service_1.MailService])
 ], NotificationsService);
 //# sourceMappingURL=notifications.service.js.map

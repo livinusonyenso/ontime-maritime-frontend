@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const signup_dto_1 = require("./dto/signup.dto");
 const login_dto_1 = require("./dto/login.dto");
 const verify_otp_dto_1 = require("./dto/verify-otp.dto");
+const resend_otp_dto_1 = require("./dto/resend-otp.dto");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -26,7 +27,10 @@ let AuthController = class AuthController {
         return this.authService.signup(signupDto);
     }
     async verifyOtp(verifyOtpDto) {
-        return this.authService.verifyOtp(verifyOtpDto.userId, verifyOtpDto.otp);
+        return this.authService.verifyOtp(verifyOtpDto.pendingId, verifyOtpDto.otp);
+    }
+    async resendOtp(resendOtpDto) {
+        return this.authService.resendOtp(resendOtpDto.email);
     }
     async login(loginDto) {
         return this.authService.login(loginDto);
@@ -34,21 +38,28 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('signup'),
+    (0, common_1.Post)("signup"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [signup_dto_1.SignupDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([
-    (0, common_1.Post)('verify-otp'),
+    (0, common_1.Post)("verify-otp"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [verify_otp_dto_1.VerifyOtpDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyOtp", null);
 __decorate([
-    (0, common_1.Post)('login'),
+    (0, common_1.Post)("resend-otp"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [resend_otp_dto_1.ResendOtpDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resendOtp", null);
+__decorate([
+    (0, common_1.Post)("login"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
