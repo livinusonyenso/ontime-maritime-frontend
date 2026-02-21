@@ -5,6 +5,7 @@ import { LoginDto } from "./dto/login.dto"
 import { VerifyOtpDto } from "./dto/verify-otp.dto"
 import { ResendOtpDto } from "./dto/resend-otp.dto"
 import { ForgotPasswordDto } from "./dto/forgot-password.dto"
+import { VerifyResetOtpDto } from "./dto/verify-reset-otp.dto"
 import { ResetPasswordDto } from "./dto/reset-password.dto"
 
 @Controller("auth")
@@ -36,8 +37,13 @@ export class AuthController {
     return this.authService.forgotPassword(dto.email)
   }
 
+  @Post("verify-reset-otp")
+  async verifyResetOtp(@Body() dto: VerifyResetOtpDto) {
+    return this.authService.verifyResetOtp(dto.email, dto.otp)
+  }
+
   @Post("reset-password")
   async resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto.email, dto.otp, dto.newPassword)
+    return this.authService.resetPassword(dto.resetToken, dto.newPassword)
   }
 }

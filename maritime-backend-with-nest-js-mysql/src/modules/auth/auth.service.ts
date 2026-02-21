@@ -246,10 +246,10 @@ export class AuthService {
   }
 
   /* ------------------------------------------------------------------ */
-  /* RESET PASSWORD — validates OTP, updates password, invalidates OTP.  */
+  /* VERIFY RESET OTP — validates OTP, marks it used, returns a short-   */
+  /* lived signed JWT that authorises the password-change step.          */
   /* ------------------------------------------------------------------ */
-  async resetPassword(email: string, otp: string, newPassword: string) {
-    // Fetch the latest unused, unexpired password-reset token for this email
+  async verifyResetOtp(email: string, otp: string) {
     const token = await this.prisma.otpToken.findFirst({
       where: {
         email,
@@ -260,25 +260,48 @@ export class AuthService {
       orderBy: { created_at: "desc" },
     })
 
-    // Validate token existence and OTP hash — same error for all failure modes
     const invalid = !token || !(await bcrypt.compare(otp, token.otp_code))
     if (invalid) {
       throw new BadRequestException("Invalid or expired OTP.")
     }
 
+    // Consume the OTP — cannot be reused
+    await this.prisma.otpToken.update({
+      where: { id: token.id },
+      data: { is_used: true },
+    })
+
+    // Issue a short-lived reset token (15 min) to authorise the password change
+    const resetToken = this.jwtService.sign(
+      { email, purpose: "password_reset" },
+      { expiresIn: "15m" },
+    )
+
+    return { resetToken }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* RESET PASSWORD — validates the reset token, updates the password.   */
+  /* ------------------------------------------------------------------ */
+  async resetPassword(resetToken: string, newPassword: string) {
+    let payload: { email: string; purpose: string }
+
+    try {
+      payload = this.jwtService.verify(resetToken)
+    } catch {
+      throw new BadRequestException("Invalid or expired reset token.")
+    }
+
+    if (payload.purpose !== "password_reset") {
+      throw new BadRequestException("Invalid reset token.")
+    }
+
     const password_hash = await bcrypt.hash(newPassword, 10)
 
-    // Update password and mark OTP used atomically
-    await this.prisma.$transaction([
-      this.prisma.user.update({
-        where: { email },
-        data: { password_hash },
-      }),
-      this.prisma.otpToken.update({
-        where: { id: token.id },
-        data: { is_used: true },
-      }),
-    ])
+    await this.prisma.user.update({
+      where: { email: payload.email },
+      data: { password_hash },
+    })
 
     return { message: "Password reset successful." }
   }

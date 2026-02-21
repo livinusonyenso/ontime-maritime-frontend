@@ -1,12 +1,8 @@
-import { IsEmail, IsString, Length, MinLength, Matches } from "class-validator"
+import { IsString, MinLength, Matches } from "class-validator"
 
 export class ResetPasswordDto {
-  @IsEmail()
-  email: string
-
   @IsString()
-  @Length(6, 6, { message: "OTP must be exactly 6 digits" })
-  otp: string
+  resetToken: string
 
   @IsString()
   @MinLength(8)

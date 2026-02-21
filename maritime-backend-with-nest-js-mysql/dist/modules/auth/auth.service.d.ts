@@ -58,7 +58,10 @@ export declare class AuthService {
     forgotPassword(email: string): Promise<{
         message: string;
     }>;
-    resetPassword(email: string, otp: string, newPassword: string): Promise<{
+    verifyResetOtp(email: string, otp: string): Promise<{
+        resetToken: string;
+    }>;
+    resetPassword(resetToken: string, newPassword: string): Promise<{
         message: string;
     }>;
 }

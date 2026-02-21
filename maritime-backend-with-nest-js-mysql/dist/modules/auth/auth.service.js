@@ -198,7 +198,7 @@ let AuthService = AuthService_1 = class AuthService {
         this.mailService.sendPasswordResetEmail(email, otp).catch((err) => this.logger.error(`Password-reset email failed for ${email}: ${err.message}`));
         return this.SAFE_RESET_RESPONSE;
     }
-    async resetPassword(email, otp, newPassword) {
+    async verifyResetOtp(email, otp) {
         const token = await this.prisma.otpToken.findFirst({
             where: {
                 email,
@@ -212,17 +212,29 @@ let AuthService = AuthService_1 = class AuthService {
         if (invalid) {
             throw new common_1.BadRequestException("Invalid or expired OTP.");
         }
+        await this.prisma.otpToken.update({
+            where: { id: token.id },
+            data: { is_used: true },
+        });
+        const resetToken = this.jwtService.sign({ email, purpose: "password_reset" }, { expiresIn: "15m" });
+        return { resetToken };
+    }
+    async resetPassword(resetToken, newPassword) {
+        let payload;
+        try {
+            payload = this.jwtService.verify(resetToken);
+        }
+        catch {
+            throw new common_1.BadRequestException("Invalid or expired reset token.");
+        }
+        if (payload.purpose !== "password_reset") {
+            throw new common_1.BadRequestException("Invalid reset token.");
+        }
         const password_hash = await bcrypt.hash(newPassword, 10);
-        await this.prisma.$transaction([
-            this.prisma.user.update({
-                where: { email },
-                data: { password_hash },
-            }),
-            this.prisma.otpToken.update({
-                where: { id: token.id },
-                data: { is_used: true },
-            }),
-        ]);
+        await this.prisma.user.update({
+            where: { email: payload.email },
+            data: { password_hash },
+        });
         return { message: "Password reset successful." };
     }
 };

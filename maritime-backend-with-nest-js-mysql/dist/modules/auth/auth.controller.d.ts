@@ -4,6 +4,7 @@ import { LoginDto } from "./dto/login.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { ResendOtpDto } from "./dto/resend-otp.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
+import { VerifyResetOtpDto } from "./dto/verify-reset-otp.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 export declare class AuthController {
     private authService;
@@ -55,6 +56,9 @@ export declare class AuthController {
     }>;
     forgotPassword(dto: ForgotPasswordDto): Promise<{
         message: string;
+    }>;
+    verifyResetOtp(dto: VerifyResetOtpDto): Promise<{
+        resetToken: string;
     }>;
     resetPassword(dto: ResetPasswordDto): Promise<{
         message: string;

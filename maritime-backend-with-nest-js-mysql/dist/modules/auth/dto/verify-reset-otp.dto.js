@@ -9,21 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResetPasswordDto = void 0;
+exports.VerifyResetOtpDto = void 0;
 const class_validator_1 = require("class-validator");
-class ResetPasswordDto {
+class VerifyResetOtpDto {
 }
-exports.ResetPasswordDto = ResetPasswordDto;
+exports.VerifyResetOtpDto = VerifyResetOtpDto;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], VerifyResetOtpDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(6, 6, { message: "OTP must be exactly 6 digits" }),
     __metadata("design:type", String)
-], ResetPasswordDto.prototype, "resetToken", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(8),
-    (0, class_validator_1.Matches)(/[A-Z]/, { message: "Password must contain an uppercase letter" }),
-    (0, class_validator_1.Matches)(/[0-9]/, { message: "Password must contain a number" }),
-    (0, class_validator_1.Matches)(/[!@#$%^&*]/, { message: "Password must contain a special character" }),
-    __metadata("design:type", String)
-], ResetPasswordDto.prototype, "newPassword", void 0);
-//# sourceMappingURL=reset-password.dto.js.map
+], VerifyResetOtpDto.prototype, "otp", void 0);
+//# sourceMappingURL=verify-reset-otp.dto.js.map
