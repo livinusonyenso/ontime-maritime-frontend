@@ -90,6 +90,37 @@ export class MailService {
     return this.sendMail(to, subject, html)
   }
 
+  async sendPasswordResetEmail(to: string, otpCode: string): Promise<boolean> {
+    const subject = "Reset your OnTime Maritime password"
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+        <div style="background:#1a3c5e;padding:24px;text-align:center">
+          <h2 style="color:#ffffff;margin:0;font-size:20px">OnTime Maritime</h2>
+        </div>
+        <div style="padding:32px 24px">
+          <h3 style="color:#1a3c5e;margin-top:0">Password Reset Request</h3>
+          <p style="color:#333;line-height:1.6">
+            We received a request to reset the password for your account.
+            Use the code below to complete the reset. It expires in <strong>10 minutes</strong>.
+          </p>
+          <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#1a3c5e;text-align:center;padding:16px;background:#f4f8fc;border-radius:6px;margin:24px 0">
+            ${otpCode}
+          </div>
+          <p style="color:#666;font-size:13px;line-height:1.6">
+            If you did not request a password reset, you can safely ignore this email.
+            Your password will not be changed.
+          </p>
+        </div>
+        <div style="background:#f4f8fc;padding:16px 24px;text-align:center">
+          <p style="color:#aaa;font-size:11px;margin:0">
+            &copy; ${new Date().getFullYear()} OnTime Maritime. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `
+    return this.sendMail(to, subject, html)
+  }
+
   async sendOtpEmail(to: string, otpCode: string): Promise<boolean> {
     const subject = "Your OnTime Maritime verification code"
     const html = `

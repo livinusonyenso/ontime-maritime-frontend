@@ -54,4 +54,11 @@ export declare class AuthService {
         pendingId: string;
         message: string;
     }>;
+    private readonly SAFE_RESET_RESPONSE;
+    forgotPassword(email: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(email: string, otp: string, newPassword: string): Promise<{
+        message: string;
+    }>;
 }

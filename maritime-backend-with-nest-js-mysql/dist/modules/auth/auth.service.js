@@ -55,6 +55,9 @@ let AuthService = AuthService_1 = class AuthService {
         this.jwtService = jwtService;
         this.mailService = mailService;
         this.logger = new common_1.Logger(AuthService_1.name);
+        this.SAFE_RESET_RESPONSE = {
+            message: "If the email exists, an OTP has been sent.",
+        };
     }
     async signup(signupDto) {
         const { email, phone, password, role } = signupDto;
@@ -171,6 +174,56 @@ let AuthService = AuthService_1 = class AuthService {
             this.logger.error(`Resend OTP email failed for ${email}`);
         }
         return { pendingId: updated.id, message: "A new OTP has been sent to your email." };
+    }
+    async forgotPassword(email) {
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return this.SAFE_RESET_RESPONSE;
+        }
+        await this.prisma.otpToken.updateMany({
+            where: { email, purpose: "password_reset", is_used: false },
+            data: { is_used: true },
+        });
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp_hash = await bcrypt.hash(otp, 10);
+        await this.prisma.otpToken.create({
+            data: {
+                user_id: user.id,
+                email,
+                otp_code: otp_hash,
+                purpose: "password_reset",
+                expires_at: new Date(Date.now() + 10 * 60 * 1000),
+            },
+        });
+        this.mailService.sendPasswordResetEmail(email, otp).catch((err) => this.logger.error(`Password-reset email failed for ${email}: ${err.message}`));
+        return this.SAFE_RESET_RESPONSE;
+    }
+    async resetPassword(email, otp, newPassword) {
+        const token = await this.prisma.otpToken.findFirst({
+            where: {
+                email,
+                purpose: "password_reset",
+                is_used: false,
+                expires_at: { gt: new Date() },
+            },
+            orderBy: { created_at: "desc" },
+        });
+        const invalid = !token || !(await bcrypt.compare(otp, token.otp_code));
+        if (invalid) {
+            throw new common_1.BadRequestException("Invalid or expired OTP.");
+        }
+        const password_hash = await bcrypt.hash(newPassword, 10);
+        await this.prisma.$transaction([
+            this.prisma.user.update({
+                where: { email },
+                data: { password_hash },
+            }),
+            this.prisma.otpToken.update({
+                where: { id: token.id },
+                data: { is_used: true },
+            }),
+        ]);
+        return { message: "Password reset successful." };
     }
 };
 exports.AuthService = AuthService;

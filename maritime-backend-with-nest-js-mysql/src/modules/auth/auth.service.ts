@@ -200,4 +200,86 @@ export class AuthService {
 
     return { pendingId: updated.id, message: "A new OTP has been sent to your email." }
   }
+
+  /* ------------------------------------------------------------------ */
+  /* FORGOT PASSWORD — sends a password-reset OTP to the user's email.   */
+  /* Always returns the same message to prevent email enumeration.       */
+  /* ------------------------------------------------------------------ */
+  private readonly SAFE_RESET_RESPONSE = {
+    message: "If the email exists, an OTP has been sent.",
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+
+    // Silently succeed if user not found — do not reveal whether email exists
+    if (!user) {
+      return this.SAFE_RESET_RESPONSE
+    }
+
+    // Invalidate all previous unused password-reset OTPs for this email
+    await this.prisma.otpToken.updateMany({
+      where: { email, purpose: "password_reset", is_used: false },
+      data: { is_used: true },
+    })
+
+    // Generate OTP, hash it before persisting
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    const otp_hash = await bcrypt.hash(otp, 10)
+
+    await this.prisma.otpToken.create({
+      data: {
+        user_id: user.id,
+        email,
+        otp_code: otp_hash,
+        purpose: "password_reset",
+        expires_at: new Date(Date.now() + 10 * 60 * 1000),
+      },
+    })
+
+    // Send email non-blocking — failure is logged, never leaked to caller
+    this.mailService.sendPasswordResetEmail(email, otp).catch((err) =>
+      this.logger.error(`Password-reset email failed for ${email}: ${err.message}`),
+    )
+
+    return this.SAFE_RESET_RESPONSE
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* RESET PASSWORD — validates OTP, updates password, invalidates OTP.  */
+  /* ------------------------------------------------------------------ */
+  async resetPassword(email: string, otp: string, newPassword: string) {
+    // Fetch the latest unused, unexpired password-reset token for this email
+    const token = await this.prisma.otpToken.findFirst({
+      where: {
+        email,
+        purpose: "password_reset",
+        is_used: false,
+        expires_at: { gt: new Date() },
+      },
+      orderBy: { created_at: "desc" },
+    })
+
+    // Validate token existence and OTP hash — same error for all failure modes
+    const invalid = !token || !(await bcrypt.compare(otp, token.otp_code))
+    if (invalid) {
+      throw new BadRequestException("Invalid or expired OTP.")
+    }
+
+    const password_hash = await bcrypt.hash(newPassword, 10)
+
+    // Update password and mark OTP used atomically
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { email },
+        data: { password_hash },
+      }),
+      this.prisma.otpToken.update({
+        where: { id: token.id },
+        data: { is_used: true },
+      }),
+    ])
+
+    return { message: "Password reset successful." }
+  }
 }

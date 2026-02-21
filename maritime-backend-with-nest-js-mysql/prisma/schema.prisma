@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.0.x"]
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl"]
 }
 
 datasource db {
@@ -452,7 +452,7 @@ model OtpToken {
   id         String   @id @default(uuid()) @db.VarChar(36)
   user_id    String   @db.VarChar(36)
   email      String   @db.VarChar(255)
-  otp_code   String   @db.VarChar(10)
+  otp_code   String   @db.VarChar(255)
   purpose    String   @db.VarChar(20)
   is_used    Boolean  @default(false)
   expires_at DateTime

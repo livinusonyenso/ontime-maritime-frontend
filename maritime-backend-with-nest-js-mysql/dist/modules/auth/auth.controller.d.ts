@@ -3,6 +3,8 @@ import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { ResendOtpDto } from "./dto/resend-otp.dto";
+import { ForgotPasswordDto } from "./dto/forgot-password.dto";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -50,5 +52,11 @@ export declare class AuthController {
             created_at: Date;
             updated_at: Date;
         };
+    }>;
+    forgotPassword(dto: ForgotPasswordDto): Promise<{
+        message: string;
+    }>;
+    resetPassword(dto: ResetPasswordDto): Promise<{
+        message: string;
     }>;
 }
