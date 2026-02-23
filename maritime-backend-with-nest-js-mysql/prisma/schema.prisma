@@ -115,24 +115,40 @@ model User {
 }
 
 model Listing {
-  id               String          @id @default(uuid()) @db.VarChar(36)
-  seller_id        String          @db.VarChar(36)
-  category         ListingCategory
-  title            String          @db.VarChar(255)
-  description      String          @db.Text
-  price_usd        Decimal         @db.Decimal(18, 2)
-  origin_port      String          @db.VarChar(100)
-  destination_port String          @db.VarChar(100)
-  container_number String?         @db.VarChar(50)
-  eta              DateTime
-  photos           Json?
-  certificates     Json?
-  is_perishable    Boolean         @default(false)
-  is_dangerous     Boolean         @default(false)
-  is_high_value    Boolean         @default(false)
-  status           ListingStatus   @default(draft)
-  created_at       DateTime        @default(now())
-  updated_at       DateTime        @updatedAt
+  id                   String          @id @default(uuid()) @db.VarChar(36)
+  seller_id            String          @db.VarChar(36)
+  category             ListingCategory
+  marketplace_category String          @default("cargo") @db.VarChar(50)
+  title                String          @db.VarChar(255)
+  description          String          @db.Text
+  price_usd            Decimal         @db.Decimal(18, 2)
+  price_type           String          @default("fixed") @db.VarChar(20)
+  currency             String          @default("USD") @db.VarChar(10)
+  origin_port          String          @db.VarChar(100)
+  destination_port     String          @db.VarChar(100)
+  container_number     String?         @db.VarChar(50)
+  eta                  DateTime
+  photos               Json?
+  certificates         Json?
+  images               Json?
+  location             Json?
+  specifications       Json?
+  condition            String          @default("good") @db.VarChar(20)
+  availability         String          @default("available") @db.VarChar(20)
+  bol_required         Boolean         @default(false)
+  bol_number           String?         @db.VarChar(100)
+  bol_verified         Boolean         @default(false)
+  featured             Boolean         @default(false)
+  views                Int             @default(0)
+  inquiries            Int             @default(0)
+  seller_name          String?         @db.VarChar(255)
+  seller_rating        Decimal         @default(0) @db.Decimal(3, 1)
+  is_perishable        Boolean         @default(false)
+  is_dangerous         Boolean         @default(false)
+  is_high_value        Boolean         @default(false)
+  status               ListingStatus   @default(draft)
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
 
   seller             User              @relation(fields: [seller_id], references: [id], onDelete: Cascade)
   transactions       Transaction[]

@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { selectSellerListings, deleteSellerListing } from "@/store/slices/sellerListingSlice"
+import { selectSellerListings, selectSellerListingsLoading, deleteSellerListing, fetchSellerListings } from "@/store/slices/sellerListingSlice"
 import type { MarketplaceListing } from "@/types/maritime"
 import { useAuth } from "@/contexts/auth-context"
-import { Package } from "lucide-react"
+import { Package, Loader2 } from "lucide-react"
 import { EditListingModal } from "./EditListingModal"
 import { SellerListingCard } from "./SellerListingCard"
 import {
@@ -23,15 +23,28 @@ export function SellerListingsView() {
   const dispatch = useDispatch()
   const { user } = useAuth()
   const myListings = useSelector(selectSellerListings)
-  
+  const loading = useSelector(selectSellerListingsLoading)
+
   const [editingListing, setEditingListing] = useState<MarketplaceListing | null>(null)
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    dispatch(fetchSellerListings() as any)
+  }, [dispatch])
 
   const handleDelete = () => {
     if (deletingListingId) {
       dispatch(deleteSellerListing(deletingListingId))
       setDeletingListingId(null)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
   }
 
   if (myListings.length === 0) {

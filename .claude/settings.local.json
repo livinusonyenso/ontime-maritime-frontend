@@ -12,7 +12,10 @@
       "Bash(netstat:*)",
       "Bash(taskkill:*)",
       "Bash(cmd /c:*)",
-      "Bash(npx ts-node:*)"
+      "Bash(npx ts-node:*)",
+      "Bash(node -e:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)"
     ]
   }
 }
