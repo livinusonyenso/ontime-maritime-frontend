@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import {
+  fetchListings,
   selectListing,
   clearSelectedListing,
   setFilterCategory,
@@ -67,6 +68,10 @@ export function MarketplaceView() {
     searchQuery,
     sortBy,
   } = useAppSelector((state) => state.marketplace)
+
+  useEffect(() => {
+    if (listings.length === 0) dispatch(fetchListings())
+  }, [dispatch])
 
   const [showListingDialog, setShowListingDialog] = useState(false)
   const [showSellerRegisterDialog, setShowSellerRegisterDialog] = useState(false)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import {
+  fetchLegalData,
   selectConsultant,
   clearSelectedConsultant,
   setSearchQuery,
@@ -60,6 +61,10 @@ export default function LegalHubPage() {
   const { consultants, templates, services, resources, selectedConsultant, searchQuery, filterCategory } =
     useAppSelector((state) => state.legalHub)
   const [activeTab, setActiveTab] = useState("consultants")
+
+  useEffect(() => {
+    if (consultants.length === 0) dispatch(fetchLegalData())
+  }, [dispatch])
   
   // Paystack payment hook
   const { isPaymentOpen, setIsPaymentOpen, paymentConfig, openPayment, closePayment } = usePaystackPayment()

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
-import { addReport, selectReport, clearSelectedReport, resetSubmissionSuccess } from "@/store/slices/securitySlice"
+import { fetchSecurityData, addReport, selectReport, clearSelectedReport, resetSubmissionSuccess } from "@/store/slices/securitySlice"
 import {
   Shield,
   Phone,
@@ -48,6 +48,11 @@ import {
 export function SecurityHotlineView() {
   const dispatch = useAppDispatch()
   const { reports, contacts, selectedReport, submissionSuccess } = useAppSelector((state) => state.security)
+
+  useEffect(() => {
+    if (reports.length === 0) dispatch(fetchSecurityData())
+  }, [dispatch])
+
   const [activeTab, setActiveTab] = useState("report")
 
   // Form state

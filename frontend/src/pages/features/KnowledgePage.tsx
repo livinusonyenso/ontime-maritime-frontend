@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import {
+  fetchKnowledgeResources,
   setFilterCategory,
   setFilterType,
   setSearchQuery,
@@ -41,6 +42,10 @@ export default function KnowledgePage() {
     (state) => state.knowledge
   )
   const [activeTab, setActiveTab] = useState("all")
+
+  useEffect(() => {
+    if (resources.length === 0) dispatch(fetchKnowledgeResources())
+  }, [dispatch])
 
   const filteredResources = resources.filter((resource) => {
     const matchesCategory =

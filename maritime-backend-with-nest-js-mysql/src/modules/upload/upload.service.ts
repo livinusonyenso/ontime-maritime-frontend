@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { v2 as cloudinary } from 'cloudinary'
 
 @Injectable()
@@ -12,17 +12,14 @@ export class UploadService {
   }
 
   async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const base64 = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
+    const base64 = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
 
-      cloudinary.uploader.upload(
-        base64,
-        { folder },
-        (error, result) => {
-          if (error) return reject(error)
-          resolve(result?.secure_url ?? '')
-        },
-      )
-    })
+    const result = await cloudinary.uploader.upload(base64, { folder })
+
+    if (!result?.secure_url) {
+      throw new InternalServerErrorException('Cloudinary upload failed: no URL returned.')
+    }
+
+    return result.secure_url
   }
 }

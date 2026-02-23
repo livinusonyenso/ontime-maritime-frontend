@@ -12,6 +12,9 @@ import { memoryStorage } from 'multer'
 import { UploadService } from './upload.service'
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard'
 
+const ALLOWED_TYPES = /^(image\/(jpeg|png|webp|gif)|application\/pdf)$/
+const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
+
 @Controller('upload')
 @UseGuards(JwtAuthGuard)
 export class UploadController {
@@ -21,10 +24,11 @@ export class UploadController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+      limits: { fileSize: MAX_SIZE },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/^image\/(jpeg|png|webp|gif)$/)) {
-          return cb(new BadRequestException('Only image files are allowed.'), false)
+        if (!ALLOWED_TYPES.test(file.mimetype)) {
+          // Pass null + false — let the handler throw the proper NestJS exception
+          return cb(null, false)
         }
         cb(null, true)
       },
@@ -34,7 +38,11 @@ export class UploadController {
     @UploadedFile() file: Express.Multer.File,
     @Query('folder') folder: string = 'ontime-maritime',
   ) {
-    if (!file) throw new BadRequestException('No file provided.')
+    if (!file) {
+      throw new BadRequestException(
+        'No file provided or file type not allowed. Accepted: jpeg, png, webp, gif, pdf.',
+      )
+    }
     const url = await this.uploadService.uploadFile(file, folder)
     return { url }
   }

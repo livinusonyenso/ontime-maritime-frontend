@@ -1,6 +1,18 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import type { SecurityReport, SecurityContact } from '../../types/maritime'
-import { dummySecurityReports, dummySecurityContacts } from '../../data/dummyData'
+import api from '../../lib/api'
+import { deepCamelize } from '../../lib/utils'
+
+export const fetchSecurityData = createAsyncThunk('security/fetchAll', async () => {
+  const [reportsRes, contactsRes] = await Promise.all([
+    api.get('/security/reports'),
+    api.get('/security/contacts'),
+  ])
+  return {
+    reports: deepCamelize(reportsRes.data) as SecurityReport[],
+    contacts: deepCamelize(contactsRes.data) as SecurityContact[],
+  }
+})
 
 interface SecurityState {
   reports: SecurityReport[]
@@ -12,8 +24,8 @@ interface SecurityState {
 }
 
 const initialState: SecurityState = {
-  reports: dummySecurityReports,
-  contacts: dummySecurityContacts,
+  reports: [],
+  contacts: [],
   selectedReport: null,
   loading: false,
   error: null,
@@ -58,6 +70,16 @@ const securitySlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSecurityData.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchSecurityData.fulfilled, (state, action) => {
+        state.loading = false
+        state.reports = action.payload.reports
+        state.contacts = action.payload.contacts
+      })
+      .addCase(fetchSecurityData.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load security data' })
   },
 })
 

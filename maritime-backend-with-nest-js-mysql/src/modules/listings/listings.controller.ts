@@ -29,6 +29,12 @@ export class ListingsController {
     return this.listingsService.findByCategory(category as any, skip, take)
   }
 
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  async findMySeller(@Request() req) {
+    return this.listingsService.findMySeller(req.user.id)
+  }
+
   @Get(':id')
   async findById(@Param('id') id: string) {
     return this.listingsService.findById(id);

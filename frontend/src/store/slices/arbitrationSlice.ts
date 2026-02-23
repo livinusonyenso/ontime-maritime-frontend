@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import type { DisputeCase } from '../../types/maritime'
-import { dummyDisputeCases } from '../../data/dummyData'
+import api from '../../lib/api'
+import { deepCamelize } from '../../lib/utils'
+
+export const fetchDisputes = createAsyncThunk('arbitration/fetchAll', async () => {
+  const res = await api.get('/disputes')
+  return deepCamelize(res.data) as DisputeCase[]
+})
 
 interface ArbitrationState {
   disputes: DisputeCase[]
@@ -11,7 +17,7 @@ interface ArbitrationState {
 }
 
 const initialState: ArbitrationState = {
-  disputes: dummyDisputeCases,
+  disputes: [],
   selectedDispute: null,
   aiAnalysisInProgress: false,
   loading: false,
@@ -92,6 +98,12 @@ const arbitrationSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchDisputes.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchDisputes.fulfilled, (state, action) => { state.loading = false; state.disputes = action.payload })
+      .addCase(fetchDisputes.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load disputes' })
   },
 })
 

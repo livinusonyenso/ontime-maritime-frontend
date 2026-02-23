@@ -18,6 +18,13 @@ export class ListingsService {
     })
   }
 
+  async findMySeller(sellerId: string) {
+    return this.prisma.listing.findMany({
+      where: { seller_id: sellerId },
+      orderBy: { created_at: 'desc' },
+    })
+  }
+
   async findAll(skip = 0, take = 20) {
     return this.prisma.listing.findMany({
       skip,

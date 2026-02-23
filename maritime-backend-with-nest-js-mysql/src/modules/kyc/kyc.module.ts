@@ -1,11 +1,10 @@
 import { Module } from "@nestjs/common"
-
 import { KycService } from "./kyc.service"
 import { KycController } from "./kyc.controller"
-
+import { UploadModule } from "../upload/upload.module"
 
 @Module({
-  imports: [],
+  imports: [UploadModule],
   controllers: [KycController],
   providers: [KycService],
   exports: [KycService],

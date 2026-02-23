@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import type { KnowledgeResource } from '../../types/maritime'
-import { dummyKnowledgeResources } from '../../data/dummyData'
+import api from '../../lib/api'
+import { deepCamelize } from '../../lib/utils'
+
+export const fetchKnowledgeResources = createAsyncThunk('knowledge/fetchAll', async () => {
+  const res = await api.get('/knowledge')
+  return deepCamelize(res.data) as KnowledgeResource[]
+})
 
 interface KnowledgeState {
   resources: KnowledgeResource[]
@@ -13,7 +19,7 @@ interface KnowledgeState {
 }
 
 const initialState: KnowledgeState = {
-  resources: dummyKnowledgeResources,
+  resources: [],
   selectedResource: null,
   filterCategory: 'all',
   filterType: 'all',
@@ -50,6 +56,12 @@ const knowledgeSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchKnowledgeResources.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchKnowledgeResources.fulfilled, (state, action) => { state.loading = false; state.resources = action.payload })
+      .addCase(fetchKnowledgeResources.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load resources' })
   },
 })
 

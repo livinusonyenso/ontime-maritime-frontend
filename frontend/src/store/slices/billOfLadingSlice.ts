@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import type { BillOfLading, ShippingQuoteRequest, ShippingQuote } from '../../types/maritime'
-import { dummyBillsOfLading, dummyShippingQuotes } from '../../data/dummyData'
+import api from '../../lib/api'
+import { deepCamelize } from '../../lib/utils'
+
+export const fetchBillsOfLading = createAsyncThunk('billOfLading/fetchAll', async () => {
+  const res = await api.get('/bol')
+  return deepCamelize(res.data) as BillOfLading[]
+})
 
 interface BillOfLadingState {
   billsOfLading: BillOfLading[]
@@ -12,9 +18,9 @@ interface BillOfLadingState {
 }
 
 const initialState: BillOfLadingState = {
-  billsOfLading: dummyBillsOfLading,
+  billsOfLading: [],
   selectedBol: null,
-  quoteRequests: dummyShippingQuotes,
+  quoteRequests: [],
   loading: false,
   error: null,
   validationInProgress: false,
@@ -100,6 +106,12 @@ const billOfLadingSlice = createSlice({
     setValidationInProgress: (state, action: PayloadAction<boolean>) => {
       state.validationInProgress = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchBillsOfLading.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchBillsOfLading.fulfilled, (state, action) => { state.loading = false; state.billsOfLading = action.payload })
+      .addCase(fetchBillsOfLading.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load bills of lading' })
   },
 })
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
-import { setSearchQuery, selectVessel, clearSelectedVessel } from "@/store/slices/vesselTrackingSlice"
+import { fetchVessels, setSearchQuery, selectVessel, clearSelectedVessel } from "@/store/slices/vesselTrackingSlice"
 import {
   Ship,
   Search,
@@ -29,6 +29,10 @@ export default function VesselTrackingPage() {
   const dispatch = useAppDispatch()
   const { vessels, selectedVessel, searchQuery } = useAppSelector((state) => state.vesselTracking)
   const [searchInput, setSearchInput] = useState("")
+
+  useEffect(() => {
+    if (vessels.length === 0) dispatch(fetchVessels())
+  }, [dispatch])
 
   const filteredVessels = vessels.filter(
     (vessel) =>

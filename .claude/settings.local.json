@@ -6,7 +6,13 @@
       "Bash(npx nest build)",
       "Bash(npx prisma:*)",
       "Bash(npm install)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(echo:*)",
+      "Bash(tasklist:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "Bash(npx ts-node:*)"
     ]
   }
 }

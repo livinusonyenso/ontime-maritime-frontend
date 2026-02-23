@@ -24,6 +24,7 @@ import { useListings } from "@/contexts/listings-context"
 import { useToast } from "@/hooks/use-toast"
 import type { Listing } from "@/types"
 import { Upload, X } from "lucide-react"
+import api from "@/lib/api"
 
 const listingSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -105,15 +106,30 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
     }
   }, [listing, form, open])
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setUploading(true)
-      setTimeout(() => {
-        const newPhotos = Array.from(e.target.files!).map(() => `/generic-placeholder-300px.png?height=300&width=600`)
-        setPhotos((prev) => [...prev, ...newPhotos])
-        setUploading(false)
-        toast({ title: "Photo uploaded", description: "Image added successfully" })
-      }, 1000)
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return
+    setUploading(true)
+    try {
+      const uploaded: string[] = []
+      for (const file of Array.from(e.target.files)) {
+        const formData = new FormData()
+        formData.append("file", file)
+        const response = await api.post("/upload?folder=listings", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        uploaded.push(response.data.url)
+      }
+      setPhotos((prev) => [...prev, ...uploaded])
+      toast({ title: "Photo uploaded", description: `${uploaded.length} image(s) uploaded successfully.` })
+    } catch (err: any) {
+      toast({
+        title: "Upload failed",
+        description: err?.data?.message || err.message || "Could not upload image.",
+        variant: "destructive",
+      })
+    } finally {
+      setUploading(false)
+      e.target.value = ""
     }
   }
 
@@ -130,8 +146,10 @@ export function ListingDialog({ open, onOpenChange, listing }: ListingDialogProp
       } else {
         await createListing({
           ...data,
+          container_number: data.container_number || null,
+          eta: data.eta || null,
           photos: photos.length > 0 ? photos : [],
-          certificates: [], // Mock certificates for now
+          certificates: [],
         })
         toast({ title: "Listing created", description: "Your new listing is now active." })
       }

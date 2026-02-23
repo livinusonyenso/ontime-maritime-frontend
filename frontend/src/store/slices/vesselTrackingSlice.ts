@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import type { Vessel } from '../../types/maritime'
-import { dummyVessels } from '../../data/dummyData'
+import api from '../../lib/api'
+import { deepCamelize } from '../../lib/utils'
+
+export const fetchVessels = createAsyncThunk('vesselTracking/fetchAll', async () => {
+  const res = await api.get('/vessels')
+  return deepCamelize(res.data) as Vessel[]
+})
 
 interface VesselTrackingState {
   vessels: Vessel[]
@@ -11,7 +17,7 @@ interface VesselTrackingState {
 }
 
 const initialState: VesselTrackingState = {
-  vessels: dummyVessels,
+  vessels: [],
   selectedVessel: null,
   searchQuery: '',
   loading: false,
@@ -49,6 +55,12 @@ const vesselTrackingSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchVessels.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchVessels.fulfilled, (state, action) => { state.loading = false; state.vessels = action.payload })
+      .addCase(fetchVessels.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load vessels' })
   },
 })
 

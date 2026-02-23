@@ -1,5 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
 import { MarketplaceListing } from "@/types/maritime"
+import api from "../../lib/api"
+import { deepCamelize } from "../../lib/utils"
+
+export const fetchSellerListings = createAsyncThunk("sellerListings/fetchMy", async () => {
+  const res = await api.get("/listings/my")
+  return deepCamelize(res.data) as MarketplaceListing[]
+})
 
 interface SellerListingState {
   listings: MarketplaceListing[]
@@ -17,18 +24,6 @@ const sellerListingSlice = createSlice({
   name: "sellerListings",
   initialState,
   reducers: {
-    getSellerListingsStart: (state) => {
-      state.loading = true
-      state.error = null
-    },
-    getSellerListingsSuccess: (state, action: PayloadAction<MarketplaceListing[]>) => {
-      state.listings = action.payload
-      state.loading = false
-    },
-    getSellerListingsFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false
-      state.error = action.payload
-    },
     addSellerListing: (state, action: PayloadAction<MarketplaceListing>) => {
       state.listings.unshift(action.payload)
     },
@@ -43,12 +38,15 @@ const sellerListingSlice = createSlice({
       state.listings = state.listings.filter((l) => l.id !== action.payload)
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSellerListings.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(fetchSellerListings.fulfilled, (state, action) => { state.loading = false; state.listings = action.payload })
+      .addCase(fetchSellerListings.rejected, (state, action) => { state.loading = false; state.error = action.error.message || "Failed to load seller listings" })
+  },
 })
 
 export const {
-  getSellerListingsStart,
-  getSellerListingsSuccess,
-  getSellerListingsFailure,
   addSellerListing,
   updateSellerListing,
   deleteSellerListing,

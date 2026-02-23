@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import {
+  fetchBillsOfLading,
   addBillOfLading,
   selectBol,
   clearSelectedBol,
@@ -49,6 +50,11 @@ export function EBOLView() {
   const { billsOfLading, selectedBol, quoteRequests } = useAppSelector(
     (state) => state.billOfLading
   )
+
+  useEffect(() => {
+    if (billsOfLading.length === 0) dispatch(fetchBillsOfLading())
+  }, [dispatch])
+
   const [activeTab, setActiveTab] = useState("overview")
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showQuoteDialog, setShowQuoteDialog] = useState(false)
