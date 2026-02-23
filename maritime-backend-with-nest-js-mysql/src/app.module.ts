@@ -19,7 +19,9 @@ import { RatingsModule } from './modules/ratings/ratings.module'
 import { ArbitrationModule } from './modules/arbitration/arbitration.module'
 import { InsuranceModule } from './modules/insurance/insurance.module'
 
+
 import { AppController } from './app.controller'
+import { UploadModule } from './modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { AppController } from './app.controller'
     RatingsModule,
     ArbitrationModule,
     InsuranceModule,
+    UploadModule,
   ],
   controllers: [AppController],
 })
