@@ -141,6 +141,25 @@ export class AdminService {
     })
   }
 
+  async getKycStats(): Promise<{ pending: number; approved: number; rejected: number }> {
+    const [pending, approved, rejected] = await Promise.all([
+      this.prisma.kyc.count({ where: { status: KycStatus.pending } }),
+      this.prisma.kyc.count({ where: { status: KycStatus.approved } }),
+      this.prisma.kyc.count({ where: { status: KycStatus.rejected } }),
+    ])
+    return { pending, approved, rejected }
+  }
+
+  async getKycByStatus(status: KycStatus, skip = 0, take = 20): Promise<Kyc[]> {
+    return this.prisma.kyc.findMany({
+      where: { status },
+      skip,
+      take,
+      include: { user: true },
+      orderBy: { created_at: "desc" },
+    })
+  }
+
   async approveKyc(kycId: string, adminId: string, comment?: string): Promise<Kyc> {
     const kyc = await this.prisma.kyc.findUnique({ where: { id: kycId } })
 

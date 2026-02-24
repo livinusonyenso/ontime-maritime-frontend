@@ -13,7 +13,7 @@ import {
 } from "@nestjs/common"
 import { JwtAuthGuard } from "../../guards/jwt-auth.guard"
 import { AdminService } from "./admin.service"
-import type { ListingStatus, UserRole } from "@prisma/client"
+import type { ListingStatus, UserRole, KycStatus } from "@prisma/client"
 
 // DTOs for request body validation
 class UpdateUserRoleDto {
@@ -137,6 +137,12 @@ export class AdminController {
 
   // ==================== KYC MANAGEMENT ====================
 
+  @Get("kyc/stats")
+  async getKycStats(@Request() req: any) {
+    this.checkAdminRole(req)
+    return this.adminService.getKycStats()
+  }
+
   @Get("kyc/pending")
   async getPendingKyc(
     @Query("skip") skip: string = "0",
@@ -145,6 +151,17 @@ export class AdminController {
   ) {
     this.checkAdminRole(req)
     return this.adminService.getPendingKyc(parseInt(skip), parseInt(take))
+  }
+
+  @Get("kyc/list")
+  async getKycList(
+    @Query("status") status: string = "pending",
+    @Query("skip") skip: string = "0",
+    @Query("take") take: string = "20",
+    @Request() req: any
+  ) {
+    this.checkAdminRole(req)
+    return this.adminService.getKycByStatus(status as KycStatus, parseInt(skip), parseInt(take))
   }
 
   @Post("kyc/:id/approve")

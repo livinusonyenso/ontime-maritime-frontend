@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import api from '../lib/api'
-import type { DashboardStats, User, KYC, AuditLog } from '../types'
+import type { DashboardStats, User, KYC, KycStats, AuditLog } from '../types'
 
 interface UserStats {
   totalUsers: number
@@ -13,6 +13,7 @@ interface AdminContextType {
   users: User[]
   userStats: UserStats | null
   pendingKyc: KYC[]
+  kycStats: KycStats | null
   auditLogs: AuditLog[]
   loading: boolean
   error: string | null
@@ -25,6 +26,8 @@ interface AdminContextType {
   suspendUser: (id: string, reason: string) => Promise<User>
   deleteUser: (id: string, reason: string) => Promise<void>
   getPendingKyc: (skip?: number, take?: number) => Promise<KYC[]>
+  getKycStats: () => Promise<KycStats>
+  getKycList: (status: string, skip?: number, take?: number) => Promise<KYC[]>
   approveKyc: (id: string, comment: string) => Promise<KYC>
   rejectKyc: (id: string, comment: string) => Promise<KYC>
   getAuditLogs: (skip?: number, take?: number) => Promise<AuditLog[]>
@@ -37,6 +40,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [pendingKyc, setPendingKyc] = useState<KYC[]>([])
+  const [kycStats, setKycStats] = useState<KycStats | null>(null)
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -220,6 +224,38 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const getKycStats = useCallback(async (): Promise<KycStats> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await api.get('/admin/kyc/stats')
+      const data: KycStats = response.data
+      setKycStats(data)
+      return data
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch KYC stats'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const getKycList = useCallback(async (status: string, skip = 0, take = 20): Promise<KYC[]> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await api.get('/admin/kyc/list', { params: { status, skip, take } })
+      return response.data as KYC[]
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to fetch KYC list'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   const approveKyc = useCallback(async (id: string, comment: string): Promise<KYC> => {
     try {
       setLoading(true)
@@ -286,6 +322,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         users,
         userStats,
         pendingKyc,
+        kycStats,
         auditLogs,
         loading,
         error,
@@ -298,6 +335,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         suspendUser,
         deleteUser,
         getPendingKyc,
+        getKycStats,
+        getKycList,
         approveKyc,
         rejectKyc,
         getAuditLogs,

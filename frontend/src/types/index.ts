@@ -18,15 +18,22 @@ export interface User {
 export interface KYC {
   id: string
   user_id: string
-  bvn: string
-  id_type: 'NIN' | 'passport' | 'drivers_license'
-  id_number: string
-  id_document_url: string
-  face_photo_url: string
+  bvn: string | null
+  id_type: 'NIN' | 'passport' | 'voter_card' | 'drivers_license' | null
+  id_number: string | null
+  id_document_url: string | null
+  face_photo_url: string | null
   status: 'pending' | 'approved' | 'rejected'
   admin_comment: string | null
   created_at: string
   updated_at: string
+  user?: { email: string; first_name?: string | null; last_name?: string | null }
+}
+
+export interface KycStats {
+  pending: number
+  approved: number
+  rejected: number
 }
 
 // Listing Types
