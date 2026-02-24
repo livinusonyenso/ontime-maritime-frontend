@@ -43,19 +43,26 @@ export class ListingsService {
   }
 
   async create(createListingDto: CreateListingDto, sellerId: string) {
-    return this.prisma.listing.create({
+    const row = await this.prisma.listing.create({
       data: {
         ...createListingDto,
         seller_id: sellerId,
-        status: ListingStatus.draft,
+        status: ListingStatus.active,
+      },
+      include: {
+        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
       },
     })
+    return this.mapListing(row)
   }
 
   async findMySeller(sellerId: string) {
     const rows = await this.prisma.listing.findMany({
       where: { seller_id: sellerId },
       orderBy: { created_at: 'desc' },
+      include: {
+        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
+      },
     })
     return rows.map(r => this.mapListing(r))
   }
@@ -119,13 +126,18 @@ export class ListingsService {
   }
 
   async update(id: string, updateListingDto: UpdateListingDto) {
-    return this.prisma.listing.update({
+    const row = await this.prisma.listing.update({
       where: { id },
       data: updateListingDto,
+      include: {
+        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
+      },
     })
+    return this.mapListing(row)
   }
 
   async delete(id: string) {
-    return this.prisma.listing.delete({ where: { id } })
+    await this.prisma.listing.delete({ where: { id } })
+    return { success: true, id }
   }
 }

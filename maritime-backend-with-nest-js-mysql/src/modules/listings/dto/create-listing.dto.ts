@@ -6,6 +6,7 @@ import {
   IsArray,
   IsOptional,
   IsBoolean,
+  IsObject,
   Min,
   MinLength,
   MaxLength,
@@ -15,6 +16,11 @@ import { ListingCategory } from "../../../common/enums"
 export class CreateListingDto {
   @IsEnum(ListingCategory)
   category: ListingCategory
+
+  /** Human-readable marketplace category (equipment, vessel, warehouse, etc.) */
+  @IsString()
+  @IsOptional()
+  marketplace_category?: string
 
   @IsString()
   @MinLength(5)
@@ -31,33 +37,94 @@ export class CreateListingDto {
   price_usd: number
 
   @IsString()
-  @MinLength(2)
-  origin_port: string
-
-  @IsString()
-  @MinLength(2)
-  destination_port: string
+  @IsOptional()
+  price_type?: string
 
   @IsString()
   @IsOptional()
-  container_number: string
+  currency?: string
+
+  @IsString()
+  @IsOptional()
+  origin_port?: string
+
+  @IsString()
+  @IsOptional()
+  destination_port?: string
+
+  @IsString()
+  @IsOptional()
+  container_number?: string
 
   @IsDateString()
-  eta: string
+  @IsOptional()
+  eta?: string
 
   @IsArray()
   @IsOptional()
-  photos: string[]
+  photos?: string[]
 
   @IsArray()
   @IsOptional()
-  certificates: string[]
+  images?: string[]
+
+  @IsArray()
+  @IsOptional()
+  certificates?: string[]
+
+  @IsObject()
+  @IsOptional()
+  location?: Record<string, any>
+
+  @IsObject()
+  @IsOptional()
+  specifications?: Record<string, string>
+
+  @IsString()
+  @IsOptional()
+  condition?: string
+
+  @IsString()
+  @IsOptional()
+  availability?: string
 
   @IsBoolean()
   @IsOptional()
-  is_perishable: boolean
+  bol_required?: boolean
+
+  @IsString()
+  @IsOptional()
+  bol_number?: string
+
+  @IsString()
+  @IsOptional()
+  bol_image?: string
 
   @IsBoolean()
   @IsOptional()
-  is_dangerous: boolean
+  bol_verified?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  featured?: boolean
+
+  @IsString()
+  @IsOptional()
+  seller_name?: string
+
+  @IsNumber()
+  @IsOptional()
+  seller_rating?: number
+
+  @IsBoolean()
+  @IsOptional()
+  is_perishable?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  is_dangerous?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  is_high_value?: boolean
 }
