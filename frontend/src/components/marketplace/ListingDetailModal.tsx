@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { unlockBol, selectUnlockedBols } from "@/store/slices/marketplaceSlice"
 import { useAuth } from "@/contexts/auth-context"
@@ -9,8 +9,82 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, DollarSign, Package, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2 } from "lucide-react"
+import { MapPin, DollarSign, Package, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+// ─── BOL document viewer ───────────────────────────────────────────────────────
+
+function BolDocumentViewer({ bolImage }: { bolImage: string }) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+
+  const isPdf =
+    bolImage.startsWith("data:application/pdf") ||
+    bolImage.toLowerCase().includes(".pdf") ||
+    bolImage.includes("/raw/upload/")
+
+  // Chrome blocks window.open() with data: URLs — convert to a blob URL instead
+  useEffect(() => {
+    if (!isPdf || !bolImage.startsWith("data:")) return
+    try {
+      const base64 = bolImage.split(",")[1]
+      const bytes  = atob(base64)
+      const arr    = new Uint8Array(bytes.length)
+      for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i)
+      const blob = new Blob([arr], { type: "application/pdf" })
+      const url  = URL.createObjectURL(blob)
+      setBlobUrl(url)
+      return () => URL.revokeObjectURL(url)
+    } catch {
+      // fall through — we'll show a plain link
+    }
+  }, [bolImage, isPdf])
+
+  const openUrl = isPdf && bolImage.startsWith("data:") ? blobUrl : bolImage
+
+  if (isPdf) {
+    return (
+      <div className="space-y-2">
+        <div className="aspect-3/4 border rounded-lg overflow-hidden bg-muted">
+          {openUrl ? (
+            <iframe
+              src={openUrl}
+              title="Bill of Lading PDF"
+              className="w-full h-full"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm">Loading PDF…</span>
+            </div>
+          )}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full gap-2"
+          onClick={() => window.open(openUrl ?? bolImage, "_blank")}
+          disabled={!openUrl}
+        >
+          <ExternalLink className="h-4 w-4" />
+          Open PDF in New Tab
+        </Button>
+      </div>
+    )
+  }
+
+  // Image (jpeg/png/webp)
+  return (
+    <div
+      className="aspect-3/4 bg-muted rounded border overflow-hidden relative group cursor-pointer"
+      onClick={() => window.open(bolImage, "_blank")}
+    >
+      <img src={bolImage} alt="Bill of Lading" className="w-full h-full object-contain" />
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-medium gap-2">
+        <ExternalLink className="h-4 w-4" /> View Full Size
+      </div>
+    </div>
+  )
+}
 
 interface ListingDetailModalProps {
   open: boolean
@@ -134,22 +208,10 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
                     </Alert>
                     
                     <div className="border rounded-lg p-4 bg-background">
-                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
                         <FileText className="h-4 w-4" /> Bill of Lading Document
                       </h4>
-                      <div className="aspect-[3/4] bg-muted rounded border overflow-hidden relative group cursor-pointer" onClick={() => window.open(listing.bolImage, '_blank')}>
-                         {listing.bolImage?.startsWith('data:image') ? (
-                            <img src={listing.bolImage} alt="Bill of Lading" className="w-full h-full object-contain" />
-                         ) : (
-                            <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <FileText className="h-12 w-12" />
-                                <span className="ml-2">PDF Document</span>
-                            </div>
-                         )}
-                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-medium">
-                            Click to View Full Size
-                         </div>
-                      </div>
+                      <BolDocumentViewer bolImage={listing.bolImage!} />
                     </div>
                   </div>
                 ) : (

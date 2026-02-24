@@ -160,6 +160,8 @@ model Listing {
 
   @@index([seller_id])
   @@index([status])
+  @@index([status, availability])   // marketplace: WHERE status='active' AND availability='available'
+  @@index([marketplace_category])   // category filter
   @@index([is_high_value])
   @@index([created_at])
   @@map("listings")

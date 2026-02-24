@@ -23,10 +23,11 @@ import { BolModule } from './modules/bol/bol.module'
 import { DisputesModule } from './modules/disputes/disputes.module'
 import { SecurityModule } from './modules/security/security.module'
 import { LegalModule } from './modules/legal/legal.module'
-import { KnowledgeModule } from './modules/knowledge/knowledge.module'
+import { KnowledgeModule }   from './modules/knowledge/knowledge.module'
+import { MarketplaceModule } from './modules/marketplace/marketplace.module'
 
 import { AppController } from './app.controller'
-import { UploadModule } from './modules/upload/upload.module'
+import { UploadModule }  from './modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { UploadModule } from './modules/upload/upload.module'
     SecurityModule,
     LegalModule,
     KnowledgeModule,
+    MarketplaceModule,
   ],
   controllers: [AppController],
 })

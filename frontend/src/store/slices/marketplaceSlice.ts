@@ -1,338 +1,222 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import type {
-  MarketplaceListing,
-  SellerProfile,
-  PurchaseRequest,
-} from "../../types/maritime";
-import api from "../../lib/api";
-import { deepCamelize } from "../../lib/utils";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
+import type { MarketplaceListing, SellerProfile, PurchaseRequest } from "../../types/maritime"
+import api from "../../lib/api"
+import { deepCamelize } from "../../lib/utils"
 
-export const fetchListings = createAsyncThunk("marketplace/fetchListings", async () => {
-  const res = await api.get("/listings")
-  return deepCamelize(res.data) as MarketplaceListing[]
-})
+// ─── Filter params ────────────────────────────────────────────────────────────
+
+export interface MarketplaceFilters {
+  search?:    string
+  category?:  string
+  minPrice?:  number
+  maxPrice?:  number
+  condition?: string
+  sort?:      "newest" | "price_asc" | "price_desc" | "featured"
+  skip?:      number
+  take?:      number
+}
+
+// ─── Thunks ───────────────────────────────────────────────────────────────────
+
+function cleanParams(params: MarketplaceFilters) {
+  return Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "")
+  )
+}
+
+/** Fetch (replace list) — called on mount or filter change */
+export const fetchListings = createAsyncThunk(
+  "marketplace/fetchListings",
+  async (params: MarketplaceFilters = {}) => {
+    const res  = await api.get("/marketplace/listings", { params: cleanParams(params) })
+    const body = res.data as { data: any[]; total: number; skip: number; take: number; hasMore: boolean }
+    return {
+      listings: deepCamelize(body.data) as MarketplaceListing[],
+      total:    body.total,
+      skip:     body.skip,
+      take:     body.take,
+      hasMore:  body.hasMore,
+    }
+  }
+)
+
+/** Append next page — called on "Load More" */
+export const fetchMoreListings = createAsyncThunk(
+  "marketplace/fetchMore",
+  async (params: MarketplaceFilters = {}) => {
+    const res  = await api.get("/marketplace/listings", { params: cleanParams(params) })
+    const body = res.data as { data: any[]; total: number; skip: number; take: number; hasMore: boolean }
+    return {
+      listings: deepCamelize(body.data) as MarketplaceListing[],
+      total:    body.total,
+      skip:     body.skip,
+      take:     body.take,
+      hasMore:  body.hasMore,
+    }
+  }
+)
+
+/** Fetch single listing detail — includes bol_image for the unlock modal */
+export const fetchListingDetail = createAsyncThunk(
+  "marketplace/fetchDetail",
+  async (id: string) => {
+    const res = await api.get(`/marketplace/listings/${id}`)
+    return deepCamelize(res.data) as MarketplaceListing
+  }
+)
+
+// ─── State ────────────────────────────────────────────────────────────────────
 
 interface MarketplaceState {
-  listings: MarketplaceListing[];
-  sellerProfiles: SellerProfile[];
-  purchaseRequests: PurchaseRequest[];
-  selectedListing: MarketplaceListing | null;
-  selectedSeller: SellerProfile | null;
-  filterCategory: string;
-  filterLocation: string;
-  searchQuery: string;
-  sortBy: "newest" | "price_low" | "price_high" | "rating";
-  loading: boolean;
-  error: string | null;
-  verificationInProgress: boolean;
-  unlockedBols: Record<string, string[]>; // userId -> listingId[]
+  listings:               MarketplaceListing[]
+  selectedListing:        MarketplaceListing | null
+  sellerProfiles:         SellerProfile[]
+  purchaseRequests:       PurchaseRequest[]
+  filterCategory:         string
+  filterLocation:         string
+  searchQuery:            string
+  sortBy:                 "newest" | "price_low" | "price_high" | "rating"
+  total:                  number
+  hasMore:                boolean
+  loading:                boolean
+  loadingMore:            boolean
+  loadingDetail:          boolean
+  error:                  string | null
+  verificationInProgress: boolean
+  unlockedBols:           Record<string, string[]>
 }
 
 const initialState: MarketplaceState = {
-  listings: [],
-  sellerProfiles: [],
-  purchaseRequests: [],
-  selectedListing: null,
-  selectedSeller: null,
-  filterCategory: "all",
-  filterLocation: "all",
-  searchQuery: "",
-  sortBy: "newest",
-  loading: false,
-  error: null,
+  listings:               [],
+  selectedListing:        null,
+  sellerProfiles:         [],
+  purchaseRequests:       [],
+  filterCategory:         "all",
+  filterLocation:         "all",
+  searchQuery:            "",
+  sortBy:                 "newest",
+  total:                  0,
+  hasMore:                false,
+  loading:                false,
+  loadingMore:            false,
+  loadingDetail:          false,
+  error:                  null,
   verificationInProgress: false,
-  unlockedBols: {},
-};
+  unlockedBols:           {},
+}
+
+// ─── Slice ────────────────────────────────────────────────────────────────────
 
 const marketplaceSlice = createSlice({
   name: "marketplace",
   initialState,
   reducers: {
-    /* ------------------------- LISTINGS CRUD ------------------------- */
-    setListings: (state, action: PayloadAction<MarketplaceListing[]>) => {
-      state.listings = action.payload;
-    },
-
-    addListing: (
-      state,
-      action: PayloadAction<
-        Omit<
-          MarketplaceListing,
-          "views" | "inquiries" | "createdAt" | "updatedAt"
-        >
-      >
-    ) => {
-      const newListing: MarketplaceListing = {
-        ...action.payload,
-        id: action.payload.id || `ml${Date.now()}`,
-        views: 0,
-        inquiries: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      state.listings.unshift(newListing);
-    },
-
-    updateListing: (
-      state,
-      action: PayloadAction<{ id: string; updates: Partial<MarketplaceListing> }>
-    ) => {
-      const index = state.listings.findIndex(
-        (l) => l.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.listings[index] = {
-          ...state.listings[index],
-          ...action.payload.updates,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-    },
-
-    deleteListing: (state, action: PayloadAction<string>) => {
-      state.listings = state.listings.filter((l) => l.id !== action.payload);
-    },
-
-    selectListing: (state, action: PayloadAction<string>) => {
-      state.selectedListing =
-        state.listings.find((l) => l.id === action.payload) || null;
-
-      const listing = state.listings.find((l) => l.id === action.payload);
-      if (listing) listing.views += 1;
-    },
-
-    clearSelectedListing: (state) => {
-      state.selectedListing = null;
-    },
-
-    /* ------------------------- SELLER CRUD --------------------------- */
-    selectSeller: (state, action: PayloadAction<string>) => {
-      state.selectedSeller =
-        state.sellerProfiles.find((s) => s.id === action.payload) || null;
-    },
-
-    clearSelectedSeller: (state) => {
-      state.selectedSeller = null;
-    },
-
-    addSellerProfile: (
-      state,
-      action: PayloadAction<
-        Omit<
-          SellerProfile,
-          | "id"
-          | "verified"
-          | "rating"
-          | "totalSales"
-          | "memberSince"
-          | "listings"
-          | "responseRate"
-          | "responseTime"
-        >
-      >
-    ) => {
-      const newSeller: SellerProfile = {
-        ...action.payload,
-        id: `seller${Date.now()}`,
-        verified: false,
-        rating: 0,
-        totalSales: 0,
-        memberSince: new Date().toISOString().split("T")[0],
-        listings: 0,
-        responseRate: 0,
-        responseTime: "New seller",
-      };
-
-      state.sellerProfiles.push(newSeller); // <-- PUSH (CREATE)
-    },
-
-    updateSeller: (
-      state,
-      action: PayloadAction<{ id: string; updates: Partial<SellerProfile> }>
-    ) => {
-      const index = state.sellerProfiles.findIndex(
-        (s) => s.id === action.payload.id
-      );
-
-      if (index !== -1) {
-        state.sellerProfiles[index] = {
-          ...state.sellerProfiles[index],
-          ...action.payload.updates,
-        };
-      }
-    },
-
-    deleteSeller: (state, action: PayloadAction<string>) => {
-      state.sellerProfiles = state.sellerProfiles.filter(
-        (s) => s.id !== action.payload
-      ); // <-- FILTER (DELETE)
-    },
-
-    /* -------------------- PURCHASE REQUEST HANDLING ------------------ */
-    addPurchaseRequest: (
-      state,
-      action: PayloadAction<
-        Omit<
-          PurchaseRequest,
-          | "id"
-          | "verificationStatus"
-          | "status"
-          | "paymentStatus"
-          | "createdAt"
-          | "updatedAt"
-        >
-      >
-    ) => {
-      const newRequest: PurchaseRequest = {
-        ...action.payload,
-        id: `pr${Date.now()}`,
-        verificationStatus: "pending",
-        status: "pending",
-        paymentStatus: "unpaid",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      state.purchaseRequests.unshift(newRequest);
-
-      const listing = state.listings.find(
-        (l) => l.id === action.payload.listingId
-      );
-      if (listing) listing.inquiries += 1;
-    },
-
-    verifyPurchaseRequest: (state, action: PayloadAction<string>) => {
-      const request = state.purchaseRequests.find(
-        (r) => r.id === action.payload
-      );
-      if (request) {
-        request.verificationStatus = "verified";
-        request.aiValidation = {
-          bolValid: true,
-          ownershipVerified: true,
-          originVerified: true,
-          destinationVerified: true,
-          inconsistencies: [],
-          riskLevel: "low",
-          validatedAt: new Date().toISOString(),
-        };
-        request.updatedAt = new Date().toISOString();
-      }
-    },
-
-    updatePurchaseRequestStatus: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        status: PurchaseRequest["status"];
-      }>
-    ) => {
-      const request = state.purchaseRequests.find(
-        (r) => r.id === action.payload.id
-      );
-      if (request) {
-        request.status = action.payload.status;
-        request.updatedAt = new Date().toISOString();
-      }
-    },
-
-    /* ------------------------- UI FILTERS ----------------------------- */
-    setFilterCategory: (state, action: PayloadAction<string>) => {
-      state.filterCategory = action.payload;
-    },
-
-    setFilterLocation: (state, action: PayloadAction<string>) => {
-      state.filterLocation = action.payload;
-    },
-
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
-    },
-
-    setSortBy: (
-      state,
-      action: PayloadAction<MarketplaceState["sortBy"]>
-    ) => {
-      state.sortBy = action.payload;
-    },
-
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
-
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-    },
-
-    setVerificationInProgress: (
-      state,
-      action: PayloadAction<boolean>
-    ) => {
-      state.verificationInProgress = action.payload;
-    },
+    setFilterCategory:  (state, action: PayloadAction<string>) => { state.filterCategory = action.payload },
+    setFilterLocation:  (state, action: PayloadAction<string>) => { state.filterLocation  = action.payload },
+    setSearchQuery:     (state, action: PayloadAction<string>) => { state.searchQuery     = action.payload },
+    setSortBy: (state, action: PayloadAction<MarketplaceState["sortBy"]>) => { state.sortBy = action.payload },
+    clearSelectedListing: (state) => { state.selectedListing = null },
 
     unlockBol: (state, action: PayloadAction<{ userId: string; listingId: string }>) => {
-      const { userId, listingId } = action.payload;
-      if (!state.unlockedBols[userId]) {
-        state.unlockedBols[userId] = [];
-      }
-      if (!state.unlockedBols[userId].includes(listingId)) {
-        state.unlockedBols[userId].push(listingId);
-      }
+      const { userId, listingId } = action.payload
+      if (!state.unlockedBols[userId]) state.unlockedBols[userId] = []
+      if (!state.unlockedBols[userId].includes(listingId)) state.unlockedBols[userId].push(listingId)
+    },
+
+    // Legacy local mutations kept for backward-compat
+    addListing: (state, action: PayloadAction<MarketplaceListing>) => { state.listings.unshift(action.payload) },
+    deleteListing: (state, action: PayloadAction<string>) => {
+      state.listings = state.listings.filter(l => l.id !== action.payload)
+    },
+    updateListing: (state, action: PayloadAction<{ id: string; updates: Partial<MarketplaceListing> }>) => {
+      const idx = state.listings.findIndex(l => l.id === action.payload.id)
+      if (idx !== -1) state.listings[idx] = { ...state.listings[idx], ...action.payload.updates }
+    },
+    addPurchaseRequest: (state, action: PayloadAction<PurchaseRequest>) => {
+      state.purchaseRequests.unshift(action.payload)
+    },
+    setLoading:                (state, action: PayloadAction<boolean>) => { state.loading = action.payload },
+    setError:                  (state, action: PayloadAction<string | null>) => { state.error = action.payload },
+    setVerificationInProgress: (state, action: PayloadAction<boolean>) => { state.verificationInProgress = action.payload },
+    selectSeller: (_state, _action: PayloadAction<string>) => { /* noop – for compat */ },
+    clearSelectedSeller: (_state) => { /* noop */ },
+    addSellerProfile: (state, action: PayloadAction<SellerProfile>) => { state.sellerProfiles.push(action.payload) },
+    updateSeller: (state, action: PayloadAction<{ id: string; updates: Partial<SellerProfile> }>) => {
+      const idx = state.sellerProfiles.findIndex(s => s.id === action.payload.id)
+      if (idx !== -1) state.sellerProfiles[idx] = { ...state.sellerProfiles[idx], ...action.payload.updates }
+    },
+    deleteSeller: (state, action: PayloadAction<string>) => {
+      state.sellerProfiles = state.sellerProfiles.filter(s => s.id !== action.payload)
+    },
+    selectListing: (state, action: PayloadAction<string>) => {
+      state.selectedListing = state.listings.find(l => l.id === action.payload) ?? null
+    },
+    verifyPurchaseRequest: (_state, _action: PayloadAction<string>) => { /* noop */ },
+    updatePurchaseRequestStatus: (state, action: PayloadAction<{ id: string; status: PurchaseRequest["status"] }>) => {
+      const req = state.purchaseRequests.find(r => r.id === action.payload.id)
+      if (req) req.status = action.payload.status
     },
   },
   extraReducers: (builder) => {
+    // fetchListings — replace list
     builder
-      .addCase(fetchListings.pending, (state) => { state.loading = true; state.error = null })
-      .addCase(fetchListings.fulfilled, (state, action) => { state.loading = false; state.listings = action.payload })
-      .addCase(fetchListings.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to load listings' })
-  },
-});
+      .addCase(fetchListings.pending,   (state) => { state.loading = true; state.error = null })
+      .addCase(fetchListings.fulfilled, (state, action) => {
+        state.loading  = false
+        state.listings = action.payload.listings
+        state.total    = action.payload.total
+        state.hasMore  = action.payload.hasMore
+      })
+      .addCase(fetchListings.rejected,  (state, action) => {
+        state.loading = false
+        state.error   = action.error.message ?? "Failed to load listings"
+      })
 
-/* -------------------------------------------------------------------------- */
-/*                              EXPORT ACTIONS                                 */
-/* -------------------------------------------------------------------------- */
+    // fetchMoreListings — append
+    builder
+      .addCase(fetchMoreListings.pending,   (state) => { state.loadingMore = true })
+      .addCase(fetchMoreListings.fulfilled, (state, action) => {
+        state.loadingMore = false
+        state.listings    = [...state.listings, ...action.payload.listings]
+        state.total       = action.payload.total
+        state.hasMore     = action.payload.hasMore
+      })
+      .addCase(fetchMoreListings.rejected,  (state) => { state.loadingMore = false })
+
+    // fetchListingDetail
+    builder
+      .addCase(fetchListingDetail.pending,   (state) => { state.loadingDetail = true })
+      .addCase(fetchListingDetail.fulfilled, (state, action) => {
+        state.loadingDetail   = false
+        state.selectedListing = action.payload
+      })
+      .addCase(fetchListingDetail.rejected,  (state) => { state.loadingDetail = false })
+  },
+})
 
 export const {
-  setListings,
-  addListing,
-  updateListing,
-  deleteListing,
-  selectListing,
-  clearSelectedListing,
-  selectSeller,
-  clearSelectedSeller,
-  addSellerProfile,
-  updateSeller,
-  deleteSeller,
-  addPurchaseRequest,
-  verifyPurchaseRequest,
-  updatePurchaseRequestStatus,
-  setFilterCategory,
-  setFilterLocation,
-  setSearchQuery,
-  setSortBy,
-  setLoading,
-  setError,
-  setVerificationInProgress,
-  unlockBol,
-} = marketplaceSlice.actions;
+  setFilterCategory, setFilterLocation, setSearchQuery, setSortBy,
+  clearSelectedListing, unlockBol,
+  addListing, deleteListing, updateListing, addPurchaseRequest,
+  setLoading, setError, setVerificationInProgress,
+  selectSeller, clearSelectedSeller, addSellerProfile, updateSeller, deleteSeller,
+  selectListing, verifyPurchaseRequest, updatePurchaseRequestStatus,
+} = marketplaceSlice.actions
 
-export default marketplaceSlice.reducer;
+export default marketplaceSlice.reducer
 
-/* --------------------------- SELECTORS ----------------------------------- */
+// ─── Selectors ────────────────────────────────────────────────────────────────
 
-export const selectSellerProfiles = (state: any) =>
-  state.marketplace.sellerProfiles;
-
-export const selectSellerById = (state: any, sellerId: string) =>
-  state.marketplace.sellerProfiles.find((s: SellerProfile) => s.id === sellerId);
-
-export const selectAllListings = (state: any) =>
-  state.marketplace.listings;
-
-export const selectSellerListings = (state: any, sellerId: string) =>
-  state.marketplace.listings.filter((l: MarketplaceListing) => l.sellerId === sellerId);
-
-export const selectUnlockedBols = (state: any, userId: string) =>
-  state.marketplace.unlockedBols[userId] || [];
+export const selectAllListings           = (state: any) => state.marketplace.listings           as MarketplaceListing[]
+export const selectSelectedListing       = (state: any) => state.marketplace.selectedListing    as MarketplaceListing | null
+export const selectMarketplaceTotal      = (state: any) => state.marketplace.total              as number
+export const selectMarketplaceHasMore    = (state: any) => state.marketplace.hasMore            as boolean
+export const selectMarketplaceLoading    = (state: any) => state.marketplace.loading            as boolean
+export const selectMarketplaceLoadingMore= (state: any) => state.marketplace.loadingMore        as boolean
+export const selectSellerProfiles        = (state: any) => state.marketplace.sellerProfiles     as SellerProfile[]
+export const selectSellerById            = (state: any, id: string) =>
+  (state.marketplace.sellerProfiles as SellerProfile[]).find(s => s.id === id)
+export const selectSellerListings        = (state: any, sellerId: string) =>
+  (state.marketplace.listings as MarketplaceListing[]).filter(l => l.sellerId === sellerId)
+export const selectUnlockedBols          = (state: any, userId: string) =>
+  (state.marketplace.unlockedBols[userId] ?? []) as string[]
