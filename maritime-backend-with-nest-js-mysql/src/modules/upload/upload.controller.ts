@@ -13,7 +13,7 @@ import { UploadService } from './upload.service'
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard'
 
 const ALLOWED_TYPES = /^(image\/(jpeg|png|webp|gif)|application\/pdf)$/
-const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
+const MAX_SIZE = 50 * 1024 * 1024 // 50 MB
 
 @Controller('upload')
 @UseGuards(JwtAuthGuard)

@@ -137,7 +137,7 @@ model Listing {
   availability         String          @default("available") @db.VarChar(20)
   bol_required         Boolean         @default(false)
   bol_number           String?         @db.VarChar(100)
-  bol_image            String?         @db.Text
+  bol_image            String?         @db.LongText
   bol_verified         Boolean         @default(false)
   featured             Boolean         @default(false)
   views                Int             @default(0)

@@ -2,9 +2,15 @@ import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from './app.module'
 import { SecurityMiddleware } from './common/middleware/security.middleware'
+import { json, urlencoded } from 'express'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  // Disable the default body parser so we can set our own size limits
+  const app = await NestFactory.create(AppModule, { bodyParser: false })
+
+  // Allow up to 50 MB for JSON bodies (base64 images / PDFs) and form data
+  app.use(json({ limit: '50mb' }))
+  app.use(urlencoded({ extended: true, limit: '50mb' }))
 
   // Enable CORS FIRST before any other middleware
   app.enableCors({
