@@ -51,7 +51,7 @@ export const navigationConfig: NavigationConfig = {
     { href: "/dashboard/buyer/payments", label: "Payments", icon: CreditCard },
   ],
   seller: [
-    { href: "/dashboard/seller", label: "Market", icon: Store },
+    
     {
       href: "/dashboard/seller/overview",
       label: "Overview",
