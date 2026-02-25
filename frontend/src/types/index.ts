@@ -50,6 +50,11 @@ export interface AdminListing {
   category: string
   marketplace_category: string
   condition: string
+  images: string[] | null
+  bol_image: string | null
+  bol_required: boolean
+  bol_verified: boolean
+  location: { city?: string; country?: string; port?: string } | null
   rejection_reason: string | null
   approved_at: string | null
   rejected_at: string | null

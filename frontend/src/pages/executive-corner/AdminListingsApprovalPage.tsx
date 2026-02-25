@@ -28,6 +28,11 @@ import {
   User,
   Calendar,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  ExternalLink,
+  MapPin,
 } from "lucide-react"
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
@@ -58,6 +63,61 @@ function sellerName(listing: AdminListing) {
   const { first_name, last_name, email } = listing.seller
   const name = [first_name, last_name].filter(Boolean).join(" ")
   return name || email
+}
+
+// ─── BOL document viewer ──────────────────────────────────────────────────────
+
+function BolViewer({ src }: { src: string }) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+
+  const isPdf =
+    src.startsWith("data:application/pdf") ||
+    src.toLowerCase().includes(".pdf") ||
+    src.includes("/raw/upload/")
+
+  useEffect(() => {
+    if (!isPdf || !src.startsWith("data:")) { setBlobUrl(null); return }
+    const base64 = src.split(",")[1]
+    const bytes  = atob(base64)
+    const arr    = new Uint8Array(bytes.length)
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i)
+    const blob = new Blob([arr], { type: "application/pdf" })
+    const url  = URL.createObjectURL(blob)
+    setBlobUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [src, isPdf])
+
+  const embedSrc = blobUrl ?? src
+
+  const openInNewTab = () => window.open(embedSrc, "_blank", "noopener,noreferrer")
+
+  if (isPdf) {
+    return (
+      <div className="space-y-2">
+        <iframe
+          src={embedSrc}
+          title="BOL Document"
+          className="w-full h-64 rounded border bg-muted"
+        />
+        <Button variant="outline" size="sm" className="gap-2" onClick={openInNewTab}>
+          <ExternalLink className="h-4 w-4" /> Open PDF in New Tab
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      <img
+        src={src}
+        alt="BOL Document"
+        className="w-full max-h-64 rounded border object-contain bg-muted"
+      />
+      <Button variant="outline" size="sm" className="gap-2" onClick={() => window.open(src, "_blank", "noopener,noreferrer")}>
+        <ExternalLink className="h-4 w-4" /> Open Image in New Tab
+      </Button>
+    </div>
+  )
 }
 
 // ─── Listing row ──────────────────────────────────────────────────────────────
@@ -152,6 +212,10 @@ export default function AdminListingsApprovalPage() {
 
   // View dialog
   const [viewListing, setViewListing] = useState<AdminListing | null>(null)
+  const [imgIndex, setImgIndex]       = useState(0)
+
+  // Reset image index when a new listing is opened
+  useEffect(() => { setImgIndex(0) }, [viewListing?.id])
 
   // Reject dialog
   const [rejectTarget, setRejectTarget]   = useState<AdminListing | null>(null)
@@ -302,53 +366,129 @@ export default function AdminListingsApprovalPage() {
 
       {/* View detail dialog */}
       <Dialog open={!!viewListing} onOpenChange={() => setViewListing(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{viewListing?.title}</DialogTitle>
             <DialogDescription>Listing details</DialogDescription>
           </DialogHeader>
-          {viewListing && (
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Status</span>
-                {statusBadge(viewListing.status)}
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Seller</span>
-                <span className="font-medium">{sellerName(viewListing)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Price</span>
-                <span className="font-medium">
-                  {viewListing.currency ?? "USD"} {Number(viewListing.price_usd).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Category</span>
-                <span className="font-medium capitalize">
-                  {viewListing.marketplace_category ?? viewListing.category}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Condition</span>
-                <span className="font-medium capitalize">{viewListing.condition?.replace(/_/g, " ")}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Submitted</span>
-                <span className="font-medium">{fmtDate(viewListing.created_at)}</span>
-              </div>
-              {viewListing.rejection_reason && (
-                <div className="bg-red-50 border border-red-200 rounded p-3">
-                  <p className="text-xs font-medium text-red-700 mb-1">Rejection reason</p>
-                  <p className="text-xs text-red-600">{viewListing.rejection_reason}</p>
+          {viewListing && (() => {
+            const images = viewListing.images ?? []
+            const location = [viewListing.location?.city, viewListing.location?.country].filter(Boolean).join(", ")
+            return (
+              <div className="space-y-4 text-sm">
+
+                {/* Image gallery */}
+                {images.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Photos ({images.length})</p>
+                    <div className="relative bg-muted rounded-lg overflow-hidden h-56">
+                      <img
+                        src={images[imgIndex]}
+                        alt={`Image ${imgIndex + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {images.length > 1 && (
+                        <>
+                          <button
+                            onClick={() => setImgIndex(i => (i - 1 + images.length) % images.length)}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setImgIndex(i => (i + 1) % images.length)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
+                            {imgIndex + 1} / {images.length}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    {images.length > 1 && (
+                      <div className="flex gap-1.5 overflow-x-auto pb-1">
+                        {images.map((img, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setImgIndex(i)}
+                            className={`shrink-0 w-14 h-14 rounded border-2 overflow-hidden transition-all ${
+                              i === imgIndex ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
+                            }`}
+                          >
+                            <img src={img} alt="" className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* BOL document */}
+                {viewListing.bol_image && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                      <FileText className="h-3.5 w-3.5" /> Bill of Lading Document
+                    </p>
+                    <BolViewer src={viewListing.bol_image} />
+                  </div>
+                )}
+
+                {/* Meta grid */}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 border-t pt-3">
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Status</span>
+                    {statusBadge(viewListing.status)}
+                  </div>
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Seller</span>
+                    <span className="font-medium">{sellerName(viewListing)}</span>
+                  </div>
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Price</span>
+                    <span className="font-medium">
+                      {viewListing.currency ?? "USD"} {Number(viewListing.price_usd).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Category</span>
+                    <span className="font-medium capitalize">
+                      {viewListing.marketplace_category ?? viewListing.category}
+                    </span>
+                  </div>
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Condition</span>
+                    <span className="font-medium capitalize">{viewListing.condition?.replace(/_/g, " ")}</span>
+                  </div>
+                  {location && (
+                    <div className="flex justify-between col-span-2 sm:col-span-1">
+                      <span className="text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />Location</span>
+                      <span className="font-medium">{location}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between col-span-2 sm:col-span-1">
+                    <span className="text-muted-foreground">Submitted</span>
+                    <span className="font-medium">{fmtDate(viewListing.created_at)}</span>
+                  </div>
                 </div>
-              )}
-              <div>
-                <p className="text-muted-foreground mb-1">Description</p>
-                <p className="text-foreground whitespace-pre-line leading-relaxed">{viewListing.description}</p>
+
+                {/* Rejection reason */}
+                {viewListing.rejection_reason && (
+                  <div className="bg-red-50 border border-red-200 rounded p-3">
+                    <p className="text-xs font-medium text-red-700 mb-1">Rejection reason</p>
+                    <p className="text-xs text-red-600">{viewListing.rejection_reason}</p>
+                  </div>
+                )}
+
+                {/* Description */}
+                <div className="border-t pt-3">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Description</p>
+                  <p className="text-foreground whitespace-pre-line leading-relaxed">{viewListing.description}</p>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
           <DialogFooter className="gap-2">
             {viewListing?.status === "pending" && (
               <>
