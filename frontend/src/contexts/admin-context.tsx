@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import api from '../lib/api'
-import type { DashboardStats, User, KYC, KycStats, AdminListing, ListingStats, AuditLog } from '../types'
+import type { DashboardStats, User, KYC, KycStats, AdminListing, ListingStats, AuditLog, ActivityEntry } from '../types'
 
 interface UserStats {
   totalUsers: number

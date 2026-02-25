@@ -316,28 +316,65 @@ export class AdminService {
     const [
       totalUsers,
       totalListings,
+      pendingListings,
       totalTransactions,
       pendingKyc,
       activeAuctions,
       revenueData,
+      rawActivity,
     ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.listing.count({ where: { status: ListingStatus.active } }),
+      this.prisma.listing.count({ where: { status: ListingStatus.pending } }),
       this.prisma.transaction.count(),
       this.prisma.kyc.count({ where: { status: KycStatus.pending } }),
       this.prisma.auction.count({ where: { status: "active" } }),
       this.prisma.transaction.aggregate({
         _sum: { commission_amount: true },
       }),
+      this.prisma.auditLog.findMany({
+        take: 10,
+        orderBy: { timestamp: "desc" },
+      }),
     ])
 
+    // Resolve actor names in one query (no N+1)
+    const actorIds = [
+      ...new Set(rawActivity.map(a => a.actor_id).filter((id): id is string => !!id)),
+    ]
+    const actors = actorIds.length > 0
+      ? await this.prisma.user.findMany({
+          where:  { id: { in: actorIds } },
+          select: { id: true, first_name: true, last_name: true, email: true },
+        })
+      : []
+    const actorMap = new Map(actors.map(u => [u.id, u]))
+
+    const recentActivity = rawActivity.map(log => {
+      const actor = log.actor_id ? actorMap.get(log.actor_id) : null
+      const actorName = actor
+        ? [actor.first_name, actor.last_name].filter(Boolean).join(" ") || actor.email
+        : "System"
+      return {
+        id:         log.id,
+        action:     log.action,
+        module:     log.module,
+        actor_id:   log.actor_id,
+        actor_name: actorName,
+        details:    log.details,
+        timestamp:  log.timestamp,
+      }
+    })
+
     return {
-      total_users: totalUsers,
-      total_listings: totalListings,
+      total_users:        totalUsers,
+      total_listings:     totalListings,
+      pending_listings:   pendingListings,
       total_transactions: totalTransactions,
-      total_revenue: revenueData._sum.commission_amount || 0,
-      pending_kyc: pendingKyc,
-      active_auctions: activeAuctions,
+      total_revenue:      revenueData._sum.commission_amount || 0,
+      pending_kyc:        pendingKyc,
+      active_auctions:    activeAuctions,
+      recent_activity:    recentActivity,
     }
   }
 

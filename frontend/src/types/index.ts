@@ -239,23 +239,36 @@ export interface InsurancePolicy {
 }
 
 // Admin Types
+
+export interface ActivityEntry {
+  id: string
+  action: string
+  module: string
+  actor_id: string | null
+  actor_name: string
+  details: Record<string, any> | null
+  timestamp: string
+}
+
 export interface DashboardStats {
   total_users: number
   total_listings: number
+  pending_listings: number
   total_transactions: number
   total_revenue: number
   pending_kyc: number
   active_auctions: number
+  recent_activity: ActivityEntry[]
 }
 
 export interface AuditLog {
   id: string
-  user_id: string
+  actor_id: string | null
   action: string
-  entity_type: string
-  entity_id: string
-  details: Record<string, any>
-  created_at: string
+  module: string
+  details: Record<string, any> | null
+  ip_address: string
+  timestamp: string
 }
 
 // API Response Types
