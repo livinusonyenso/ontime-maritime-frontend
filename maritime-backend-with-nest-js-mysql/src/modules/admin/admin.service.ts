@@ -212,7 +212,7 @@ export class AdminService {
     return this.prisma.listing.findMany({
       skip,
       take,
-      include: { seller: true },
+      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true } } },
       orderBy: { created_at: "desc" },
     })
   }
@@ -222,40 +222,59 @@ export class AdminService {
       where: { status },
       skip,
       take,
-      include: { seller: true },
+      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true } } },
+      orderBy: { created_at: "desc" },
     })
   }
 
-  async approveHighValueListing(listingId: string, adminId: string): Promise<Listing> {
-    const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
+  async getListingStats(): Promise<{ pending: number; active: number; rejected: number; archived: number }> {
+    const [pending, active, rejected, archived] = await Promise.all([
+      this.prisma.listing.count({ where: { status: ListingStatus.pending } }),
+      this.prisma.listing.count({ where: { status: ListingStatus.active } }),
+      this.prisma.listing.count({ where: { status: ListingStatus.rejected } }),
+      this.prisma.listing.count({ where: { status: ListingStatus.archived } }),
+    ])
+    return { pending, active, rejected, archived }
+  }
 
-    if (!listing) {
-      throw new NotFoundException("Listing not found")
-    }
+  async approveListing(listingId: string, adminId: string): Promise<Listing> {
+    const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
+    if (!listing) throw new NotFoundException("Listing not found")
 
     const updatedListing = await this.prisma.listing.update({
       where: { id: listingId },
-      data: { status: ListingStatus.active },
+      data: {
+        status: ListingStatus.active,
+        approved_by: adminId,
+        approved_at: new Date(),
+        rejection_reason: null,
+      },
     })
 
-    await this.logAction("APPROVED_LISTING", "listing", listingId, adminId, updatedListing)
+    await this.logAction("APPROVED_LISTING", "listing", listingId, adminId, { title: listing.title })
 
     return updatedListing
   }
 
+  // Keep old name as alias for backward compat
+  async approveHighValueListing(listingId: string, adminId: string): Promise<Listing> {
+    return this.approveListing(listingId, adminId)
+  }
+
   async rejectListing(listingId: string, adminId: string, reason: string): Promise<Listing> {
     const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
-
-    if (!listing) {
-      throw new NotFoundException("Listing not found")
-    }
+    if (!listing) throw new NotFoundException("Listing not found")
 
     const updatedListing = await this.prisma.listing.update({
       where: { id: listingId },
-      data: { status: ListingStatus.archived },
+      data: {
+        status: ListingStatus.rejected,
+        rejection_reason: reason,
+        rejected_at: new Date(),
+      },
     })
 
-    await this.logAction("REJECTED_LISTING", "listing", listingId, adminId, { reason })
+    await this.logAction("REJECTED_LISTING", "listing", listingId, adminId, { reason, title: listing.title })
 
     return updatedListing
   }

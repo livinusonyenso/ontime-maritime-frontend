@@ -38,7 +38,37 @@ export interface KycStats {
 
 // Listing Types
 export type ListingCategory = 'cargo' | 'vessel' | 'container' | 'equipment'
-export type ListingStatus = 'active' | 'sold' | 'expired' | 'pending'
+export type ListingStatus = 'draft' | 'pending' | 'active' | 'sold' | 'archived' | 'rejected' | 'executive_review'
+
+export interface AdminListing {
+  id: string
+  title: string
+  description: string
+  status: ListingStatus
+  price_usd: number
+  currency: string
+  category: string
+  marketplace_category: string
+  condition: string
+  rejection_reason: string | null
+  approved_at: string | null
+  rejected_at: string | null
+  created_at: string
+  updated_at: string
+  seller: {
+    id: string
+    email: string
+    first_name: string | null
+    last_name: string | null
+  } | null
+}
+
+export interface ListingStats {
+  pending: number
+  active: number
+  rejected: number
+  archived: number
+}
 
 export interface Listing {
   id: string

@@ -30,6 +30,7 @@ enum ListingStatus {
   active
   sold
   archived
+  rejected
 }
 
 enum TransactionType {
@@ -147,7 +148,11 @@ model Listing {
   is_perishable        Boolean         @default(false)
   is_dangerous         Boolean         @default(false)
   is_high_value        Boolean         @default(false)
-  status               ListingStatus   @default(draft)
+  status               ListingStatus   @default(pending)
+  rejection_reason     String?         @db.Text
+  approved_by          String?         @db.VarChar(36)
+  approved_at          DateTime?
+  rejected_at          DateTime?
   created_at           DateTime        @default(now())
   updated_at           DateTime        @updatedAt
 

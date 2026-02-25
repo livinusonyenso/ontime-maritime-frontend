@@ -136,14 +136,16 @@ export class MarketplaceService {
     const where   = buildWhere(query)
     const orderBy = buildOrderBy(query.sort)
 
-    // Run count + data in a single transaction for consistency
-    const [rows, total] = await this.prisma.$transaction([
-      this.prisma.listing.findMany({
-        skip, take, where, orderBy,
-        select: PUBLIC_SELECT,
-      }),
-      this.prisma.listing.count({ where }),
-    ])
+    // Interactive transaction pins all ops to the same MySQL connection so
+    // SET SESSION sort_buffer_size takes effect for the subsequent findMany.
+    const { rows, total } = await this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SET SESSION sort_buffer_size = 8388608`
+      const [data, count] = await Promise.all([
+        tx.listing.findMany({ skip, take, where, orderBy, select: PUBLIC_SELECT }),
+        tx.listing.count({ where }),
+      ])
+      return { rows: data, total: count }
+    })
 
     return {
       data:  rows.map(r => toPublic(r)),

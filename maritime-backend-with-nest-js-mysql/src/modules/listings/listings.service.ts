@@ -1,8 +1,49 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
 import { PrismaService } from "../../prisma/prisma.service"
-import { ListingCategory, ListingStatus } from "@prisma/client"
+import { ListingCategory, ListingStatus, Prisma } from "@prisma/client"
 import {  CreateListingDto  } from './dto/create-listing.dto'
 import {  UpdateListingDto  } from './dto/update-listing.dto'
+
+/**
+ * Select all listing fields EXCEPT bol_image for list/findMany queries.
+ * Excluding the LongText column prevents MySQL "Out of sort memory" (error 1038)
+ * because MySQL loads full row data into the sort buffer — a single bol_image
+ * can be several MB, exhausting the default 256 KB sort_buffer_size instantly.
+ * bol_image is fetched only in findById (single-item detail).
+ *
+ */
+const LIST_SELECT = {
+  id:                   true,
+  seller_id:            true,
+  category:             true,
+  marketplace_category: true,
+  title:                true,
+  description:          true,
+  price_usd:            true,
+  price_type:           true,
+  currency:             true,
+  images:               true,
+  location:             true,
+  specifications:       true,
+  condition:            true,
+  availability:         true,
+  bol_required:         true,
+  bol_number:           true,
+  bol_verified:         true,
+  featured:             true,
+  views:                true,
+  inquiries:            true,
+  seller_name:          true,
+  seller_rating:        true,
+  status:               true,
+  rejection_reason:     true,
+  approved_at:          true,
+  rejected_at:          true,
+  created_at:           true,
+  updated_at:           true,
+  // bol_image intentionally omitted — fetched only in findById
+  seller: { select: { id: true, email: true, first_name: true, last_name: true } },
+} satisfies Prisma.ListingSelect
 
 @Injectable()
 export class ListingsService {
@@ -36,9 +77,10 @@ export class ListingsService {
       featured:      listing.featured   ?? false,
       views:         listing.views      ?? 0,
       inquiries:     listing.inquiries  ?? 0,
-      status:        listing.status,
-      created_at:    listing.created_at,
-      updated_at:    listing.updated_at,
+      status:           listing.status,
+      rejection_reason: listing.rejection_reason ?? null,
+      created_at:       listing.created_at,
+      updated_at:       listing.updated_at,
     }
   }
 
@@ -47,67 +89,61 @@ export class ListingsService {
       data: {
         ...createListingDto,
         seller_id: sellerId,
-        status: ListingStatus.active,
+        status: ListingStatus.pending,
       },
-      include: {
-        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
-      },
+      select: LIST_SELECT,
     })
     return this.mapListing(row)
   }
 
   async findMySeller(sellerId: string) {
-    const rows = await this.prisma.listing.findMany({
-      where: { seller_id: sellerId },
-      orderBy: { created_at: 'desc' },
-      include: {
-        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
-      },
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SET SESSION sort_buffer_size = 8388608`
+      const rows = await tx.listing.findMany({
+        where:   { seller_id: sellerId },
+        orderBy: { created_at: 'desc' },
+        take:    200,
+        select:  LIST_SELECT,
+      })
+      return rows.map(r => this.mapListing(r))
     })
-    return rows.map(r => this.mapListing(r))
   }
 
   async findAll(skip = 0, take = 20) {
-    const rows = await this.prisma.listing.findMany({
-      skip: Number(skip),
-      take: Number(take),
-      where: { status: ListingStatus.active },
-      include: {
-        seller: {
-          select: { id: true, email: true, first_name: true, last_name: true },
-        },
-      },
-      orderBy: { created_at: 'desc' },
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SET SESSION sort_buffer_size = 8388608`
+      const rows = await tx.listing.findMany({
+        skip:    Number(skip),
+        take:    Number(take),
+        where:   { status: ListingStatus.active },
+        orderBy: { created_at: 'desc' },
+        select:  LIST_SELECT,
+      })
+      return rows.map(r => this.mapListing(r))
     })
-    console.log(`[ListingsService] findAll → ${rows.length} rows`)
-    return rows.map(r => this.mapListing(r))
   }
 
   async search(query: string, skip = 0, take = 20) {
     const rows = await this.prisma.listing.findMany({
-      skip: Number(skip),
-      take: Number(take),
+      skip:  Number(skip),
+      take:  Number(take),
       where: {
         AND: [
           { status: ListingStatus.active },
           { OR: [{ title: { contains: query } }, { description: { contains: query } }] },
         ],
       },
-      include: {
-        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
-      },
+      select: LIST_SELECT,
     })
     return rows.map(r => this.mapListing(r))
   }
 
   async findByCategory(category: ListingCategory, skip = 0, take = 20) {
     const rows = await this.prisma.listing.findMany({
-      skip: Number(skip),
-      take: Number(take),
-      where: { category, status: ListingStatus.active },
-      include: {
-        seller: { select: { id: true, email: true, first_name: true, last_name: true } },
-      },
+      skip:   Number(skip),
+      take:   Number(take),
+      where:  { category, status: ListingStatus.active },
+      select: LIST_SELECT,
     })
     return rows.map(r => this.mapListing(r))
   }

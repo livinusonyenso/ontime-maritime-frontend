@@ -64,6 +64,7 @@ import AdminDocumentsPage from "./pages/executive-corner/AdminDocumentsPage"
 import AdminInsurancePage from "./pages/executive-corner/AdminInsurancePage"
 import AdminAnalyticsPage from "./pages/executive-corner/AdminAnalyticsPage"
 import AdminKYCPage from "./pages/executive-corner/AdminKYCPage"
+import AdminListingsApprovalPage from "./pages/executive-corner/AdminListingsApprovalPage"
 import AdminAuditLogsPage from "./pages/executive-corner/AdminAuditLogsPage"
 import AdminSettingsPage from "./pages/executive-corner/AdminSettingsPage"
 import MaritimeSalesAdmin from "./pages/seller/MaritimeSalesAdmin"
@@ -176,6 +177,7 @@ function App() {
           <Route path="documents" element={<AdminDocumentsPage />} />
           <Route path="insurance" element={<AdminInsurancePage />} />
           <Route path="kyc" element={<AdminKYCPage />} />
+          <Route path="listings" element={<AdminListingsApprovalPage />} />
           <Route path="audit-logs" element={<AdminAuditLogsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>

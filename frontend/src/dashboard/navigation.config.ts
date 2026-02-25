@@ -13,6 +13,7 @@ import {
   UserCheck,
   ScrollText,
   BarChart3,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -84,6 +85,7 @@ export const navigationConfig: NavigationConfig = {
     { href: "/admin/documents", label: "Documents", icon: FileText },
     { href: "/admin/insurance", label: "Insurance", icon: Shield },
     { href: "/admin/kyc", label: "KYC", icon: UserCheck },
+    { href: "/admin/listings", label: "Listings Approval", icon: ClipboardCheck },
     { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
     { href: "/admin/settings", label: "Settings", icon: Settings },
   ],

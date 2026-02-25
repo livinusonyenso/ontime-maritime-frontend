@@ -186,6 +186,12 @@ export class AdminController {
 
   // ==================== LISTING MANAGEMENT ====================
 
+  @Get("listings/stats")
+  async getListingStats(@Request() req: any) {
+    this.checkAdminRole(req)
+    return this.adminService.getListingStats()
+  }
+
   @Get("listings")
   async getAllListings(
     @Query("skip") skip: string = "0",
@@ -210,7 +216,7 @@ export class AdminController {
   @Post("listings/:id/approve")
   async approveListing(@Param("id") id: string, @Request() req: any) {
     this.checkAdminRole(req)
-    return this.adminService.approveHighValueListing(id, req.user.id)
+    return this.adminService.approveListing(id, req.user.id)
   }
 
   @Post("listings/:id/reject")

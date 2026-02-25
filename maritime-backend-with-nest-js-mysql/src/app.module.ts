@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 
 import { PassportModule } from '@nestjs/passport'
 import { PrismaModule } from './prisma/prisma.module'
@@ -35,6 +36,7 @@ import { UploadModule }  from './modules/upload/upload.module'
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     PassportModule,
 
