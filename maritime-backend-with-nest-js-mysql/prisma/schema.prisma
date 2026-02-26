@@ -320,16 +320,21 @@ model Notification {
 }
 
 model AuditLog {
-  id         String   @id @default(uuid()) @db.VarChar(36)
-  actor_id   String?  @db.VarChar(36)
-  action     String   @db.VarChar(100)
-  module     String   @db.VarChar(50)
-  details    Json?
-  ip_address String   @db.VarChar(45)
-  timestamp  DateTime @default(now())
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  actor_id     String?  @db.VarChar(36)
+  actor_email  String?  @db.VarChar(255)
+  action       String   @db.VarChar(100)
+  module       String   @db.VarChar(50)
+  target_id    String?  @db.VarChar(36)
+  details      Json?
+  ip_address   String   @db.VarChar(45)
+  user_agent   String?  @db.Text
+  timestamp    DateTime @default(now())
 
   @@index([actor_id])
+  @@index([actor_email])
   @@index([module])
+  @@index([action])
   @@index([timestamp])
   @@map("audit_logs")
 }

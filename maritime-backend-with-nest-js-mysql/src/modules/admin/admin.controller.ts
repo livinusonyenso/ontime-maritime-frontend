@@ -11,37 +11,56 @@ import {
   Request,
   ForbiddenException,
 } from "@nestjs/common"
+import { IsString, IsNotEmpty, IsOptional, IsIn } from "class-validator"
 import { JwtAuthGuard } from "../../guards/jwt-auth.guard"
 import { AdminService } from "./admin.service"
 import type { ListingStatus, UserRole, KycStatus } from "@prisma/client"
 
-// DTOs for request body validation
+// ─── DTOs (all fields decorated so ValidationPipe whitelist passes) ────────────
+
 class UpdateUserRoleDto {
+  @IsString()
+  @IsNotEmpty()
   role: UserRole
 }
 
 class UpdateSubscriptionDto {
+  @IsString()
+  @IsNotEmpty()
   subscription_status: string
+
+  @IsOptional()
+  @IsString()
   subscription_expiry: string | null
 }
 
 class SuspendUserDto {
+  @IsString()
+  @IsNotEmpty()
   reason: string
 }
 
 class DeleteUserDto {
+  @IsString()
+  @IsNotEmpty()
   reason: string
 }
 
 class RejectListingDto {
+  @IsString()
+  @IsNotEmpty()
   reason: string
 }
 
 class ApproveKycDto {
+  @IsOptional()
+  @IsString()
   comment?: string
 }
 
 class RejectKycDto {
+  @IsString()
+  @IsNotEmpty()
   comment: string
 }
 
@@ -53,6 +72,20 @@ export class AdminController {
   private checkAdminRole(req: any): void {
     if (req.user.role !== "admin" && req.user.role !== "executive") {
       throw new ForbiddenException("Admin access required")
+    }
+  }
+
+  /** Extract IP, user-agent and actor email from the request for audit logging. */
+  private getCtx(req: any): { ip: string; ua: string | undefined; email: string | undefined } {
+    const ip =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.ip ||
+      req.socket?.remoteAddress ||
+      "0.0.0.0"
+    return {
+      ip,
+      ua:    req.headers["user-agent"] as string | undefined,
+      email: req.user?.email as string | undefined,
     }
   }
 
@@ -95,7 +128,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    return this.adminService.updateUserRole(id, body.role, req.user.id)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.updateUserRole(id, body.role, req.user.id, ip, ua, email)
   }
 
   @Patch("users/:id/subscription")
@@ -105,12 +139,10 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
+    const { ip, ua, email } = this.getCtx(req)
     const expiry = body.subscription_expiry ? new Date(body.subscription_expiry) : null
     return this.adminService.updateUserSubscription(
-      id,
-      body.subscription_status,
-      expiry,
-      req.user.id
+      id, body.subscription_status, expiry, req.user.id, ip, ua, email,
     )
   }
 
@@ -121,7 +153,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    return this.adminService.suspendUser(id, req.user.id, body.reason)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.suspendUser(id, req.user.id, body.reason, ip, ua, email)
   }
 
   @Delete("users/:id")
@@ -131,7 +164,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    await this.adminService.deleteUser(id, req.user.id, body.reason)
+    const { ip, ua, email } = this.getCtx(req)
+    await this.adminService.deleteUser(id, req.user.id, body.reason, ip, ua, email)
     return { message: "User deleted successfully" }
   }
 
@@ -171,7 +205,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    return this.adminService.approveKyc(id, req.user.id, body.comment)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.approveKyc(id, req.user.id, body.comment, ip, ua, email)
   }
 
   @Post("kyc/:id/reject")
@@ -181,7 +216,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    return this.adminService.rejectKyc(id, req.user.id, body.comment)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.rejectKyc(id, req.user.id, body.comment, ip, ua, email)
   }
 
   // ==================== LISTING MANAGEMENT ====================
@@ -216,7 +252,8 @@ export class AdminController {
   @Post("listings/:id/approve")
   async approveListing(@Param("id") id: string, @Request() req: any) {
     this.checkAdminRole(req)
-    return this.adminService.approveListing(id, req.user.id)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.approveListing(id, req.user.id, ip, ua, email)
   }
 
   @Post("listings/:id/reject")
@@ -226,7 +263,8 @@ export class AdminController {
     @Request() req: any
   ) {
     this.checkAdminRole(req)
-    return this.adminService.rejectListing(id, req.user.id, body.reason)
+    const { ip, ua, email } = this.getCtx(req)
+    return this.adminService.rejectListing(id, req.user.id, body.reason, ip, ua, email)
   }
 
   // ==================== TRANSACTION MANAGEMENT ====================
@@ -251,20 +289,33 @@ export class AdminController {
 
   @Get("audit-logs")
   async getAuditLogs(
-    @Query("skip") skip: string = "0",
-    @Query("take") take: string = "20",
-    @Request() req: any
+    @Query("module")   module?: string,
+    @Query("action")   action?: string,
+    @Query("actorId")  actorId?: string,
+    @Query("dateFrom") dateFrom?: string,
+    @Query("dateTo")   dateTo?: string,
+    @Query("skip")     skip: string = "0",
+    @Query("take")     take: string = "50",
+    @Request()         req?: any,
   ) {
     this.checkAdminRole(req)
-    return this.adminService.getAuditLogs(parseInt(skip), parseInt(take))
+    return this.adminService.getAuditLogs({
+      module,
+      action,
+      actorId,
+      dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+      dateTo:   dateTo   ? new Date(dateTo)   : undefined,
+      skip:     parseInt(skip),
+      take:     parseInt(take),
+    })
   }
 
-  @Get("audit-logs/:module")
+  @Get("audit-logs/module/:module")
   async getAuditLogsByModule(
     @Param("module") module: string,
-    @Query("skip") skip: string = "0",
-    @Query("take") take: string = "20",
-    @Request() req: any
+    @Query("skip")   skip: string = "0",
+    @Query("take")   take: string = "50",
+    @Request()       req?: any,
   ) {
     this.checkAdminRole(req)
     return this.adminService.getAuditLogsByModule(module, parseInt(skip), parseInt(take))

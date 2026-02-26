@@ -262,13 +262,16 @@ export interface DashboardStats {
 }
 
 export interface AuditLog {
-  id: string
-  actor_id: string | null
-  action: string
-  module: string
-  details: Record<string, any> | null
-  ip_address: string
-  timestamp: string
+  id:          string
+  actor_id:    string | null
+  actor_email: string | null
+  action:      string
+  module:      string
+  target_id:   string | null
+  details:     Record<string, any> | null
+  ip_address:  string
+  user_agent:  string | null
+  timestamp:   string
 }
 
 // API Response Types

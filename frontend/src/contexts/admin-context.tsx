@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import api from '../lib/api'
-import type { DashboardStats, User, KYC, KycStats, AdminListing, ListingStats, AuditLog, ActivityEntry } from '../types'
+import type { DashboardStats, User, KYC, KycStats, AdminListing, ListingStats, AuditLog } from '../types'
 
 interface UserStats {
   totalUsers: number
@@ -30,7 +30,10 @@ interface AdminContextType {
   getKycList: (status: string, skip?: number, take?: number) => Promise<KYC[]>
   approveKyc: (id: string, comment: string) => Promise<KYC>
   rejectKyc: (id: string, comment: string) => Promise<KYC>
-  getAuditLogs: (skip?: number, take?: number) => Promise<AuditLog[]>
+  getAuditLogs: (params?: {
+    module?: string; action?: string; actorId?: string
+    dateFrom?: string; dateTo?: string; skip?: number; take?: number
+  }) => Promise<{ data: AuditLog[]; total: number }>
   // Listing approval
   listingStats: ListingStats | null
   getListingStats: () => Promise<ListingStats>
@@ -359,18 +362,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const getAuditLogs = useCallback(async (skip = 0, take = 20): Promise<AuditLog[]> => {
+  const getAuditLogs = useCallback(async (params?: {
+    module?: string; action?: string; actorId?: string
+    dateFrom?: string; dateTo?: string; skip?: number; take?: number
+  }): Promise<{ data: AuditLog[]; total: number }> => {
     try {
       setLoading(true)
       setError(null)
 
-      const response = await api.get('/admin/audit-logs', {
-        params: { skip, take },
-      })
-      const data = response.data
+      const response = await api.get('/admin/audit-logs', { params: { take: 50, ...params } })
+      const result: { data: AuditLog[]; total: number } = response.data
 
-      setAuditLogs(data)
-      return data
+      setAuditLogs(result.data)
+      return result
     } catch (err: any) {
       const errorMessage = err.message || 'Failed to fetch audit logs'
       setError(errorMessage)
