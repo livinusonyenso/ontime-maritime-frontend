@@ -1,10 +1,14 @@
 import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common"
 import { PrismaService } from "../../prisma/prisma.service"
+import { MailService } from "../notifications/mail.service"
 import { User, UserRole, Listing, ListingStatus, Transaction, AuditLog, Kyc, KycStatus, Prisma } from "@prisma/client"
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   // ==================== USER MANAGEMENT ====================
 
@@ -257,7 +261,10 @@ export class AdminService {
     userAgent?: string,
     actorEmail?: string,
   ): Promise<Listing> {
-    const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
+    const listing = await this.prisma.listing.findUnique({
+      where: { id: listingId },
+      include: { seller: { select: { email: true } } },
+    })
     if (!listing) throw new NotFoundException("Listing not found")
 
     const updatedListing = await this.prisma.listing.update({
@@ -269,6 +276,11 @@ export class AdminService {
       { title: listing.title, sellerId: listing.seller_id },
       ipAddress, actorEmail, userAgent,
     )
+
+    // Fire-and-forget — don't block the response if email fails
+    if ((listing as any).seller?.email) {
+      this.mailService.sendListingApprovedEmail((listing as any).seller.email, listing.title).catch(() => {})
+    }
 
     return updatedListing
   }
@@ -286,7 +298,10 @@ export class AdminService {
     userAgent?: string,
     actorEmail?: string,
   ): Promise<Listing> {
-    const listing = await this.prisma.listing.findUnique({ where: { id: listingId } })
+    const listing = await this.prisma.listing.findUnique({
+      where: { id: listingId },
+      include: { seller: { select: { email: true } } },
+    })
     if (!listing) throw new NotFoundException("Listing not found")
 
     const updatedListing = await this.prisma.listing.update({
@@ -298,6 +313,11 @@ export class AdminService {
       { reason, title: listing.title, sellerId: listing.seller_id },
       ipAddress, actorEmail, userAgent,
     )
+
+    // Fire-and-forget — don't block the response if email fails
+    if ((listing as any).seller?.email) {
+      this.mailService.sendListingRejectedEmail((listing as any).seller.email, listing.title, reason).catch(() => {})
+    }
 
     return updatedListing
   }

@@ -121,6 +121,86 @@ export class MailService {
     return this.sendMail(to, subject, html)
   }
 
+  async sendListingApprovedEmail(to: string, listingTitle: string): Promise<boolean> {
+    const subject = "Your listing has been approved — OnTime Maritime"
+    const dashboardUrl = `${process.env.FRONTEND_URL || "https://ontimemaritime.com"}/dashboard/seller/listings`
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+        <div style="background:#1a3c5e;padding:32px 24px;text-align:center">
+          <h1 style="color:#ffffff;margin:0;font-size:24px;letter-spacing:1px">ONTIME MARITIME</h1>
+          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Tech Meet Cargo</p>
+        </div>
+        <div style="padding:32px 24px">
+          <h2 style="color:#1a3c5e;margin-top:0">Listing Approved ✅</h2>
+          <p style="color:#333;line-height:1.6">
+            Great news! Your listing <strong>${listingTitle}</strong> has been reviewed and approved by our team.
+            It is now live on the OnTime Maritime marketplace and visible to buyers.
+          </p>
+          <div style="text-align:center;margin:32px 0">
+            <a href="${dashboardUrl}"
+               style="background:#1a3c5e;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">
+              View My Listings
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px;line-height:1.6">
+            If you have any questions, contact us at
+            <a href="mailto:support@ontimemaritime.com" style="color:#1a3c5e">support@ontimemaritime.com</a>.
+          </p>
+        </div>
+        <div style="background:#f4f8fc;padding:16px 24px;text-align:center">
+          <p style="color:#aaa;font-size:11px;margin:0">
+            &copy; ${new Date().getFullYear()} OnTime Maritime. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `
+    return this.sendMail(to, subject, html)
+  }
+
+  async sendListingRejectedEmail(to: string, listingTitle: string, reason: string): Promise<boolean> {
+    const subject = "Your listing was not approved — OnTime Maritime"
+    const dashboardUrl = `${process.env.FRONTEND_URL || "https://ontimemaritime.com"}/dashboard/seller/listings`
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+        <div style="background:#1a3c5e;padding:32px 24px;text-align:center">
+          <h1 style="color:#ffffff;margin:0;font-size:24px;letter-spacing:1px">ONTIME MARITIME</h1>
+          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Tech Meet Cargo</p>
+        </div>
+        <div style="padding:32px 24px">
+          <h2 style="color:#c0392b;margin-top:0">Listing Not Approved</h2>
+          <p style="color:#333;line-height:1.6">
+            Unfortunately, your listing <strong>${listingTitle}</strong> was not approved at this time.
+          </p>
+          <div style="background:#fff5f5;border-left:4px solid #e74c3c;padding:12px 16px;border-radius:4px;margin:20px 0">
+            <p style="margin:0;color:#555;font-size:14px;line-height:1.6">
+              <strong>Reason:</strong> ${reason}
+            </p>
+          </div>
+          <p style="color:#333;line-height:1.6">
+            You may revise your listing based on the feedback above and resubmit it for review.
+            Our team is happy to assist if you have questions.
+          </p>
+          <div style="text-align:center;margin:32px 0">
+            <a href="${dashboardUrl}"
+               style="background:#1a3c5e;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">
+              Go to My Listings
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px;line-height:1.6">
+            Need help? Contact us at
+            <a href="mailto:support@ontimemaritime.com" style="color:#1a3c5e">support@ontimemaritime.com</a>.
+          </p>
+        </div>
+        <div style="background:#f4f8fc;padding:16px 24px;text-align:center">
+          <p style="color:#aaa;font-size:11px;margin:0">
+            &copy; ${new Date().getFullYear()} OnTime Maritime. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `
+    return this.sendMail(to, subject, html)
+  }
+
   async sendOtpEmail(to: string, otpCode: string): Promise<boolean> {
     const subject = "Your OnTime Maritime verification code"
     const html = `
