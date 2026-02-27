@@ -1,7 +1,7 @@
 // User Types
 export interface User {
   id: string
-  role: 'buyer' | 'seller' | 'admin' | 'executive' | 'expert'
+  role: 'buyer' | 'seller' | 'admin' | 'executive' | 'expert' | 'organization'
   email: string
   phone: string
   is_phone_verified: boolean
@@ -10,6 +10,9 @@ export interface User {
   subscription_expiry: string | null
   first_name: string | null
   last_name: string | null
+  company_name: string | null
+  business_address: string | null
+  website: string | null
   created_at: string
   updated_at: string
 }
@@ -65,6 +68,7 @@ export interface AdminListing {
     email: string
     first_name: string | null
     last_name: string | null
+    company_name: string | null
   } | null
 }
 

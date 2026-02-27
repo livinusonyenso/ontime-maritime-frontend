@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, Phone, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react"
+import { Ship, Mail, Lock, Phone, ArrowRight, AlertCircle, Eye, EyeOff, Building2, Globe, MapPin } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -22,7 +22,10 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [role, setRole] = useState<"buyer" | "seller">("buyer")
+  const [role, setRole] = useState<"buyer" | "seller" | "organization">("buyer")
+  const [companyName, setCompanyName] = useState("")
+  const [businessAddress, setBusinessAddress] = useState("")
+  const [website, setWebsite] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -48,7 +51,10 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const pendingId = await signup(email, phone, password, role)
+      const orgFields = role === "organization"
+        ? { company_name: companyName, business_address: businessAddress || undefined, website: website || undefined }
+        : undefined
+      const pendingId = await signup(email, phone, password, role, orgFields)
       toast({
         title: "Check your email!",
         description: "We sent a 6-digit verification code to your inbox.",
@@ -133,16 +139,67 @@ export default function RegisterPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="role">I am a</Label>
-                    <Select value={role} onValueChange={(value) => setRole(value as "buyer" | "seller")}>
+                    <Select value={role} onValueChange={(value) => setRole(value as "buyer" | "seller" | "organization")}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your role" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="buyer">Buyer</SelectItem>
                         <SelectItem value="seller">Seller</SelectItem>
+                        <SelectItem value="organization">Organization</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {role === "organization" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="companyName">Company Name <span className="text-destructive">*</span></Label>
+                        <div className="relative">
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input
+                            id="companyName"
+                            type="text"
+                            placeholder="Acme Shipping Ltd."
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="businessAddress">Business Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input
+                            id="businessAddress"
+                            type="text"
+                            placeholder="123 Port Street, Lagos"
+                            value={businessAddress}
+                            onChange={(e) => setBusinessAddress(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="website">Website <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                        <div className="relative">
+                          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input
+                            id="website"
+                            type="url"
+                            placeholder="https://yourcompany.com"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>

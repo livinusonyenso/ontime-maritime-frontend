@@ -40,13 +40,14 @@ export class AdminService {
   }
 
   async getUserStats(): Promise<any> {
-    const totalUsers = await this.prisma.user.count()
-    const buyers = await this.prisma.user.count({ where: { role: UserRole.buyer } })
-    const sellers = await this.prisma.user.count({ where: { role: UserRole.seller } })
-    const admins = await this.prisma.user.count({ where: { role: UserRole.admin } })
+    const totalUsers    = await this.prisma.user.count()
+    const buyers        = await this.prisma.user.count({ where: { role: UserRole.buyer } })
+    const sellers       = await this.prisma.user.count({ where: { role: UserRole.seller } })
+    const organizations = await this.prisma.user.count({ where: { role: "organization" as UserRole } })
+    const admins        = await this.prisma.user.count({ where: { role: UserRole.admin } })
     const verifiedUsers = await this.prisma.user.count({ where: { is_email_verified: true } })
 
-    return { totalUsers, buyers, sellers, admins, verifiedUsers }
+    return { totalUsers, buyers, sellers, organizations, admins, verifiedUsers }
   }
 
   async updateUserRole(
@@ -229,7 +230,7 @@ export class AdminService {
     return this.prisma.listing.findMany({
       skip,
       take,
-      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true } } },
+      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true, company_name: true } } },
       orderBy: { created_at: "desc" },
     })
   }
@@ -239,7 +240,7 @@ export class AdminService {
       where: { status },
       skip,
       take,
-      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true } } },
+      include: { seller: { select: { id: true, email: true, first_name: true, last_name: true, company_name: true } } },
       orderBy: { created_at: "desc" },
     })
   }

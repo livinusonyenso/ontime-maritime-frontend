@@ -8,6 +8,7 @@ export enum UserRole {
   admin = 'admin',
   executive = 'executive',
   expert = 'expert',
+  organization = 'organization',
 }
 
 export enum ListingCategory {

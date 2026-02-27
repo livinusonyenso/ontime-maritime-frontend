@@ -29,7 +29,7 @@ export class AuthService {
   /* No user account is created until OTP is verified.                   */
   /* ------------------------------------------------------------------ */
   async signup(signupDto: SignupDto) {
-    const { email, phone, password, role } = signupDto
+    const { email, phone, password, role, company_name, business_address, website } = signupDto
 
     // Block if a fully verified user already exists with this email or phone
     const existingUser = await this.prisma.user.findFirst({
@@ -58,6 +58,9 @@ export class AuthService {
         role,
         otp_code,
         expires_at: new Date(Date.now() + 10 * 60 * 1000),
+        company_name:     company_name     ?? null,
+        business_address: business_address ?? null,
+        website:          website          ?? null,
       },
     })
 
@@ -88,12 +91,15 @@ export class AuthService {
     // Create the real user account — only happens on successful OTP
     const user = await this.prisma.user.create({
       data: {
-        email: pending.email,
-        phone: pending.phone,
-        password_hash: pending.password_hash,
-        role: pending.role as UserRole,
+        email:            pending.email,
+        phone:            pending.phone,
+        password_hash:    pending.password_hash,
+        role:             pending.role as UserRole,
         is_email_verified: true,
         is_phone_verified: true,
+        company_name:     pending.company_name     ?? null,
+        business_address: pending.business_address ?? null,
+        website:          pending.website          ?? null,
       },
     })
 

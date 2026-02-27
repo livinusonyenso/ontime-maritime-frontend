@@ -14,6 +14,7 @@ import {
   ScrollText,
   BarChart3,
   ClipboardCheck,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,6 +29,7 @@ export interface NavigationConfig {
   seller: NavItem[];
   admin: NavItem[];
   executive: NavItem[];
+  organization: NavItem[];
 }
 
 export const navigationConfig: NavigationConfig = {
@@ -91,5 +93,16 @@ export const navigationConfig: NavigationConfig = {
   ],
   executive: [
     { href: "/dashboard/executive", label: "Overview", icon: LayoutDashboard },
+  ],
+  organization: [
+    { href: "/dashboard/organization", label: "Overview", icon: LayoutDashboard },
+    { href: "/dashboard/organization/listings", label: "Listings", icon: Package },
+    { href: "/dashboard/organization/sales", label: "Sales", icon: CreditCard },
+    { href: "/dashboard/organization/ebol", label: "e-BOL", icon: FileText },
+    { href: "/dashboard/organization/arbitration", label: "Arbitration", icon: Gavel },
+    { href: "/dashboard/organization/security-hotline", label: "Security Hotline", icon: Bell },
+    { href: "/dashboard/organization/tracking", label: "Tracking", icon: Ship },
+    { href: "/dashboard/organization/documents", label: "Documents", icon: FileText },
+    { href: "/dashboard/organization/profile", label: "Company Profile", icon: Building2 },
   ],
 };

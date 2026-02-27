@@ -153,9 +153,7 @@ export default function AdminLoginPage() {
             </CardContent>
           </Card>
 
-          <p className="text-center text-xs text-muted-foreground">
-            Admin: admin@ontimemaritime.com / admin123
-          </p>
+        
 
           <div className="text-center">
             <Link

@@ -6,7 +6,7 @@ import { DashboardSidebar, MobileSidebar, DashboardHeader } from "@/dashboard/co
 import { navigationConfig } from "@/dashboard/navigation.config"
 
 interface DashboardLayoutProps {
-  role: "buyer" | "seller" | "admin" | "executive"
+  role: "buyer" | "seller" | "admin" | "executive" | "organization"
 }
 
 export function DashboardLayout({ role }: DashboardLayoutProps) {

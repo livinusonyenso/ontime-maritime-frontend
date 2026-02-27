@@ -60,7 +60,8 @@ function fmtDate(iso: string) {
 
 function sellerName(listing: AdminListing) {
   if (!listing.seller) return "Unknown seller"
-  const { first_name, last_name, email } = listing.seller
+  const { first_name, last_name, email, company_name } = listing.seller
+  if (company_name) return company_name
   const name = [first_name, last_name].filter(Boolean).join(" ")
   return name || email
 }

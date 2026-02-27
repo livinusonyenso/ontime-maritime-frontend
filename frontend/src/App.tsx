@@ -56,6 +56,10 @@ import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
 
+// Organization Pages
+import OrganizationDashboardPage from "./pages/organization/OrganizationDashboardPage"
+import OrganizationProfilePage from "./pages/organization/OrganizationProfilePage"
+
 // Executive Corner Pages
 import ExecutiveDashboardPage from "./pages/executive-corner/ExecutiveDashboardPage"
 import AdminPage from "./pages/executive-corner/AdminPage"
@@ -151,6 +155,26 @@ function App() {
           <Route path="ebol" element={<SellerEBOLPage />} />
           <Route path="arbitration" element={<SellerArbitrationPage />} />
           <Route path="security-hotline" element={<UserSecurityHotlineDashboard/>} />
+        </Route>
+
+        {/* Organization Dashboard Routes */}
+        <Route
+          path="/dashboard/organization"
+          element={
+            <ProtectedRoute allowedRoles={["organization"]}>
+              <DashboardLayout role="organization" />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<OrganizationDashboardPage />} />
+          <Route path="listings" element={<SellerListingsPage />} />
+          <Route path="sales" element={<MaritimeSalesAdmin />} />
+          <Route path="ebol" element={<SellerEBOLPage />} />
+          <Route path="arbitration" element={<SellerArbitrationPage />} />
+          <Route path="security-hotline" element={<UserSecurityHotlineDashboard />} />
+          <Route path="tracking" element={<TrackingUserDashboard />} />
+          <Route path="documents" element={<UserDocumentsDashboard />} />
+          <Route path="profile" element={<OrganizationProfilePage />} />
         </Route>
 
         {/* Executive Dashboard Routes */}

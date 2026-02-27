@@ -18,7 +18,8 @@ interface AuthContextType {
     email: string,
     phone: string,
     password: string,
-    role: "buyer" | "seller"
+    role: "buyer" | "seller" | "organization",
+    orgFields?: { company_name?: string; business_address?: string; website?: string }
   ) => Promise<string>
   verifyOtp: (pendingId: string, otp: string) => Promise<void>
   resendOtp: (email: string) => Promise<{ pendingId?: string; message: string }>
@@ -53,7 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     phone: string,
     password: string,
-    role: "buyer" | "seller"
+    role: "buyer" | "seller" | "organization",
+    orgFields?: { company_name?: string; business_address?: string; website?: string }
   ): Promise<string> => {
     try {
       setLoading(true)
@@ -64,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone,
         password,
         role,
+        ...orgFields,
       })
 
       /**
