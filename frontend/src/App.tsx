@@ -25,6 +25,7 @@ import LegalHubPage from "./pages/features/LegalHubPage"
 import SecurityHotlinePage from "./pages/features/SecurityHotlinePage"
 import ArbitrationPage from "./pages/features/ArbitrationPage"
 import MarketplacePage from "./pages/features/MarketplacePage"
+import MarketplaceListingDetailPage from "./pages/features/MarketplaceListingDetailPage"
 import KnowledgePage from "./pages/features/KnowledgePage"
 
 // Feature Views
@@ -101,6 +102,7 @@ function App() {
         <Route path="/security-hotline" element={<SecurityHotlinePage />} />
         <Route path="/arbitration" element={<ArbitrationPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/marketplace/:id" element={<MarketplaceListingDetailPage />} />
         <Route path="/knowledge" element={<KnowledgePage />} />
 
         {/* Legacy public routes */}
