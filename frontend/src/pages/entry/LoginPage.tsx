@@ -43,6 +43,7 @@ export default function LoginPage() {
 
       if (user.role === "buyer") navigate("/dashboard/buyer")
       else if (user.role === "seller") navigate("/dashboard/seller")
+      else if (user.role === "organization") navigate("/dashboard/organization")
       else if (user.role === "executive") navigate("/dashboard/executive")
       else if (user.role === "admin") navigate("/admin")
       else navigate("/dashboard/buyer")

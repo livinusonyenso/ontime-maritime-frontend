@@ -8,12 +8,14 @@ export function SidebarHeader() {
     ? "/admin"
     : location.pathname.startsWith("/dashboard/seller")
       ? "/dashboard/seller"
-      : "/dashboard/buyer"
+      : location.pathname.startsWith("/dashboard/organization")
+        ? "/dashboard/organization"
+        : "/dashboard/buyer"
 
   return (
-    <div className="flex h-16 items-center px-6 border-b">
+    <div className="flex h-16 items-center px-6 border-b overflow-hidden">
       <Link to={dashboardPath} className="flex items-center gap-2">
-        <img src="/logo.png" alt="Ontime Maritime" className="h-30 w-auto" />
+        <img src="/logo.png" alt="Ontime Maritime" className="h-8 w-auto" />
       </Link>
     </div>
   )

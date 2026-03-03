@@ -32,6 +32,21 @@ import { useToast } from "@/hooks/use-toast"
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
+/** True if this Cloudinary URL is a PDF (raw upload or .pdf extension) */
+function isPdfUrl(url: string): boolean {
+  return url.includes('/raw/upload/') || /\.(pdf)$/i.test(url)
+}
+
+/**
+ * Wrap a URL in Google Docs Viewer so the browser always renders the PDF
+ * inline — bypasses Cloudinary's Content-Disposition: attachment header.
+ * embedded=true  → renders inside an iframe without the toolbar chrome
+ * embedded=false → opens the full Docs Viewer page (good for "new tab")
+ */
+function toGoogleViewerUrl(url: string, embedded = true): string {
+  return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}${embedded ? '&embedded=true' : ''}`
+}
+
 function displayName(k: KYC) {
   return k.user?.first_name || k.user?.last_name
     ? `${k.user.first_name ?? ""} ${k.user.last_name ?? ""}`.trim()
@@ -372,7 +387,7 @@ export default function AdminKYCPage() {
 
       {/* View Document Dialog */}
       <Dialog open={!!viewEntry} onOpenChange={() => setViewEntry(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>KYC Details — {viewEntry ? displayName(viewEntry) : ""}</DialogTitle>
           </DialogHeader>
@@ -401,15 +416,23 @@ export default function AdminKYCPage() {
               {viewEntry.id_document_url && (
                 <div>
                   <p className="text-muted-foreground mb-2 font-medium">ID Document</p>
-                  {viewEntry.id_document_url.match(/\.(pdf)$/i) ? (
-                    <a
-                      href={viewEntry.id_document_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary underline"
-                    >
-                      <FileText className="h-4 w-4" /> View PDF Document
-                    </a>
+                  {isPdfUrl(viewEntry.id_document_url) ? (
+                    <div className="space-y-2">
+                      <iframe
+                        src={toGoogleViewerUrl(viewEntry.id_document_url)}
+                        title="ID Document PDF"
+                        className="w-full h-72 rounded-lg border bg-muted"
+                        sandbox="allow-scripts allow-same-origin allow-popups"
+                      />
+                      <a
+                        href={toGoogleViewerUrl(viewEntry.id_document_url, false)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-xs text-primary underline"
+                      >
+                        <FileText className="h-3 w-3" /> Open in new tab
+                      </a>
+                    </div>
                   ) : (
                     <a href={viewEntry.id_document_url} target="_blank" rel="noopener noreferrer">
                       <img
