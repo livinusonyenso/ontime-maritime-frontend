@@ -43,7 +43,7 @@ export class AdminService {
     const totalUsers    = await this.prisma.user.count()
     const buyers        = await this.prisma.user.count({ where: { role: UserRole.buyer } })
     const sellers       = await this.prisma.user.count({ where: { role: UserRole.seller } })
-    const organizations = await this.prisma.user.count({ where: { role: "organization" as UserRole } })
+    const organizations = await this.prisma.user.count({ where: { role: UserRole.organization } })
     const admins        = await this.prisma.user.count({ where: { role: UserRole.admin } })
     const verifiedUsers = await this.prisma.user.count({ where: { is_email_verified: true } })
 

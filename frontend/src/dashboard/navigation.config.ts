@@ -54,29 +54,16 @@ export const navigationConfig: NavigationConfig = {
     { href: "/dashboard/buyer/payments", label: "Payments", icon: CreditCard },
   ],
   seller: [
-    
-    {
-      href: "/dashboard/seller/overview",
-      label: "Overview",
-      icon: LayoutDashboard,
-    },
+    { href: "/dashboard/seller/overview", label: "Overview", icon: LayoutDashboard },
+    { href: "/dashboard/seller/kyc", label: "KYC Verification", icon: UserCheck },
     { href: "/dashboard/seller/listings", label: "Listings", icon: Package },
     { href: "/dashboard/seller/sales", label: "Sales", icon: CreditCard },
     { href: "/dashboard/seller/ebol", label: "e-BOL", icon: FileText },
-    {
-      href: "/dashboard/seller/arbitration",
-      label: "Arbitration",
-      icon: Gavel,
-    },
-    {
-      href: "/dashboard/seller/security-hotline",
-      label: "Security Hotline",
-      icon: Bell,
-    },
+    { href: "/dashboard/seller/arbitration", label: "Arbitration", icon: Gavel },
+    { href: "/dashboard/seller/security-hotline", label: "Security Hotline", icon: Bell },
     { href: "/dashboard/seller/tracking", label: "Tracking", icon: Ship },
     { href: "/dashboard/seller/auctions", label: "Auctions", icon: Gavel },
     { href: "/dashboard/seller/insurance", label: "Insurance", icon: Package },
-
     { href: "/dashboard/seller/documents", label: "Documents", icon: FileText },
   ],
   admin: [

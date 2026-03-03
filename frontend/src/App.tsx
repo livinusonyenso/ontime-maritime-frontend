@@ -55,6 +55,7 @@ import SellerDocumentsPage from "./dashboard/seller/Documents/DocumentsPage"
 import SellerDashboardPage from "./pages/seller/SellerDashboardPage"
 import SellerMarketPage from "./pages/seller/MarketPage"
 import SellerListingsPage from "./pages/seller/ListingsPage"
+import KYCSubmissionPage from "./pages/seller/KYCSubmissionPage"
 
 // Organization Pages
 import OrganizationDashboardPage from "./pages/organization/OrganizationDashboardPage"
@@ -155,6 +156,7 @@ function App() {
           <Route path="ebol" element={<SellerEBOLPage />} />
           <Route path="arbitration" element={<SellerArbitrationPage />} />
           <Route path="security-hotline" element={<UserSecurityHotlineDashboard/>} />
+          <Route path="kyc" element={<KYCSubmissionPage />} />
         </Route>
 
         {/* Organization Dashboard Routes */}
