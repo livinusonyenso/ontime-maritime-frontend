@@ -8,8 +8,17 @@ async function bootstrap() {
   // Disable the default body parser so we can set our own size limits
   const app = await NestFactory.create(AppModule, { bodyParser: false })
 
-  // Allow up to 50 MB for JSON bodies (base64 images / PDFs) and form data
-  app.use(json({ limit: '50mb' }))
+  // Allow up to 50 MB for JSON bodies (base64 images / PDFs) and form data.
+  // The verify callback stores the raw body so the webhook endpoint can
+  // validate the Paystack x-paystack-signature header.
+  app.use(
+    json({
+      limit: '50mb',
+      verify: (req: any, _res, buf) => {
+        req.rawBody = buf.toString('utf8')
+      },
+    }),
+  )
   app.use(urlencoded({ extended: true, limit: '50mb' }))
 
   // Enable CORS FIRST before any other middleware

@@ -17,6 +17,7 @@ import {
   clearSelectedListing,
 } from "@/store/slices/marketplaceSlice"
 import { useAuth } from "@/contexts/auth-context"
+import api from "@/lib/api"
 
 import type { MarketplaceListing } from "@/types/maritime"
 
@@ -35,6 +36,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   LogIn,
+  Loader2,
 } from "lucide-react"
 
 // ─── Image Gallery ────────────────────────────────────────────────────────────
@@ -142,13 +144,15 @@ export default function MarketplaceListingDetailPage() {
   const { id }        = useParams<{ id: string }>()
   const navigate      = useNavigate()
   const dispatch      = useAppDispatch()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   const listing = useAppSelector(selectSelectedListing) as MarketplaceListing | null
 
-  const [loading,  setLoading]  = useState(true)
-  const [notFound, setNotFound] = useState(false)
-  const [feedback, setFeedback] = useState<string | null>(null)
+  const [loading,    setLoading]    = useState(true)
+  const [notFound,   setNotFound]   = useState(false)
+  const [feedback,   setFeedback]   = useState<string | null>(null)
+  const [buyLoading, setBuyLoading] = useState(false)
+  const [buyError,   setBuyError]   = useState<string | null>(null)
 
   // Fetch on mount / id change
   useEffect(() => {
@@ -170,9 +174,38 @@ export default function MarketplaceListingDetailPage() {
       navigate("/login", { state: { redirectTo: `/marketplace/${id}` } })
       return
     }
-    // Authenticated: show a temporary acknowledgment until real endpoint exists
     setFeedback(`Your ${label.toLowerCase()} request has been noted. A team member will follow up shortly.`)
     setTimeout(() => setFeedback(null), 5000)
+  }
+
+  // ── Buy Now ────────────────────────────────────────────────────────────────
+
+  const handleBuyNow = async () => {
+    if (!isAuthenticated || !user) {
+      navigate("/login", { state: { redirectTo: `/marketplace/${id}` } })
+      return
+    }
+    if (!listing) return
+
+    setBuyLoading(true)
+    setBuyError(null)
+
+    try {
+      // amount in kobo: price_usd * 100 (treating USD value as NGN for test mode)
+      const amountKobo = Math.round(Number(listing.price) * 100)
+
+      const res = await api.post("/payments/initialize", {
+        email: user.email,
+        amount: amountKobo,
+        metadata: { listingId: listing.id, listingTitle: listing.title },
+      })
+
+      const { authorization_url } = res.data
+      window.location.href = authorization_url
+    } catch (err: any) {
+      setBuyError(err?.message || "Failed to initialize payment. Please try again.")
+      setBuyLoading(false)
+    }
   }
 
   // ── not found ──────────────────────────────────────────────────────────────
@@ -340,6 +373,13 @@ export default function MarketplaceListingDetailPage() {
                 </div>
               )}
 
+              {/* Buy Now error */}
+              {buyError && (
+                <div className="p-3 rounded-lg border border-red-500/20 bg-red-500/5 text-sm text-red-700 dark:text-red-400">
+                  {buyError}
+                </div>
+              )}
+
               {/* Interaction buttons */}
               <div className="space-y-3">
                 <Button
@@ -354,11 +394,14 @@ export default function MarketplaceListingDetailPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     size="lg"
-                    variant="outline"
-                    onClick={() => handleInteraction("Buy Now")}
+                    disabled={buyLoading}
+                    onClick={handleBuyNow}
                   >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Buy Now
+                    {buyLoading
+                      ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      : <ShoppingCart className="h-4 w-4 mr-2" />
+                    }
+                    {buyLoading ? "Redirecting…" : "Buy Now"}
                   </Button>
                   <Button
                     size="lg"
