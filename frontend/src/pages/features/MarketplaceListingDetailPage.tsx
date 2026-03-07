@@ -201,7 +201,7 @@ export default function MarketplaceListingDetailPage() {
       })
 
       const { authorization_url } = res.data
-      window.location.href = authorization_url
+      window.open(authorization_url, '_blank', 'noopener,noreferrer')
     } catch (err: any) {
       setBuyError(err?.message || "Failed to initialize payment. Please try again.")
       setBuyLoading(false)

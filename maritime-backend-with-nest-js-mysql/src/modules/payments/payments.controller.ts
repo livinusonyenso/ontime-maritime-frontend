@@ -11,7 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
-import { Request, Response } from 'express'
+import { Request as ExpressRequest, Response } from 'express'
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard'
 import { PaymentsService } from './payments.service'
 import { InitializePaymentDto } from './dto/initialize-payment.dto'
@@ -24,11 +24,13 @@ export class PaymentsController {
   // Protected: only authenticated users can start a payment
   @Post('initialize')
   @UseGuards(JwtAuthGuard)
-  async initialize(@Body() dto: InitializePaymentDto) {
+  async initialize(@Req() req: ExpressRequest, @Body() dto: InitializePaymentDto) {
+    const buyerId: string | undefined = (req as any).user?.id
     const result = await this.paymentsService.initializePayment(
       dto.email,
       dto.amount,
       dto.metadata ?? {},
+      buyerId,
     )
     return {
       authorization_url: result.authorization_url,
@@ -50,7 +52,7 @@ export class PaymentsController {
   // Public: called directly by Paystack — must return 200 quickly
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
-  async webhook(@Req() req: Request, @Res() res: Response) {
+  async webhook(@Req() req: ExpressRequest, @Res() res: Response) {
     const signature = req.headers['x-paystack-signature'] as string
 
     // rawBody is attached by the verify callback in main.ts
@@ -60,7 +62,8 @@ export class PaymentsController {
       throw new UnauthorizedException('Invalid webhook signature')
     }
 
-    const { event, data } = req.body as { event: string; data: any }
+    const body = req.body as unknown as { event: string; data: any }
+    const { event, data } = body
 
     // Respond immediately — process async so Paystack gets its 200 fast
     res.json({ received: true })

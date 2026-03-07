@@ -28,6 +28,8 @@ import {
   selectMarketplaceLoadingMore,
   selectMarketplaceTotal,
 } from "@/store/slices/marketplaceSlice"
+import { useAuth } from "@/contexts/auth-context"
+import api from "@/lib/api"
 
 import type { MarketplaceListing } from "@/types/maritime"
 
@@ -44,6 +46,7 @@ import {
   Anchor,
   Settings,
   Loader2,
+  ShoppingCart,
 } from "lucide-react"
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -89,9 +92,13 @@ function getCategoryIcon(category: string) {
 function ListingCard({
   listing,
   onClick,
+  onBuyNow,
+  buying,
 }: {
   listing: MarketplaceListing
   onClick: () => void
+  onBuyNow: (e: React.MouseEvent) => void
+  buying: boolean
 }) {
   return (
     <Card
@@ -161,6 +168,20 @@ function ListingCard({
         </div>
 
         <p className="text-[11px] text-muted-foreground truncate">by {listing.sellerName}</p>
+
+        {/* Buy Now button */}
+        <Button
+          size="sm"
+          className="w-full mt-1"
+          disabled={buying}
+          onClick={onBuyNow}
+        >
+          {buying
+            ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+            : <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
+          }
+          {buying ? "Redirecting…" : "Buy Now"}
+        </Button>
       </CardContent>
     </Card>
   )
@@ -185,6 +206,7 @@ function ListingCardSkeleton() {
 export default function MarketplacePage() {
   const navigate   = useNavigate()
   const dispatch   = useAppDispatch()
+  const { isAuthenticated, user } = useAuth()
 
   const listings   = useAppSelector(selectAllListings)
   const hasMore    = useAppSelector(selectMarketplaceHasMore)
@@ -195,6 +217,7 @@ export default function MarketplacePage() {
   const [search,   setSearch]   = useState("")
   const [category, setCategory] = useState("all")
   const [sort,     setSort]     = useState<"newest" | "price_asc" | "price_desc" | "featured">("newest")
+  const [buyingId, setBuyingId] = useState<string | null>(null)
 
   const skipRef    = useRef(0)
   const debounceRef= useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -247,6 +270,30 @@ export default function MarketplacePage() {
     const nextSkip = skipRef.current + PAGE_SIZE
     skipRef.current = nextSkip
     dispatch(fetchMoreListings(buildParams({ skip: nextSkip })))
+  }
+
+  // ── Buy Now ────────────────────────────────────────────────────────────────
+
+  const handleBuyNow = async (listing: MarketplaceListing, e: React.MouseEvent) => {
+    e.stopPropagation() // prevent card click navigating to detail
+
+    if (!isAuthenticated || !user) {
+      navigate("/login", { state: { redirectTo: `/marketplace/${listing.id}` } })
+      return
+    }
+
+    setBuyingId(listing.id)
+    try {
+      const amountKobo = Math.round(Number(listing.price) * 100)
+      const res = await api.post("/payments/initialize", {
+        email: user.email,
+        amount: amountKobo,
+        metadata: { listingId: listing.id, listingTitle: listing.title },
+      })
+      window.open(res.data.authorization_url, '_blank', 'noopener,noreferrer')
+    } catch {
+      setBuyingId(null)
+    }
   }
 
   // ── render ─────────────────────────────────────────────────────────────────
@@ -343,6 +390,8 @@ export default function MarketplacePage() {
                     key={listing.id}
                     listing={listing}
                     onClick={() => navigate(`/marketplace/${listing.id}`)}
+                    onBuyNow={(e) => handleBuyNow(listing, e)}
+                    buying={buyingId === listing.id}
                   />
                 ))}
               </div>

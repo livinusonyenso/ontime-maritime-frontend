@@ -190,6 +190,8 @@ model Transaction {
   payment_gateway   String?         @db.VarChar(50)
   gateway_reference String?         @unique @db.VarChar(255)
   paid_at           DateTime?
+  payment_status    String?         @default("pending") @db.VarChar(50)
+  buyer_email       String?         @db.VarChar(255)
   created_at        DateTime        @default(now())
   updated_at        DateTime        @updatedAt
 

@@ -33,8 +33,11 @@ import {
   Loader2,
   PackageSearch,
   X,
+  ShoppingCart,
 } from "lucide-react"
 import { ListingDetailModal } from "@/components/marketplace/ListingDetailModal"
+import { useAuth } from "@/contexts/auth-context"
+import api from "@/lib/api"
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -97,9 +100,11 @@ function ListingCardSkeleton() {
 interface ListingCardProps {
   listing: MarketplaceListing
   onClick: () => void
+  onBuyNow: (e: React.MouseEvent) => void
+  buying: boolean
 }
 
-function ListingCard({ listing, onClick }: ListingCardProps) {
+function ListingCard({ listing, onClick, onBuyNow, buying }: ListingCardProps) {
   const city    = listing.location?.city    ?? ""
   const country = listing.location?.country ?? ""
   const locationText = [city, country].filter(Boolean).join(", ") || "Location not specified"
@@ -159,12 +164,23 @@ function ListingCard({ listing, onClick }: ListingCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 flex gap-2">
         <Button
-          className="w-full group-hover:bg-primary group-hover:text-white transition-colors"
+          className="flex-1 group-hover:bg-primary group-hover:text-white transition-colors"
           variant="secondary"
         >
           View Details <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+        <Button
+          className="flex-1"
+          disabled={buying}
+          onClick={onBuyNow}
+        >
+          {buying
+            ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+            : <ShoppingCart className="h-4 w-4 mr-1.5" />
+          }
+          {buying ? "Redirecting…" : "Buy Now"}
         </Button>
       </CardFooter>
     </Card>
@@ -175,6 +191,7 @@ function ListingCard({ listing, onClick }: ListingCardProps) {
 
 export function MarketView() {
   const dispatch        = useDispatch<AppDispatch>()
+  const { isAuthenticated, user } = useAuth()
   const listings        = useSelector(selectAllListings)
   const selectedListing = useSelector(selectSelectedListing)
   const total           = useSelector(selectMarketplaceTotal)
@@ -190,6 +207,7 @@ export function MarketView() {
   const [minPrice,  setMinPrice]  = useState("")
   const [maxPrice,  setMaxPrice]  = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const [buyingId,    setBuyingId]    = useState<string | null>(null)
 
   // ── Modal state ───────────────────────────────────────────────────────────
   const [detailModalOpen, setDetailModalOpen] = useState(false)
@@ -251,6 +269,30 @@ export function MarketView() {
   function handleModalClose() {
     setDetailModalOpen(false)
     dispatch(clearSelectedListing())
+  }
+
+  // ── Buy Now ───────────────────────────────────────────────────────────────
+  async function handleBuyNow(listing: MarketplaceListing, e: React.MouseEvent) {
+    e.stopPropagation()
+
+    if (!isAuthenticated || !user) {
+      window.location.href = `/login?redirectTo=/dashboard/buyer`
+      return
+    }
+
+    setBuyingId(listing.id)
+    try {
+      const amountKobo = Math.round(Number(listing.price) * 100)
+      const res = await api.post("/payments/initialize", {
+        email: user.email,
+        amount: amountKobo,
+        metadata: { listingId: listing.id, listingTitle: listing.title },
+      })
+      window.open(res.data.authorization_url, '_blank', 'noopener,noreferrer')
+      setBuyingId(null)
+    } catch {
+      setBuyingId(null)
+    }
   }
 
   const hasActiveFilters =
@@ -441,6 +483,8 @@ export function MarketView() {
                   key={listing.id}
                   listing={listing}
                   onClick={() => handleCardClick(listing.id)}
+                  onBuyNow={(e) => handleBuyNow(listing, e)}
+                  buying={buyingId === listing.id}
                 />
               ))}
             </div>

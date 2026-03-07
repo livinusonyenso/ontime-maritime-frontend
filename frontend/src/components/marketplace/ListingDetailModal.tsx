@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, DollarSign, Package, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink } from "lucide-react"
+import { MapPin, DollarSign, Package, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink, ShoppingCart } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import api from "@/lib/api"
 
 // ─── BOL document viewer ───────────────────────────────────────────────────────
 
@@ -99,8 +100,29 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
   
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [buyLoading, setBuyLoading] = useState(false)
 
   if (!listing) return null
+
+  async function handleBuyNow() {
+    if (!user) {
+      window.location.href = "/login"
+      return
+    }
+    setBuyLoading(true)
+    try {
+      const amountKobo = Math.round(Number(listing!.price) * 100)
+      const res = await api.post("/payments/initialize", {
+        email: user.email,
+        amount: amountKobo,
+        metadata: { listingId: listing!.id, listingTitle: listing!.title },
+      })
+      window.open(res.data.authorization_url, '_blank', 'noopener,noreferrer')
+      setBuyLoading(false)
+    } catch {
+      setBuyLoading(false)
+    }
+  }
 
   const isBolUnlocked = unlockedBols.includes(listing.id)
   const hasBol = !!listing.bolImage
@@ -267,14 +289,27 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
         </div>
 
         <DialogFooter className="sm:justify-start">
-           <div className="flex w-full justify-between items-center">
-              <div className="text-xs text-muted-foreground">
-                Listing ID: {listing.id}
-              </div>
+          <div className="flex w-full justify-between items-center gap-3">
+            <div className="text-xs text-muted-foreground">
+              Listing ID: {listing.id}
+            </div>
+            <div className="flex gap-2">
               <Button type="button" variant="secondary" onClick={onClose}>
                 Close
               </Button>
-           </div>
+              <Button
+                type="button"
+                disabled={buyLoading}
+                onClick={handleBuyNow}
+              >
+                {buyLoading
+                  ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  : <ShoppingCart className="h-4 w-4 mr-2" />
+                }
+                {buyLoading ? "Redirecting…" : "Buy Now"}
+              </Button>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

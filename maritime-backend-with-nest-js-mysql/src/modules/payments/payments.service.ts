@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PrismaService } from '../../prisma/prisma.service'
+import { TransactionType, PayoutStatus } from '@prisma/client'
 import axios from 'axios'
 import * as crypto from 'crypto'
 
@@ -20,9 +21,13 @@ export class PaymentsService {
 
   // ─── Initialize Payment ────────────────────────────────────────────────────
 
-  async initializePayment(email: string, amount: number, metadata: Record<string, any> = {}) {
+  async initializePayment(
+    email: string,
+    amount: number,
+    metadata: Record<string, any> = {},
+    buyerId?: string,
+  ) {
     // Paystack expects amount in kobo (smallest currency unit)
-    // amount here is in USD cents — or your app's base unit; document accordingly.
     const response = await axios.post(
       `${this.paystackBaseUrl}/transaction/initialize`,
       { email, amount, metadata, currency: 'NGN' },
@@ -35,6 +40,42 @@ export class PaymentsService {
     )
 
     const { authorization_url, reference, access_code } = response.data.data
+
+    // Persist a pending Transaction record so the webhook can update it later
+    if (buyerId && metadata?.listingId) {
+      try {
+        const listing = await this.prisma.listing.findUnique({
+          where: { id: metadata.listingId },
+        })
+
+        if (listing) {
+          // amount is in kobo → convert to base unit (NGN)
+          const amountNGN = amount / 100
+
+          await this.prisma.transaction.create({
+            data: {
+              buyer_id: buyerId,
+              seller_id: listing.seller_id,
+              listing_id: listing.id,
+              amount: amountNGN,
+              commission_amount: amountNGN * 0.05,
+              transaction_type: TransactionType.buy_now,
+              payout_status: PayoutStatus.pending,
+              payment_gateway: 'paystack',
+              gateway_reference: reference,
+              buyer_email: email,
+              payment_status: 'pending',
+            },
+          })
+
+          this.logger.log(`Transaction created for reference: ${reference}`)
+        }
+      } catch (err) {
+        // Log but don't block payment — the webhook will handle recovery
+        this.logger.error('Failed to create transaction record during initialization', err)
+      }
+    }
+
     return { authorization_url, reference, access_code }
   }
 
@@ -52,6 +93,20 @@ export class PaymentsService {
 
     if (data.status !== 'success') {
       throw new BadRequestException(`Payment not successful. Status: ${data.status}`)
+    }
+
+    // Sync the transaction status in DB if it exists
+    try {
+      await this.prisma.transaction.updateMany({
+        where: { gateway_reference: reference },
+        data: {
+          payout_status: PayoutStatus.completed,
+          payment_status: 'success',
+          paid_at: new Date(),
+        },
+      })
+    } catch (err) {
+      this.logger.warn(`Could not update transaction on verify for ref ${reference}`, err)
     }
 
     return data
@@ -75,18 +130,16 @@ export class PaymentsService {
 
       if (reference) {
         try {
-          // Cast to `any` until `npx prisma migrate dev` regenerates the client
-          // with the gateway_reference / paid_at columns.
           await (this.prisma.transaction as any).updateMany({
             where: { gateway_reference: reference },
             data: {
-              payout_status: 'completed',
+              payout_status: PayoutStatus.completed,
+              payment_status: 'success',
               paid_at: new Date(),
             },
           })
           this.logger.log(`Webhook charge.success processed for reference: ${reference}`)
         } catch (err) {
-          // Log but don't throw — Paystack requires a fast 200 response
           this.logger.error(`Failed to update transaction for reference ${reference}`, err)
         }
       }
