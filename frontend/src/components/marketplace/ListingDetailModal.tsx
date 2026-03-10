@@ -1,15 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { unlockBol, selectUnlockedBols } from "@/store/slices/marketplaceSlice"
 import { useAuth } from "@/contexts/auth-context"
 import type { MarketplaceListing } from "@/types/maritime"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, DollarSign, Package, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink, ShoppingCart } from "lucide-react"
+import { MapPin, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink, ShoppingCart, RefreshCw } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import api from "@/lib/api"
 
@@ -94,15 +92,51 @@ interface ListingDetailModalProps {
 }
 
 export function ListingDetailModal({ open, onClose, listing }: ListingDetailModalProps) {
-  const dispatch = useDispatch()
   const { user } = useAuth()
-  const unlockedBols = useSelector((state: any) => selectUnlockedBols(state, user?.id || ""))
-  
+
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
-  const [buyLoading, setBuyLoading] = useState(false)
+  const [bolPaymentPending, setBolPaymentPending]     = useState(false)
+  const [isCheckingBol, setIsCheckingBol]             = useState(false)
+  const [localBolImage, setLocalBolImage]             = useState<string | null>(null)
+  const [bolError, setBolError]                       = useState<string | null>(null)
+  const [buyLoading, setBuyLoading]                   = useState(false)
+
+  // Sync localBolImage when listing or modal changes
+  useEffect(() => {
+    setLocalBolImage(listing?.bolImage ?? null)
+    setBolPaymentPending(false)
+    setBolError(null)
+  }, [listing?.id, open])
+
+  // When user returns to this tab after paying, re-fetch listing to check BOL status
+  useEffect(() => {
+    if (!bolPaymentPending || !listing) return
+
+    const handleFocus = async () => {
+      setIsCheckingBol(true)
+      try {
+        const res = await api.get(`/marketplace/listings/${listing.id}`)
+        if (res.data.bolImage || res.data.bol_image) {
+          setLocalBolImage(res.data.bolImage ?? res.data.bol_image)
+          setBolPaymentPending(false)
+        }
+      } catch {
+        // silently ignore — user can use the manual refresh button
+      } finally {
+        setIsCheckingBol(false)
+      }
+    }
+
+    window.addEventListener("focus", handleFocus)
+    return () => window.removeEventListener("focus", handleFocus)
+  }, [bolPaymentPending, listing])
 
   if (!listing) return null
+
+  // Listing has a verified BOL if bolVerified is true
+  const hasBol       = listing.bolVerified
+  // BOL is unlocked if the API returned the image (present in local state)
+  const isBolUnlocked = !!localBolImage
 
   async function handleBuyNow() {
     if (!user) {
@@ -117,33 +151,49 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
         amount: amountKobo,
         metadata: { listingId: listing!.id, listingTitle: listing!.title },
       })
-      window.open(res.data.authorization_url, '_blank', 'noopener,noreferrer')
-      setBuyLoading(false)
+      window.open(res.data.authorization_url, "_blank", "noopener,noreferrer")
     } catch {
+      // ignore
+    } finally {
       setBuyLoading(false)
     }
   }
 
-  const isBolUnlocked = unlockedBols.includes(listing.id)
-  const hasBol = !!listing.bolImage
-
-  const handleVerifyBol = () => {
+  async function handleUnlockBol() {
     if (!user) {
-      alert("Please login to verify BOL")
+      window.location.href = "/login"
       return
     }
-
+    setBolError(null)
     setIsProcessingPayment(true)
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      dispatch(unlockBol({ userId: user.id, listingId: listing.id }))
+    try {
+      const res = await api.post(`/payments/bol-unlock/${listing!.id}`)
+      window.open(res.data.authorization_url, "_blank", "noopener,noreferrer")
+      // Mark that we're waiting for the payment to complete
+      setBolPaymentPending(true)
+    } catch (err: any) {
+      setBolError(err?.response?.data?.message ?? "Failed to initialize payment. Please try again.")
+    } finally {
       setIsProcessingPayment(false)
-      setPaymentSuccess(true)
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => setPaymentSuccess(false), 3000)
-    }, 2000)
+    }
+  }
+
+  async function handleCheckBolStatus() {
+    if (!listing) return
+    setIsCheckingBol(true)
+    try {
+      const res = await api.get(`/marketplace/listings/${listing.id}`)
+      if (res.data.bolImage || res.data.bol_image) {
+        setLocalBolImage(res.data.bolImage ?? res.data.bol_image)
+        setBolPaymentPending(false)
+      } else {
+        setBolError("Payment not confirmed yet. Please wait a moment and try again.")
+      }
+    } catch {
+      setBolError("Could not check status. Please try again.")
+    } finally {
+      setIsCheckingBol(false)
+    }
   }
 
   return (
@@ -173,9 +223,9 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
           {/* Left Column: Images */}
           <div className="space-y-4">
             <div className="aspect-video bg-muted rounded-lg overflow-hidden border">
-              <img 
-                src={listing.images[0] || "/placeholder.svg"} 
-                alt={listing.title} 
+              <img
+                src={listing.images[0] || "/placeholder.svg"}
+                alt={listing.title}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -228,21 +278,52 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
                         You have verified the Bill of Lading for this listing.
                       </AlertDescription>
                     </Alert>
-                    
+
                     <div className="border rounded-lg p-4 bg-background">
                       <h4 className="font-medium mb-3 flex items-center gap-2">
                         <FileText className="h-4 w-4" /> Bill of Lading Document
                       </h4>
-                      <BolDocumentViewer bolImage={listing.bolImage!} />
+                      <BolDocumentViewer bolImage={localBolImage!} />
                     </div>
                   </div>
+                ) : bolPaymentPending ? (
+                  // User has started payment — waiting for confirmation
+                  <div className="space-y-4">
+                    <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-700">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <AlertTitle>Waiting for Payment Confirmation</AlertTitle>
+                      <AlertDescription>
+                        Complete the payment in the Paystack tab. Once done, come back here — the BOL will load automatically when you switch back.
+                      </AlertDescription>
+                    </Alert>
+                    {bolError && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{bolError}</AlertDescription>
+                      </Alert>
+                    )}
+                    <Button
+                      variant="outline"
+                      className="w-full gap-2"
+                      onClick={handleCheckBolStatus}
+                      disabled={isCheckingBol}
+                    >
+                      {isCheckingBol ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
+                      {isCheckingBol ? "Checking…" : "I've Paid — Check Now"}
+                    </Button>
+                  </div>
                 ) : (
+                  // BOL exists but not unlocked yet
                   <div className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      The seller has uploaded a Bill of Lading (BOL) to verify ownership of this item. 
-                      Pay a small fee to access and verify this document securely.
+                      The seller has uploaded a verified Bill of Lading (BOL) to confirm ownership.
+                      Pay a one-time fee to access and verify this document securely.
                     </p>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-background border rounded-md">
                       <div className="flex items-center gap-2">
                         <FileText className="h-5 w-5 text-muted-foreground" />
@@ -253,25 +334,30 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
                       </Badge>
                     </div>
 
-                    <Button 
-                      className="w-full" 
-                      size="lg" 
-                      onClick={handleVerifyBol}
+                    {bolError && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{bolError}</AlertDescription>
+                      </Alert>
+                    )}
+
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={handleUnlockBol}
                       disabled={isProcessingPayment}
                     >
                       {isProcessingPayment ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing Payment...
+                          Redirecting to Payment…
                         </>
                       ) : (
-                        <>
-                          Verify BOL - Pay $20.00
-                        </>
+                        "Unlock BOL — Pay ₦2,000"
                       )}
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
-                      Secure payment processing via Stripe
+                      Secure payment via Paystack · One-time fee per listing
                     </p>
                   </div>
                 )

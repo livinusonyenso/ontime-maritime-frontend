@@ -5,11 +5,15 @@ import { TransactionType, PayoutStatus } from '@prisma/client'
 import axios from 'axios'
 import * as crypto from 'crypto'
 
+// BOL unlock fee in kobo (₦2,000 ≈ $20 equivalent). Override via env BOL_UNLOCK_PRICE_KOBO.
+const DEFAULT_BOL_PRICE_KOBO = 200_000
+
 @Injectable()
 export class PaymentsService {
   private readonly logger = new Logger(PaymentsService.name)
   private readonly paystackBaseUrl: string
   private readonly secretKey: string
+  private readonly bolUnlockPriceKobo: number
 
   constructor(
     private config: ConfigService,
@@ -17,9 +21,10 @@ export class PaymentsService {
   ) {
     this.paystackBaseUrl = this.config.get<string>('PAYSTACK_BASE_URL') || 'https://api.paystack.co'
     this.secretKey = this.config.get<string>('PAYSTACK_SECRET_KEY') || ''
+    this.bolUnlockPriceKobo = Number(this.config.get<string>('BOL_UNLOCK_PRICE_KOBO') || DEFAULT_BOL_PRICE_KOBO)
   }
 
-  // ─── Initialize Payment ────────────────────────────────────────────────────
+  // ─── Initialize Payment (Listing Purchase) ────────────────────────────────
 
   async initializePayment(
     email: string,
@@ -79,6 +84,67 @@ export class PaymentsService {
     return { authorization_url, reference, access_code }
   }
 
+  // ─── Initialize BOL Unlock Payment ────────────────────────────────────────
+
+  async initializeBolUnlock(listingId: string, buyerId: string) {
+    // Look up buyer email from DB — never trust the client
+    const buyer = await this.prisma.user.findUnique({
+      where: { id: buyerId },
+      select: { email: true },
+    })
+
+    if (!buyer) throw new BadRequestException('Buyer not found')
+
+    // Check listing exists and has a verified BOL
+    const listing = await this.prisma.listing.findUnique({
+      where: { id: listingId },
+      select: { id: true, bol_verified: true, bol_image: true },
+    })
+
+    if (!listing) throw new BadRequestException('Listing not found')
+    if (!listing.bol_verified) throw new BadRequestException('This listing does not have a verified Bill of Lading')
+
+    // Check if already unlocked
+    const existing = await this.prisma.bolUnlock.findUnique({
+      where: { buyer_id_listing_id: { buyer_id: buyerId, listing_id: listingId } },
+    })
+    if (existing) throw new BadRequestException('You have already unlocked the BOL for this listing')
+
+    const response = await axios.post(
+      `${this.paystackBaseUrl}/transaction/initialize`,
+      {
+        email: buyer.email,
+        amount: this.bolUnlockPriceKobo,
+        currency: 'NGN',
+        metadata: {
+          type: 'bol_unlock',
+          listingId,
+          buyerId,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.secretKey}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    const { authorization_url, reference, access_code } = response.data.data
+    this.logger.log(`BOL unlock payment initialized for listing ${listingId} by buyer ${buyerId}, ref: ${reference}`)
+
+    return { authorization_url, reference, access_code }
+  }
+
+  // ─── Check BOL Unlock Status ───────────────────────────────────────────────
+
+  async isBolUnlocked(buyerId: string, listingId: string): Promise<boolean> {
+    const record = await this.prisma.bolUnlock.findUnique({
+      where: { buyer_id_listing_id: { buyer_id: buyerId, listing_id: listingId } },
+    })
+    return !!record
+  }
+
   // ─── Verify Payment ────────────────────────────────────────────────────────
 
   async verifyPayment(reference: string) {
@@ -127,10 +193,28 @@ export class PaymentsService {
   async handleWebhookEvent(event: string, data: any): Promise<{ received: boolean }> {
     if (event === 'charge.success') {
       const reference: string = data?.reference
+      const metadata: Record<string, any> = data?.metadata ?? {}
 
-      if (reference) {
+      if (metadata?.type === 'bol_unlock') {
+        // BOL unlock payment — create BolUnlock record
+        const { buyerId, listingId } = metadata
+
+        if (buyerId && listingId) {
+          try {
+            await this.prisma.bolUnlock.upsert({
+              where: { buyer_id_listing_id: { buyer_id: buyerId, listing_id: listingId } },
+              create: { buyer_id: buyerId, listing_id: listingId },
+              update: {}, // already exists — no-op
+            })
+            this.logger.log(`BOL unlocked for listing ${listingId} by buyer ${buyerId} (ref: ${reference})`)
+          } catch (err) {
+            this.logger.error(`Failed to create BolUnlock record for ref ${reference}`, err)
+          }
+        }
+      } else if (reference) {
+        // Regular listing purchase — update Transaction
         try {
-          await (this.prisma.transaction as any).updateMany({
+          await this.prisma.transaction.updateMany({
             where: { gateway_reference: reference },
             data: {
               payout_status: PayoutStatus.completed,

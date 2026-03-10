@@ -1,6 +1,8 @@
-import { Controller, Get, Param, Query } from "@nestjs/common"
+import { Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common"
+import { Request } from "express"
 import { MarketplaceService } from "./marketplace.service"
 import { QueryMarketplaceDto } from "./dto/query-marketplace.dto"
+import { OptionalJwtAuthGuard } from "../../guards/optional-jwt-auth.guard"
 
 /**
  * Public Marketplace API
@@ -9,8 +11,8 @@ import { QueryMarketplaceDto } from "./dto/query-marketplace.dto"
  *  - Browse (GET) endpoints are fully public — no authentication required.
  *  - Only active + available listings are surfaced by the service layer.
  *  - Seller PII (email, internal id) is never returned.
- *  - bol_image is only returned on the detail endpoint; the unlock payment
- *    flow is enforced in the frontend (authenticated users only).
+ *  - bol_image is gated: only returned when the authenticated user has a
+ *    BolUnlock record for that listing (paid $20 unlock fee).
  *  - Interaction endpoints (contact, offer, buy, save) live in their own
  *    modules and are individually protected by JwtAuthGuard.
  */
@@ -39,13 +41,16 @@ export class MarketplaceController {
   }
 
   /**
-   * GET /api/marketplace/listings/:id  — fully public
+   * GET /api/marketplace/listings/:id
    *
-   * Returns full listing detail. Listing must be active; view count is
-   * incremented asynchronously. Returns 404 for non-active listings.
+   * Public endpoint with optional auth. Increments view count asynchronously.
+   * If authenticated and the user has a BolUnlock record for this listing,
+   * bol_image is included in the response. Otherwise it is omitted.
    */
   @Get("listings/:id")
-  async getListingById(@Param("id") id: string) {
-    return this.marketplaceService.findPublicById(id)
+  @UseGuards(OptionalJwtAuthGuard)
+  async getListingById(@Param("id") id: string, @Req() req: Request) {
+    const buyerId: string | undefined = (req as any).user?.id
+    return this.marketplaceService.findPublicById(id, buyerId)
   }
 }

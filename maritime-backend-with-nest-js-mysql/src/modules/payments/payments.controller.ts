@@ -10,6 +10,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common'
 import { Request as ExpressRequest, Response } from 'express'
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard'
@@ -32,6 +33,25 @@ export class PaymentsController {
       dto.metadata ?? {},
       buyerId,
     )
+    return {
+      authorization_url: result.authorization_url,
+      reference: result.reference,
+      access_code: result.access_code,
+    }
+  }
+
+  // ─── POST /payments/bol-unlock/:listingId ─────────────────────────────────
+  // Protected: initializes a $20 BOL unlock Paystack payment
+  @Post('bol-unlock/:listingId')
+  @UseGuards(JwtAuthGuard)
+  async initializeBolUnlock(
+    @Req() req: ExpressRequest,
+    @Param('listingId') listingId: string,
+  ) {
+    const buyerId: string | undefined = (req as any).user?.id
+    if (!buyerId) throw new ForbiddenException('Authentication required')
+
+    const result = await this.paymentsService.initializeBolUnlock(listingId, buyerId)
     return {
       authorization_url: result.authorization_url,
       reference: result.reference,

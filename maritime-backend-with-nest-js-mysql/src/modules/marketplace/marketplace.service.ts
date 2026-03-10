@@ -157,10 +157,13 @@ export class MarketplaceService {
   }
 
   /**
-   * Single listing detail — includes bol_image for the BOL-unlock modal.
+   * Single listing detail.
+   * bol_image is only included when:
+   *   - buyerId is provided (authenticated request), AND
+   *   - a BolUnlock record exists for (buyerId, listingId)
    * Increments view counter asynchronously (fire-and-forget).
    */
-  async findPublicById(id: string) {
+  async findPublicById(id: string, buyerId?: string) {
     const row = await this.prisma.listing.findFirst({
       where: { id, status: ListingStatus.active },
       select: DETAIL_SELECT,
@@ -173,6 +176,15 @@ export class MarketplaceService {
       .update({ where: { id }, data: { views: { increment: 1 } } })
       .catch(() => {/* swallow — not critical */})
 
-    return toPublic(row, true)
+    // Gate bol_image: only expose it if the buyer has paid to unlock it
+    let includeBol = false
+    if (buyerId) {
+      const unlock = await this.prisma.bolUnlock.findUnique({
+        where: { buyer_id_listing_id: { buyer_id: buyerId, listing_id: id } },
+      })
+      includeBol = !!unlock
+    }
+
+    return toPublic(row, includeBol)
   }
 }
