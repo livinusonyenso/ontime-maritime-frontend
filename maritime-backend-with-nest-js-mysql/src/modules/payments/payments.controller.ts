@@ -41,17 +41,18 @@ export class PaymentsController {
   }
 
   // ─── POST /payments/bol-unlock/:listingId ─────────────────────────────────
-  // Protected: initializes a $20 BOL unlock Paystack payment
+  // Protected: initializes a BOL unlock Paystack payment
   @Post('bol-unlock/:listingId')
   @UseGuards(JwtAuthGuard)
   async initializeBolUnlock(
     @Req() req: ExpressRequest,
     @Param('listingId') listingId: string,
+    @Body() body: { callbackUrl?: string },
   ) {
     const buyerId: string | undefined = (req as any).user?.id
     if (!buyerId) throw new ForbiddenException('Authentication required')
 
-    const result = await this.paymentsService.initializeBolUnlock(listingId, buyerId)
+    const result = await this.paymentsService.initializeBolUnlock(listingId, buyerId, body?.callbackUrl)
     return {
       authorization_url: result.authorization_url,
       reference: result.reference,
@@ -60,9 +61,9 @@ export class PaymentsController {
   }
 
   // ─── GET /payments/verify/:reference ──────────────────────────────────────
-  // Protected: only authenticated users can verify
+  // Public: the Paystack reference is the proof of payment — no auth required.
+  // This prevents 401 errors on the callback page from wiping the user's session.
   @Get('verify/:reference')
-  @UseGuards(JwtAuthGuard)
   async verify(@Param('reference') reference: string) {
     const data = await this.paymentsService.verifyPayment(reference)
     return { status: 'success', message: 'Payment verified', data }

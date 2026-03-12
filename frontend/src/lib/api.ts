@@ -44,7 +44,7 @@ api.interceptors.response.use(
           // Unauthorized - clear token and redirect to login
           // But don't redirect if we're already on a login or register page
           const currentPath = window.location.pathname
-          const isOnAuthPage = ['/login', '/register', '/admin/login'].includes(currentPath)
+          const isOnAuthPage = ['/login', '/register', '/admin/login', '/payment/callback'].includes(currentPath)
 
           if (!isOnAuthPage) {
             localStorage.removeItem('ontime_token')

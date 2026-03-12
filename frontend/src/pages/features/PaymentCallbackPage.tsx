@@ -42,10 +42,19 @@ export default function PaymentCallbackPage() {
     api
       .get(`/payments/verify/${reference}`)
       .then((res) => {
-        setTxData(res.data.data)
+        const data = res.data.data
+        setTxData(data)
         setStatus("success")
         setMessage("Your payment was confirmed successfully.")
         setModalOpen(true)
+
+        // BOL unlock: notify the opener tab so it can auto-show the document
+        if (data?.metadata?.type === "bol_unlock" && data?.metadata?.listingId) {
+          window.opener?.postMessage(
+            { type: "BOL_UNLOCKED", listingId: data.metadata.listingId },
+            window.location.origin,
+          )
+        }
       })
       .catch((err) => {
         setStatus("failed")
@@ -129,12 +138,28 @@ export default function PaymentCallbackPage() {
           )}
 
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" asChild className="flex-1">
-              <Link to="/marketplace">Back to Marketplace</Link>
-            </Button>
-            <Button asChild className="flex-1">
-              <Link to="/dashboard/buyer/payments">My Payments</Link>
-            </Button>
+            {txData?.metadata?.type === "bol_unlock" ? (
+              <>
+                <Button
+                  className="flex-1"
+                  onClick={() => window.close()}
+                >
+                  Close Tab &amp; View BOL
+                </Button>
+                <Button variant="outline" asChild className="flex-1">
+                  <Link to="/dashboard/buyer/payments">My Payments</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" asChild className="flex-1">
+                  <Link to="/marketplace">Back to Marketplace</Link>
+                </Button>
+                <Button asChild className="flex-1">
+                  <Link to="/dashboard/buyer/payments">My Payments</Link>
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

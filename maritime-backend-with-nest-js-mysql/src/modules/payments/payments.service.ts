@@ -86,7 +86,7 @@ export class PaymentsService {
 
   // ─── Initialize BOL Unlock Payment ────────────────────────────────────────
 
-  async initializeBolUnlock(listingId: string, buyerId: string) {
+  async initializeBolUnlock(listingId: string, buyerId: string, callbackUrl?: string) {
     // Look up buyer email from DB — never trust the client
     const buyer = await this.prisma.user.findUnique({
       where: { id: buyerId },
@@ -116,6 +116,7 @@ export class PaymentsService {
         email: buyer.email,
         amount: this.bolUnlockPriceKobo,
         currency: 'NGN',
+        ...(callbackUrl ? { callback_url: callbackUrl } : {}),
         metadata: {
           type: 'bol_unlock',
           listingId,
@@ -173,6 +174,26 @@ export class PaymentsService {
       })
     } catch (err) {
       this.logger.warn(`Could not update transaction on verify for ref ${reference}`, err)
+    }
+
+    // For BOL unlock payments — upsert the BolUnlock record immediately so the
+    // frontend can access the BOL without waiting for the async webhook.
+    if (data.metadata?.type === 'bol_unlock' && data.metadata?.listingId && data.metadata?.buyerId) {
+      try {
+        await this.prisma.bolUnlock.upsert({
+          where: {
+            buyer_id_listing_id: {
+              buyer_id: data.metadata.buyerId,
+              listing_id: data.metadata.listingId,
+            },
+          },
+          create: { buyer_id: data.metadata.buyerId, listing_id: data.metadata.listingId },
+          update: {},
+        })
+        this.logger.log(`BolUnlock upserted on verify for listing ${data.metadata.listingId} buyer ${data.metadata.buyerId}`)
+      } catch (err) {
+        this.logger.error(`Failed to upsert BolUnlock on verify for ref ${reference}`, err)
+      }
     }
 
     return data

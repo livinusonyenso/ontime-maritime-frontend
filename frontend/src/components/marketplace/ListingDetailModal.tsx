@@ -101,34 +101,43 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
   const [bolError, setBolError]                       = useState<string | null>(null)
   const [buyLoading, setBuyLoading]                   = useState(false)
 
-  // Sync localBolImage when listing or modal changes
+  // Sync localBolImage when listing changes or modal opens.
+  // Including listing?.bolImage ensures previously-unlocked BOLs show immediately
+  // on re-open without requiring a manual refresh.
   useEffect(() => {
     setLocalBolImage(listing?.bolImage ?? null)
     setBolPaymentPending(false)
     setBolError(null)
-  }, [listing?.id, open])
+  }, [listing?.id, listing?.bolImage, open])
 
-  // When user returns to this tab after paying, re-fetch listing to check BOL status
+  // Listen for BOL_UNLOCKED message from the Paystack callback tab
   useEffect(() => {
     if (!bolPaymentPending || !listing) return
 
-    const handleFocus = async () => {
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin ||
+        event.data?.type !== "BOL_UNLOCKED" ||
+        event.data?.listingId !== listing.id
+      ) return
+
+      // Payment confirmed — re-fetch to get the bol_image
       setIsCheckingBol(true)
-      try {
-        const res = await api.get(`/marketplace/listings/${listing.id}`)
-        if (res.data.bolImage || res.data.bol_image) {
-          setLocalBolImage(res.data.bolImage ?? res.data.bol_image)
-          setBolPaymentPending(false)
-        }
-      } catch {
-        // silently ignore — user can use the manual refresh button
-      } finally {
-        setIsCheckingBol(false)
-      }
+      api
+        .get(`/marketplace/listings/${listing.id}`)
+        .then((res) => {
+          const image = res.data.bol_image ?? res.data.bolImage
+          if (image) {
+            setLocalBolImage(image)
+            setBolPaymentPending(false)
+          }
+        })
+        .catch(() => {/* user can still click "Check Now" */})
+        .finally(() => setIsCheckingBol(false))
     }
 
-    window.addEventListener("focus", handleFocus)
-    return () => window.removeEventListener("focus", handleFocus)
+    window.addEventListener("message", handleMessage)
+    return () => window.removeEventListener("message", handleMessage)
   }, [bolPaymentPending, listing])
 
   if (!listing) return null
@@ -167,12 +176,23 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
     setBolError(null)
     setIsProcessingPayment(true)
     try {
-      const res = await api.post(`/payments/bol-unlock/${listing!.id}`)
-      window.open(res.data.authorization_url, "_blank", "noopener,noreferrer")
+      const callbackUrl = `${window.location.origin}/payment/callback`
+      const res = await api.post(`/payments/bol-unlock/${listing!.id}`, { callbackUrl })
+      // Note: do NOT use noopener/noreferrer here — we need window.opener for postMessage
+      window.open(res.data.authorization_url, "_blank")
       // Mark that we're waiting for the payment to complete
       setBolPaymentPending(true)
     } catch (err: any) {
-      setBolError(err?.response?.data?.message ?? "Failed to initialize payment. Please try again.")
+      const msg: string = err?.response?.data?.message ?? err?.message ?? ""
+      // If already unlocked (e.g. previous session), just re-fetch to show the BOL
+      if (msg.toLowerCase().includes("already unlocked")) {
+        try {
+          const res = await api.get(`/marketplace/listings/${listing!.id}`)
+          const image = res.data.bol_image ?? res.data.bolImage
+          if (image) { setLocalBolImage(image); return }
+        } catch { /* fall through to error */ }
+      }
+      setBolError(msg || "Failed to initialize payment. Please try again.")
     } finally {
       setIsProcessingPayment(false)
     }
