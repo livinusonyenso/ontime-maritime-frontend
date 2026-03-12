@@ -133,8 +133,8 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
 
   if (!listing) return null
 
-  // Listing has a verified BOL if bolVerified is true
-  const hasBol       = listing.bolVerified
+  // hasBol: true if a BOL image exists in DB (bolHasImage) or seller has verified one (bolVerified)
+  const hasBol        = !!(listing.bolHasImage ?? listing.bolVerified)
   // BOL is unlocked if the API returned the image (present in local state)
   const isBolUnlocked = !!localBolImage
 

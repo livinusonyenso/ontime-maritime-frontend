@@ -228,7 +228,8 @@ export interface MarketplaceListing {
     port?: string
     coordinates?: { lat: number; lng: number }
   }
-  bolImage?: string // URL or base64 of the Bill of Lading image
+  bolImage?: string // URL or base64 of the Bill of Lading image (only present after unlock)
+  bolHasImage?: boolean // true if a BOL image exists in the DB (gated — use to show unlock button)
   specifications: Record<string, string>
   condition: 'new' | 'like_new' | 'good' | 'fair' | 'used'
   availability: 'available' | 'pending' | 'sold' | 'rented'

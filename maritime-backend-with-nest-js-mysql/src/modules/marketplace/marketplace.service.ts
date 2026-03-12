@@ -66,7 +66,9 @@ function toPublic(row: any, includeBol = false) {
     // BOL flags — visible to buyers so they know verification is possible
     bol_required:   row.bol_required         ?? false,
     bol_verified:   row.bol_verified         ?? false,
-    // bol_image only in detail response (paid-unlock flow)
+    // Always tell the frontend whether a BOL image exists (without exposing it)
+    bol_has_image:  !!row.bol_image,
+    // bol_image only returned after the buyer has paid to unlock it
     ...(includeBol ? { bol_image: row.bol_image ?? null } : {}),
     featured:       row.featured             ?? false,
     views:          row.views                ?? 0,
