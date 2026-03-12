@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams, Link } from "react-router-dom"
+import { useSearchParams, Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
@@ -21,12 +21,16 @@ type Status = "loading" | "success" | "failed"
 
 export default function PaymentCallbackPage() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const reference = searchParams.get("reference") || searchParams.get("trxref")
 
   const [status,    setStatus]    = useState<Status>("loading")
   const [message,   setMessage]   = useState("")
   const [txData,    setTxData]    = useState<any>(null)
   const [modalOpen, setModalOpen] = useState(false)
+
+  // Listing ID stored by ListingDetailModal before redirecting to Paystack
+  const returnListingId = sessionStorage.getItem("bol_return_listing_id")
 
   const verify = () => {
     if (!reference) {
@@ -48,12 +52,9 @@ export default function PaymentCallbackPage() {
         setMessage("Your payment was confirmed successfully.")
         setModalOpen(true)
 
-        // BOL unlock: notify the opener tab so it can auto-show the document
-        if (data?.metadata?.type === "bol_unlock" && data?.metadata?.listingId) {
-          window.opener?.postMessage(
-            { type: "BOL_UNLOCKED", listingId: data.metadata.listingId },
-            window.location.origin,
-          )
+        // Clear the stored listing ID after a successful BOL unlock
+        if (data?.metadata?.type === "bol_unlock") {
+          sessionStorage.removeItem("bol_return_listing_id")
         }
       })
       .catch((err) => {
@@ -65,6 +66,17 @@ export default function PaymentCallbackPage() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { verify() }, [reference])
+
+  // Navigate directly to the listing detail page — BOL section shows automatically
+  // because the BolUnlock record now exists in the DB
+  function handleViewBol() {
+    const listingId = txData?.metadata?.listingId ?? returnListingId
+    if (listingId) {
+      navigate(`/marketplace/${listingId}`, { replace: true })
+    } else {
+      navigate("/marketplace", { replace: true })
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -140,11 +152,8 @@ export default function PaymentCallbackPage() {
           <DialogFooter className="flex-col sm:flex-row gap-2">
             {txData?.metadata?.type === "bol_unlock" ? (
               <>
-                <Button
-                  className="flex-1"
-                  onClick={() => window.close()}
-                >
-                  Close Tab &amp; View BOL
+                <Button className="flex-1" onClick={handleViewBol}>
+                  View BOL
                 </Button>
                 <Button variant="outline" asChild className="flex-1">
                   <Link to="/dashboard/buyer/payments">My Payments</Link>

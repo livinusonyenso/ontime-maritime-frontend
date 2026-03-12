@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink, ShoppingCart, RefreshCw } from "lucide-react"
+import { MapPin, FileText, CheckCircle, ShieldCheck, AlertCircle, Loader2, ExternalLink, ShoppingCart } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import api from "@/lib/api"
 
@@ -21,7 +21,6 @@ function BolDocumentViewer({ bolImage }: { bolImage: string }) {
     bolImage.toLowerCase().includes(".pdf") ||
     bolImage.includes("/raw/upload/")
 
-  // Chrome blocks window.open() with data: URLs — convert to a blob URL instead
   useEffect(() => {
     if (!isPdf || !bolImage.startsWith("data:")) return
     try {
@@ -34,7 +33,7 @@ function BolDocumentViewer({ bolImage }: { bolImage: string }) {
       setBlobUrl(url)
       return () => URL.revokeObjectURL(url)
     } catch {
-      // fall through — we'll show a plain link
+      // fall through — show a plain link
     }
   }, [bolImage, isPdf])
 
@@ -45,11 +44,7 @@ function BolDocumentViewer({ bolImage }: { bolImage: string }) {
       <div className="space-y-2">
         <div className="aspect-3/4 border rounded-lg overflow-hidden bg-muted">
           {openUrl ? (
-            <iframe
-              src={openUrl}
-              title="Bill of Lading PDF"
-              className="w-full h-full"
-            />
+            <iframe src={openUrl} title="Bill of Lading PDF" className="w-full h-full" />
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground gap-2">
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -71,7 +66,6 @@ function BolDocumentViewer({ bolImage }: { bolImage: string }) {
     )
   }
 
-  // Image (jpeg/png/webp)
   return (
     <div
       className="aspect-3/4 bg-muted rounded border overflow-hidden relative group cursor-pointer"
@@ -95,63 +89,27 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
   const { user } = useAuth()
 
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
-  const [bolPaymentPending, setBolPaymentPending]     = useState(false)
-  const [isCheckingBol, setIsCheckingBol]             = useState(false)
   const [localBolImage, setLocalBolImage]             = useState<string | null>(null)
   const [bolError, setBolError]                       = useState<string | null>(null)
   const [buyLoading, setBuyLoading]                   = useState(false)
 
   // Sync localBolImage when listing changes or modal opens.
-  // Including listing?.bolImage ensures previously-unlocked BOLs show immediately
-  // on re-open without requiring a manual refresh.
+  // listing?.bolImage is included in deps so previously-unlocked BOLs show
+  // immediately on re-open without re-paying.
   useEffect(() => {
     setLocalBolImage(listing?.bolImage ?? null)
-    setBolPaymentPending(false)
     setBolError(null)
   }, [listing?.id, listing?.bolImage, open])
 
-  // Listen for BOL_UNLOCKED message from the Paystack callback tab
-  useEffect(() => {
-    if (!bolPaymentPending || !listing) return
-
-    const handleMessage = (event: MessageEvent) => {
-      if (
-        event.origin !== window.location.origin ||
-        event.data?.type !== "BOL_UNLOCKED" ||
-        event.data?.listingId !== listing.id
-      ) return
-
-      // Payment confirmed — re-fetch to get the bol_image
-      setIsCheckingBol(true)
-      api
-        .get(`/marketplace/listings/${listing.id}`)
-        .then((res) => {
-          const image = res.data.bol_image ?? res.data.bolImage
-          if (image) {
-            setLocalBolImage(image)
-            setBolPaymentPending(false)
-          }
-        })
-        .catch(() => {/* user can still click "Check Now" */})
-        .finally(() => setIsCheckingBol(false))
-    }
-
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [bolPaymentPending, listing])
-
   if (!listing) return null
 
-  // hasBol: true if a BOL image exists in DB (bolHasImage) or seller has verified one (bolVerified)
   const hasBol        = !!(listing.bolHasImage ?? listing.bolVerified)
-  // BOL is unlocked if the API returned the image (present in local state)
   const isBolUnlocked = !!localBolImage
 
+  // ── Buy Now ─────────────────────────────────────────────────────────────────
+
   async function handleBuyNow() {
-    if (!user) {
-      window.location.href = "/login"
-      return
-    }
+    if (!user) { window.location.href = "/login"; return }
     setBuyLoading(true)
     try {
       const amountKobo = Math.round(Number(listing!.price) * 100)
@@ -168,52 +126,39 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
     }
   }
 
+  // ── Unlock BOL ───────────────────────────────────────────────────────────────
+  // Uses a full-page redirect to Paystack (same tab) — avoids all cross-tab
+  // communication issues (postMessage, opener, token sharing between tabs).
+  // After payment Paystack redirects back to /payment/callback which then
+  // links back here. The DB record means the BOL shows on re-open automatically.
+
   async function handleUnlockBol() {
-    if (!user) {
-      window.location.href = "/login"
-      return
-    }
+    if (!user) { window.location.href = "/login"; return }
     setBolError(null)
     setIsProcessingPayment(true)
     try {
+      // Store return destination so callback page can link back
+      sessionStorage.setItem("bol_return_listing_id", listing!.id)
+
       const callbackUrl = `${window.location.origin}/payment/callback`
       const res = await api.post(`/payments/bol-unlock/${listing!.id}`, { callbackUrl })
-      // Note: do NOT use noopener/noreferrer here — we need window.opener for postMessage
-      window.open(res.data.authorization_url, "_blank")
-      // Mark that we're waiting for the payment to complete
-      setBolPaymentPending(true)
+
+      // Redirect this tab directly to Paystack — no popup, no cross-tab issues
+      window.location.href = res.data.authorization_url
     } catch (err: any) {
       const msg: string = err?.response?.data?.message ?? err?.message ?? ""
-      // If already unlocked (e.g. previous session), just re-fetch to show the BOL
+      // Already unlocked in a previous session — re-fetch to reveal the BOL
       if (msg.toLowerCase().includes("already unlocked")) {
         try {
           const res = await api.get(`/marketplace/listings/${listing!.id}`)
           const image = res.data.bol_image ?? res.data.bolImage
           if (image) { setLocalBolImage(image); return }
-        } catch { /* fall through to error */ }
+        } catch { /* fall through */ }
       }
       setBolError(msg || "Failed to initialize payment. Please try again.")
-    } finally {
       setIsProcessingPayment(false)
     }
-  }
-
-  async function handleCheckBolStatus() {
-    if (!listing) return
-    setIsCheckingBol(true)
-    try {
-      const res = await api.get(`/marketplace/listings/${listing.id}`)
-      if (res.data.bolImage || res.data.bol_image) {
-        setLocalBolImage(res.data.bolImage ?? res.data.bol_image)
-        setBolPaymentPending(false)
-      } else {
-        setBolError("Payment not confirmed yet. Please wait a moment and try again.")
-      }
-    } catch {
-      setBolError("Could not check status. Please try again.")
-    } finally {
-      setIsCheckingBol(false)
-    }
+    // Note: don't reset isProcessingPayment on success — the page is navigating away
   }
 
   return (
@@ -305,36 +250,6 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
                       </h4>
                       <BolDocumentViewer bolImage={localBolImage!} />
                     </div>
-                  </div>
-                ) : bolPaymentPending ? (
-                  // User has started payment — waiting for confirmation
-                  <div className="space-y-4">
-                    <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-700">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <AlertTitle>Waiting for Payment Confirmation</AlertTitle>
-                      <AlertDescription>
-                        Complete the payment in the Paystack tab. Once done, come back here — the BOL will load automatically when you switch back.
-                      </AlertDescription>
-                    </Alert>
-                    {bolError && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{bolError}</AlertDescription>
-                      </Alert>
-                    )}
-                    <Button
-                      variant="outline"
-                      className="w-full gap-2"
-                      onClick={handleCheckBolStatus}
-                      disabled={isCheckingBol}
-                    >
-                      {isCheckingBol ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <RefreshCw className="h-4 w-4" />
-                      )}
-                      {isCheckingBol ? "Checking…" : "I've Paid — Check Now"}
-                    </Button>
                   </div>
                 ) : (
                   // BOL exists but not unlocked yet

@@ -40,20 +40,29 @@ api.interceptors.response.use(
       const message = (error.response.data as any)?.message || error.message
 
       switch (status) {
-        case 401:
-          // Unauthorized - clear token and redirect to login
-          // But don't redirect if we're already on a login or register page
+        case 401: {
+          // Clear tokens and notify the auth context via a custom event.
+          // We intentionally do NOT do window.location.href here — that causes a
+          // full page reload that wipes all in-flight state (e.g. during a BOL
+          // payment flow where the user is returning from the Paystack tab).
+          // Protected routes already redirect to /login when isAuthenticated is false.
           const currentPath = window.location.pathname
-          const isOnAuthPage = ['/login', '/register', '/admin/login', '/payment/callback'].includes(currentPath)
+          const isOnAuthPage =
+            currentPath === '/login' ||
+            currentPath === '/register' ||
+            currentPath.startsWith('/admin/login') ||
+            currentPath.startsWith('/payment/callback')
 
           if (!isOnAuthPage) {
             localStorage.removeItem('ontime_token')
             localStorage.removeItem('ontime_user')
-            // Redirect to appropriate login page based on current path
-            const isAdminRoute = currentPath.startsWith('/admin')
-            window.location.href = isAdminRoute ? '/admin/login' : '/login'
+            // Let the auth context react to the cleared tokens
+            window.dispatchEvent(new CustomEvent('auth:session-expired', {
+              detail: { isAdmin: currentPath.startsWith('/admin') },
+            }))
           }
           break
+        }
         case 403:
           console.error('Access forbidden:', message)
           break

@@ -35,9 +35,14 @@ import {
   Bookmark,
   ShieldCheck,
   CheckCircle2,
+  CheckCircle,
+  AlertCircle,
+  FileText,
+  ExternalLink,
   LogIn,
   Loader2,
 } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 // ─── Image Gallery ────────────────────────────────────────────────────────────
 
@@ -148,11 +153,13 @@ export default function MarketplaceListingDetailPage() {
 
   const listing = useAppSelector(selectSelectedListing) as MarketplaceListing | null
 
-  const [loading,    setLoading]    = useState(true)
-  const [notFound,   setNotFound]   = useState(false)
-  const [feedback,   setFeedback]   = useState<string | null>(null)
-  const [buyLoading, setBuyLoading] = useState(false)
-  const [buyError,   setBuyError]   = useState<string | null>(null)
+  const [loading,             setLoading]             = useState(true)
+  const [notFound,            setNotFound]            = useState(false)
+  const [feedback,            setFeedback]            = useState<string | null>(null)
+  const [buyLoading,          setBuyLoading]          = useState(false)
+  const [buyError,            setBuyError]            = useState<string | null>(null)
+  const [bolProcessing,       setBolProcessing]       = useState(false)
+  const [bolError,            setBolError]            = useState<string | null>(null)
 
   // Fetch on mount / id change
   useEffect(() => {
@@ -205,6 +212,34 @@ export default function MarketplaceListingDetailPage() {
     } catch (err: any) {
       setBuyError(err?.message || "Failed to initialize payment. Please try again.")
       setBuyLoading(false)
+    }
+  }
+
+  // ── Unlock BOL (same-tab redirect) ─────────────────────────────────────────
+
+  const handleUnlockBol = async () => {
+    if (!isAuthenticated || !user) {
+      navigate("/login", { state: { redirectTo: `/marketplace/${id}` } })
+      return
+    }
+    if (!listing) return
+    setBolError(null)
+    setBolProcessing(true)
+    try {
+      // Already unlocked in a previous session — listing will already have bolImage
+      const callbackUrl = `${window.location.origin}/payment/callback`
+      const res = await api.post(`/payments/bol-unlock/${listing.id}`, { callbackUrl })
+      sessionStorage.setItem("bol_return_listing_id", listing.id)
+      window.location.href = res.data.authorization_url
+    } catch (err: any) {
+      const msg: string = err?.response?.data?.message ?? err?.message ?? ""
+      if (msg.toLowerCase().includes("already unlocked")) {
+        // Re-fetch to pick up the bol_image
+        dispatch(fetchListingDetail(listing.id))
+        return
+      }
+      setBolError(msg || "Failed to initialize payment. Please try again.")
+      setBolProcessing(false)
     }
   }
 
@@ -349,6 +384,77 @@ export default function MarketplaceListingDetailPage() {
                     </div>
                   </div>
                 )}
+
+              {/* ── BOL Verification Section ── */}
+              {(() => {
+                const hasBol        = !!(listing.bolHasImage ?? listing.bolVerified)
+                const isBolUnlocked = !!listing.bolImage
+                return (
+                  <div className="bg-muted/30 p-4 rounded-lg border border-border/50 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="h-5 w-5 text-primary" />
+                      <h2 className="font-semibold">Ownership Verification</h2>
+                    </div>
+
+                    {!hasBol ? (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Not Available</AlertTitle>
+                        <AlertDescription>
+                          The seller has not uploaded a Bill of Lading for this listing yet.
+                        </AlertDescription>
+                      </Alert>
+                    ) : isBolUnlocked ? (
+                      <>
+                        <Alert className="bg-green-500/10 border-green-500/20 text-green-700">
+                          <CheckCircle className="h-4 w-4" />
+                          <AlertTitle>Verified</AlertTitle>
+                          <AlertDescription>You have verified the Bill of Lading for this listing.</AlertDescription>
+                        </Alert>
+                        <div className="border rounded-lg p-3 bg-background">
+                          <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                            <FileText className="h-4 w-4" /> Bill of Lading Document
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full gap-2"
+                            onClick={() => window.open(listing.bolImage!, "_blank")}
+                          >
+                            <ExternalLink className="h-4 w-4" /> View Document
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground">
+                          The seller has uploaded a verified Bill of Lading (BOL) to confirm ownership.
+                          Pay a one-time fee to access and verify this document securely.
+                        </p>
+                        {bolError && (
+                          <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>{bolError}</AlertDescription>
+                          </Alert>
+                        )}
+                        <Button
+                          className="w-full"
+                          onClick={handleUnlockBol}
+                          disabled={bolProcessing}
+                        >
+                          {bolProcessing
+                            ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Redirecting to Payment…</>
+                            : "Unlock BOL — Pay ₦2,000"
+                          }
+                        </Button>
+                        <p className="text-xs text-center text-muted-foreground">
+                          Secure payment via Paystack · One-time fee per listing
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )
+              })()}
 
               <Separator />
 

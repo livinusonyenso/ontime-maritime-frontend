@@ -3,8 +3,10 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
   type ReactNode,
 } from "react"
+import { useNavigate } from "react-router-dom"
 import api from "../lib/api"
 import type { User } from "../types"
 
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   /* ------------------ INIT FROM STORAGE ------------------ */
   useEffect(() => {
@@ -48,6 +51,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setLoading(false)
   }, [])
+
+  /* ------------------ SESSION EXPIRY (from 401 interceptor) ------------------ */
+  // Listen for the custom event fired by the axios interceptor instead of doing
+  // a hard window.location.href redirect (which would wipe in-flight state).
+  const handleSessionExpired = useCallback((e: Event) => {
+    const isAdmin = (e as CustomEvent).detail?.isAdmin ?? false
+    setUser(null)
+    setToken(null)
+    navigate(isAdmin ? "/admin/login" : "/login", { replace: true })
+  }, [navigate])
+
+  useEffect(() => {
+    window.addEventListener("auth:session-expired", handleSessionExpired)
+    return () => window.removeEventListener("auth:session-expired", handleSessionExpired)
+  }, [handleSessionExpired])
 
   /* ------------------ SIGNUP ------------------ */
   const signup = async (
