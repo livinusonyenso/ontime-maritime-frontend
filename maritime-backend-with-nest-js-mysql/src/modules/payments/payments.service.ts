@@ -102,7 +102,7 @@ export class PaymentsService {
     })
 
     if (!listing) throw new BadRequestException('Listing not found')
-    if (!listing.bol_verified) throw new BadRequestException('This listing does not have a verified Bill of Lading')
+    if (!listing.bol_image) throw new BadRequestException('This listing does not have a Bill of Lading uploaded')
 
     // Check if already unlocked
     const existing = await this.prisma.bolUnlock.findUnique({
