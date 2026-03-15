@@ -87,7 +87,7 @@ let MailService = MailService_1 = class MailService {
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
         <div style="background:#1a3c5e;padding:32px 24px;text-align:center">
           <h1 style="color:#ffffff;margin:0;font-size:24px;letter-spacing:1px">ONTIME MARITIME</h1>
-          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Tech Meet Cargo</p>
+          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Cargo Meet Tech</p>
         </div>
         <div style="padding:32px 24px">
           <h2 style="color:#1a3c5e;margin-top:0">Welcome aboard! 🎉</h2>

@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg leading-none">ONTIME MARITIME</span>
-              <span className="text-xs text-muted-foreground">Tech Meet Cargo</span>
+              <span className="text-xs text-muted-foreground">Cargo Meet Tech</span>
             </div>
           </div>
 

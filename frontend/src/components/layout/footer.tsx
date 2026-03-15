@@ -24,7 +24,7 @@ export function Footer() {
               />
               <div className="hidden md:flex flex-col">
                 <span className="font-bold text-lg leading-none text-white">MARITIME</span>
-                <span className="text-xs text-slate-400">Tech Meet Cargo</span>
+                <span className="text-xs text-slate-400">Cargo Meet Tech</span>
               </div>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -154,7 +154,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-400">© 2025 ONTIME RESOURCES LIMITED. All rights reserved.</p>
-          <p className="text-sm font-semibold text-primary">Tech Meet Cargo</p>
+          <p className="text-sm font-semibold text-primary">Cargo Meet Tech</p>
         </div>
       </div>
     </footer>

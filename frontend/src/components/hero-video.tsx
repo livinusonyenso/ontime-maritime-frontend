@@ -12,7 +12,7 @@ interface HeroSlide {
 
 const slides: HeroSlide[] = [
   {
-    title: "Tech Meet Cargo",
+    title: "Cargo Meet Tech",
     subtitle: "Revolutionary Maritime Platform",
     description: "Real-time tracking, automated documentation, and digital marketplaces for global shipping",
   },

@@ -66,7 +66,7 @@ export function Header() {
                   MARITIME
                 </span>
                 <span className="text-[10px] md:text-xs text-muted-foreground">
-                  Tech Meet Cargo
+                  Cargo Meet Tech
                 </span>
               </div>
             </Link>
@@ -166,7 +166,7 @@ export function Header() {
               />
               <div className="flex flex-col">
                 <span className="font-bold text-sm leading-tight">MARITIME</span>
-                <span className="text-[10px] text-muted-foreground">Tech Meet Cargo</span>
+                <span className="text-[10px] text-muted-foreground">Cargo Meet Tech</span>
               </div>
             </Link>
             

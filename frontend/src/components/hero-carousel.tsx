@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 const slides = [
   {
     image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=1920&q=80",
-    title: "Tech Meet Cargo",
+    title: "Cargo Meet Tech",
     subtitle: "Revolutionary Maritime Platform",
     description: "Real-time tracking, automated documentation, and digital marketplaces for global shipping",
   },

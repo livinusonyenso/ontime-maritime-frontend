@@ -18,7 +18,7 @@ export const translations: Translations = {
   "nav.register": { en: "Register", fr: "S'inscrire", cn: "注册" },
 
   // Hero
-  "hero.title": { en: "Tech Meet Cargo", fr: "Tech Meet Cargo", cn: "科技遇见货运" },
+  "hero.title": { en: "Cargo Meet Tech", fr: "Cargo Meet Tech", cn: "科技遇见货运" },
   "hero.subtitle": {
     en: "Revolutionary maritime cargo platform connecting shippers, carriers, and logistics providers worldwide",
     fr: "Plateforme de fret maritime révolutionnaire reliant expéditeurs, transporteurs et prestataires logistiques dans le monde entier",
