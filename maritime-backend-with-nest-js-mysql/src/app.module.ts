@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core'
 
 import { PassportModule } from '@nestjs/passport'
 import { PrismaModule } from './prisma/prisma.module'
@@ -37,6 +39,9 @@ import { UploadModule }  from './modules/upload/upload.module'
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ThrottlerModule.forRoot([
+      { ttl: 60_000, limit: 60 }, // 60 req / minute global default
+    ]),
     ScheduleModule.forRoot(),
     PrismaModule,
     PassportModule,
@@ -66,5 +71,8 @@ import { UploadModule }  from './modules/upload/upload.module'
     PaymentsModule,
   ],
   controllers: [AppController],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+  ],
 })
 export class AppModule {}

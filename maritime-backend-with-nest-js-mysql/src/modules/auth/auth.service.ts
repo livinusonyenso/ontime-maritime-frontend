@@ -122,9 +122,12 @@ export class AuthService {
   }
 
   /* ------------------------------------------------------------------ */
-  /* LOGIN — blocks accounts where email is not verified.                */
+  /* LOGIN — blocks locked accounts, counts failed attempts.            */
   /* ------------------------------------------------------------------ */
-  async login(loginDto: LoginDto) {
+  private readonly MAX_FAILED_ATTEMPTS = 5
+  private readonly LOCKOUT_MINUTES     = 15
+
+  async login(loginDto: LoginDto, ip = "unknown") {
     const { email, password } = loginDto
 
     const user = await this.prisma.user.findUnique({ where: { email } })
@@ -148,8 +151,51 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials.")
     }
 
+    // ── Account lockout check ──────────────────────────────────────────
+    if (user.lock_until && user.lock_until > new Date()) {
+      const minutesLeft = Math.ceil(
+        (user.lock_until.getTime() - Date.now()) / 60_000,
+      )
+      throw new HttpException(
+        {
+          message: `Account temporarily locked due to too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+          code: "ACCOUNT_LOCKED",
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      )
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password_hash)
+
     if (!isPasswordValid) {
+      // Increment failed counter; lock after threshold
+      const attempts = (user.failed_login_attempts ?? 0) + 1
+      const shouldLock = attempts >= this.MAX_FAILED_ATTEMPTS
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          failed_login_attempts: attempts,
+          lock_until: shouldLock
+            ? new Date(Date.now() + this.LOCKOUT_MINUTES * 60_000)
+            : null,
+        },
+      })
+
+      this.logger.warn(
+        `Failed login for ${email} from ${ip} — attempt ${attempts}${shouldLock ? " → LOCKED" : ""}`,
+      )
+
+      if (shouldLock) {
+        throw new HttpException(
+          {
+            message: `Too many failed attempts. Account locked for ${this.LOCKOUT_MINUTES} minutes.`,
+            code: "ACCOUNT_LOCKED",
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        )
+      }
+
       throw new UnauthorizedException("Invalid credentials.")
     }
 
@@ -164,6 +210,14 @@ export class AuthService {
         },
         HttpStatus.UNAUTHORIZED,
       )
+    }
+
+    // ── Successful login — reset failure counter ───────────────────────
+    if (user.failed_login_attempts > 0 || user.lock_until) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { failed_login_attempts: 0, lock_until: null },
+      })
     }
 
     const token = this.jwtService.sign({

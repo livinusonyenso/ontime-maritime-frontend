@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from './app.module'
 import { SecurityMiddleware } from './common/middleware/security.middleware'
 import { json, urlencoded } from 'express'
+import helmet from 'helmet'
 
 async function bootstrap() {
   // Disable the default body parser so we can set our own size limits
@@ -20,6 +21,9 @@ async function bootstrap() {
     }),
   )
   app.use(urlencoded({ extended: true, limit: '50mb' }))
+
+  // Security headers
+  app.use(helmet())
 
   // Enable CORS FIRST before any other middleware
   app.enableCors({

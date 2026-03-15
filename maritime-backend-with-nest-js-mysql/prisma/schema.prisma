@@ -99,11 +99,13 @@ model User {
   first_name          String?   @db.VarChar(100)
   last_name           String?   @db.VarChar(100)
   // Organization-specific fields (null for buyer/seller accounts)
-  company_name        String?   @db.VarChar(255)
-  business_address    String?   @db.Text
-  website             String?   @db.VarChar(255)
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
+  company_name          String?   @db.VarChar(255)
+  business_address      String?   @db.Text
+  website               String?   @db.VarChar(255)
+  failed_login_attempts Int       @default(0)
+  lock_until            DateTime?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
 
   listings        Listing[]
   purchases       Transaction[]     @relation("BuyerTransactions")
@@ -532,7 +534,7 @@ model PendingRegistration {
 
   @@index([email])
   @@index([expires_at])
-  @@map("pending_registrations")
+  @@map("pending_registration")
 }
 
 model Vessel {
@@ -555,7 +557,7 @@ model Vessel {
   updated_at  DateTime @updatedAt
 
   @@index([status])
-  @@map("vessels")
+  @@map("vessel")
 }
 
 model BillOfLading {
@@ -589,7 +591,7 @@ model BillOfLading {
   updated_at          DateTime @updatedAt
 
   @@index([status])
-  @@map("bills_of_lading")
+  @@map("bill_of_lading")
 }
 
 model Dispute {
@@ -609,7 +611,7 @@ model Dispute {
   updated_at       DateTime @updatedAt
 
   @@index([status])
-  @@map("disputes")
+  @@map("dispute")
 }
 
 model SecurityReport {
@@ -629,7 +631,7 @@ model SecurityReport {
   updated_at       DateTime @updatedAt
 
   @@index([status])
-  @@map("security_reports")
+  @@map("security_report")
 }
 
 model SecurityContact {
@@ -642,7 +644,7 @@ model SecurityContact {
   available24x7  Boolean  @default(false)
   created_at     DateTime @default(now())
 
-  @@map("security_contacts")
+  @@map("security_contact")
 }
 
 model LegalConsultant {
@@ -663,7 +665,7 @@ model LegalConsultant {
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
-  @@map("legal_consultants")
+  @@map("legal_consultant")
 }
 
 model LegalTemplate {
@@ -677,7 +679,7 @@ model LegalTemplate {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  @@map("legal_templates")
+  @@map("legal_template")
 }
 
 model LegalService {
@@ -690,7 +692,7 @@ model LegalService {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  @@map("legal_services")
+  @@map("legal_service")
 }
 
 model LegalResource {
@@ -705,7 +707,7 @@ model LegalResource {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  @@map("legal_resources")
+  @@map("legal_resource")
 }
 
 model KnowledgeResource {
@@ -721,5 +723,5 @@ model KnowledgeResource {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  @@map("knowledge_resources")
+  @@map("knowledge_resource")
 }
