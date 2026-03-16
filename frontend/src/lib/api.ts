@@ -2,21 +2,65 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
-// Create axios instance
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
-  withCredentials: true, // ✅ allow cookies / session
+  withCredentials: true, // required so the httpOnly refresh cookie is sent
 })
 
+// ── Error message normaliser ─────────────────────────────────────────────────
+// Converts raw NestJS / server messages into friendly, actionable text.
+// All Promise.reject() calls go through here so every consumer gets clean text.
+function friendlyMessage(status: number, raw: string | string[] | undefined, data?: any): string {
+  // Validation arrays from class-validator: join into a single sentence
+  if (Array.isArray(raw)) return raw.join(' ')
 
-// Request interceptor - Add auth token to requests
+  const msg = (raw ?? '').trim()
+
+  // ── Rate limiting ────────────────────────────────────────────────────────
+  if (status === 429 || /throttl|too many request/i.test(msg)) {
+    const seconds: number | undefined =
+      data?.retryAfter ?? data?.retry_after ?? data?.ttl
+    if (seconds) {
+      const mins = Math.ceil(seconds / 60)
+      return mins >= 2
+        ? `Too many attempts. Please wait ${mins} minutes before trying again.`
+        : `Too many attempts. Please wait ${seconds} second${seconds !== 1 ? 's' : ''} before trying again.`
+    }
+    return 'Too many attempts. Please wait a minute and try again.'
+  }
+
+  // ── Server / internal errors ─────────────────────────────────────────────
+  if (status >= 500 || /internal server error/i.test(msg)) {
+    return 'Something went wrong on our end. Please try again in a moment.'
+  }
+
+  // ── Strip NestJS exception class prefixes ────────────────────────────────
+  // "ThrottlerException: Too Many Requests" → "Too Many Requests"
+  // "NotFoundException: Listing not found"  → "Listing not found"
+  if (/Exception:/i.test(msg)) {
+    const afterColon = msg.split(':').slice(1).join(':').trim()
+    if (afterColon) return friendlyMessage(status, afterColon, data)
+  }
+
+  // ── Known backend codes (pass through — handled specially in pages) ──────
+  if (data?.code === 'EMAIL_NOT_VERIFIED' || data?.code === 'ACCOUNT_LOCKED') return msg
+
+  // ── Generic status fallbacks ─────────────────────────────────────────────
+  if (!msg || msg.toLowerCase() === 'unauthorized')       return 'Your session has expired. Please log in again.'
+  if (!msg || msg.toLowerCase() === 'forbidden')          return 'You do not have permission to perform this action.'
+  if (!msg || msg.toLowerCase() === 'not found')          return 'The requested resource was not found.'
+  if (!msg || msg.toLowerCase() === 'bad request')        return 'Invalid request. Please check your input and try again.'
+  if (!msg || msg.toLowerCase() === 'service unavailable') return 'The service is temporarily unavailable. Please try again later.'
+
+  return msg || 'An unexpected error occurred. Please try again.'
+}
+
+// ── Request interceptor — attach access token ────────────────────────────────
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('ontime_token')
@@ -25,78 +69,90 @@ api.interceptors.request.use(
     }
     return config
   },
-  (error: AxiosError) => {
-    return Promise.reject(error)
-  }
+  (error: AxiosError) => Promise.reject(error),
 )
 
-// Response interceptor - Handle errors globally
+// ── Response interceptor — silent token refresh on 401 ───────────────────────
+let isRefreshing = false
+let refreshQueue: Array<(token: string) => void> = []
+
+function processQueue(newToken: string) {
+  refreshQueue.forEach((cb) => cb(newToken))
+  refreshQueue = []
+}
+
+function forceLogout(isAdmin = false) {
+  localStorage.removeItem('ontime_token')
+  localStorage.removeItem('ontime_user')
+  window.dispatchEvent(new CustomEvent('auth:session-expired', { detail: { isAdmin } }))
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (error.response) {
-      // Server responded with error status
-      const status = error.response.status
-      const message = (error.response.data as any)?.message || error.message
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-      switch (status) {
-        case 401: {
-          // Clear tokens and notify the auth context via a custom event.
-          // We intentionally do NOT do window.location.href here — that causes a
-          // full page reload that wipes all in-flight state (e.g. during a BOL
-          // payment flow where the user is returning from the Paystack tab).
-          // Protected routes already redirect to /login when isAuthenticated is false.
-          const currentPath = window.location.pathname
-          const isOnAuthPage =
-            currentPath === '/login' ||
-            currentPath === '/register' ||
-            currentPath.startsWith('/admin/login') ||
-            currentPath.startsWith('/payment/callback')
+    if (!error.response) {
+      return Promise.reject({ status: 0, message: 'Network error. Please check your connection.' })
+    }
 
-          if (!isOnAuthPage) {
-            localStorage.removeItem('ontime_token')
-            localStorage.removeItem('ontime_user')
-            // Let the auth context react to the cleared tokens
-            window.dispatchEvent(new CustomEvent('auth:session-expired', {
-              detail: { isAdmin: currentPath.startsWith('/admin') },
-            }))
-          }
-          break
-        }
-        case 403:
-          console.error('Access forbidden:', message)
-          break
-        case 404:
-          console.error('Resource not found:', message)
-          break
-        case 500:
-          console.error('Server error:', message)
-          break
-        default:
-          console.error('API error:', message)
+    const { status }   = error.response
+    const rawData      = error.response.data as any
+    const rawMessage   = rawData?.message || error.message
+    const message      = friendlyMessage(status, rawMessage, rawData)
+
+    // ── 401 handling — attempt silent refresh ──────────────────────────────
+    if (status === 401) {
+      const currentPath = window.location.pathname
+      const isSafePath  =
+        currentPath === '/login' ||
+        currentPath === '/register' ||
+        currentPath.startsWith('/admin/login') ||
+        currentPath.startsWith('/payment/callback')
+
+      if (isSafePath || originalRequest.url?.includes('/auth/refresh')) {
+        if (!isSafePath) forceLogout(currentPath.startsWith('/admin'))
+        return Promise.reject({ status, message, data: rawData })
       }
 
-      return Promise.reject({
-        status,
-        message,
-        data: error.response.data,
-      })
-    } else if (error.request) {
-      // Request made but no response received
-      console.error('Network error: No response from server')
-      return Promise.reject({
-        status: 0,
-        message: 'Network error. Please check your connection.',
-      })
-    } else {
-      // Something else happened
-      console.error('Request error:', error.message)
-      return Promise.reject({
-        status: 0,
-        message: error.message,
-      })
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          refreshQueue.push((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            resolve(api(originalRequest))
+          })
+        })
+      }
+
+      if (originalRequest._retry) {
+        forceLogout(currentPath.startsWith('/admin'))
+        return Promise.reject({ status, message, data: rawData })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        const { data } = await api.post('/auth/refresh')
+        const newToken: string = data.access_token
+
+        localStorage.setItem('ontime_token', newToken)
+        window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token: newToken } }))
+
+        processQueue(newToken)
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+        return api(originalRequest)
+      } catch {
+        processQueue('')
+        forceLogout(currentPath.startsWith('/admin'))
+        return Promise.reject({ status: 401, message: 'Session expired. Please log in again.' })
+      } finally {
+        isRefreshing = false
+      }
     }
-  }
+
+    return Promise.reject({ status, message, data: rawData })
+  },
 )
 
 export default api

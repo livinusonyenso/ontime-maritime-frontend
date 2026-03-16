@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Req } from "@nestjs/common"
+import { Controller, Post, Body, Req, Res, UseGuards } from "@nestjs/common"
 import { Throttle, SkipThrottle } from "@nestjs/throttler"
-import { Request } from "express"
+import { Request, Response } from "express"
+import { AuthGuard } from "@nestjs/passport"
 import { AuthService } from "./auth.service"
 import { SignupDto } from "./dto/signup.dto"
 import { LoginDto } from "./dto/login.dto"
@@ -14,35 +15,56 @@ import { ResetPasswordDto } from "./dto/reset-password.dto"
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // Signup: 10 attempts / minute (generous — real users retry OTP, not signup)
+  // Signup: 10 / minute
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post("signup")
   async signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto)
   }
 
-  // OTP verify: 5 attempts / minute per IP — brute-force protection
+  // OTP verify: 5 / minute
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post("verify-otp")
-  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
-    return this.authService.verifyOtp(verifyOtpDto.pendingId, verifyOtpDto.otp)
+  async verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response) {
+    return this.authService.verifyOtp(dto.pendingId, dto.otp, res)
   }
 
   // Resend OTP: 3 / minute
   @Throttle({ default: { limit: 3, ttl: 60_000 } })
   @Post("resend-otp")
-  async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
-    return this.authService.resendOtp(resendOtpDto.email)
+  async resendOtp(@Body() dto: ResendOtpDto) {
+    return this.authService.resendOtp(dto.email)
   }
 
-  // Login: 5 attempts / minute — credential stuffing + brute-force protection
+  // Login: 5 / minute
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post("login")
-  async login(@Body() loginDto: LoginDto, @Req() req: Request) {
-    return this.authService.login(loginDto, req.ip ?? "unknown")
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+  ) {
+    return this.authService.login(loginDto, res, req.ip ?? "unknown")
   }
 
-  // Forgot password: 5 / minute — prevents email flooding
+  // Refresh: 20 / minute (silent background call — needs some headroom)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  @Post("refresh")
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const token = req.cookies?.["ontime_refresh"]
+    return this.authService.refresh(token, res)
+  }
+
+  // Logout: requires valid JWT access token
+  @SkipThrottle()
+  @UseGuards(AuthGuard("jwt"))
+  @Post("logout")
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const userId = (req as any).user?.id
+    return this.authService.logout(userId, res)
+  }
+
+  // Forgot password: 5 / minute
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post("forgot-password")
   async forgotPassword(@Body() dto: ForgotPasswordDto) {

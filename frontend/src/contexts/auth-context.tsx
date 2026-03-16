@@ -53,8 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   /* ------------------ SESSION EXPIRY (from 401 interceptor) ------------------ */
-  // Listen for the custom event fired by the axios interceptor instead of doing
-  // a hard window.location.href redirect (which would wipe in-flight state).
   const handleSessionExpired = useCallback((e: Event) => {
     const isAdmin = (e as CustomEvent).detail?.isAdmin ?? false
     setUser(null)
@@ -62,10 +60,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate(isAdmin ? "/admin/login" : "/login", { replace: true })
   }, [navigate])
 
+  /* ------------------ SILENT REFRESH (from 401 interceptor) ----------------- */
+  // When the axios interceptor silently refreshes the access token it fires this
+  // event so React state stays in sync without a full re-login.
+  const handleTokenRefreshed = useCallback((e: Event) => {
+    const newToken: string = (e as CustomEvent).detail?.token
+    if (newToken) {
+      setToken(newToken)
+      localStorage.setItem("ontime_token", newToken)
+    }
+  }, [])
+
   useEffect(() => {
     window.addEventListener("auth:session-expired", handleSessionExpired)
-    return () => window.removeEventListener("auth:session-expired", handleSessionExpired)
-  }, [handleSessionExpired])
+    window.addEventListener("auth:token-refreshed", handleTokenRefreshed)
+    return () => {
+      window.removeEventListener("auth:session-expired", handleSessionExpired)
+      window.removeEventListener("auth:token-refreshed", handleTokenRefreshed)
+    }
+  }, [handleSessionExpired, handleTokenRefreshed])
 
   /* ------------------ SIGNUP ------------------ */
   const signup = async (
@@ -180,9 +193,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null)
     setToken(null)
-
     localStorage.removeItem("ontime_token")
     localStorage.removeItem("ontime_user")
+    // Clear the httpOnly refresh cookie via the backend (fire-and-forget)
+    api.post("/auth/logout").catch(() => {/* ignore — local state is already cleared */})
   }
 
   /* ------------------ REFRESH PROFILE ------------------ */

@@ -4,6 +4,8 @@ import { AppModule } from './app.module'
 import { SecurityMiddleware } from './common/middleware/security.middleware'
 import { json, urlencoded } from 'express'
 import helmet from 'helmet'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const cookieParser = require('cookie-parser')
 
 async function bootstrap() {
   // Disable the default body parser so we can set our own size limits
@@ -21,6 +23,7 @@ async function bootstrap() {
     }),
   )
   app.use(urlencoded({ extended: true, limit: '50mb' }))
+  app.use(cookieParser())
 
   // Security headers
   app.use(helmet())
