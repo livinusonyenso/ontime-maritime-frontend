@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
-import { Ship, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff, MailWarning } from "lucide-react"
+import { Ship, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff, MailWarning, ShieldAlert } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Header } from "@/components/layout/header"
@@ -24,9 +24,33 @@ export default function LoginPage() {
   const [resending, setResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null)
+  const [lockUntil, setLockUntil] = useState<Date | null>(null)
+  const [countdown, setCountdown] = useState("")
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { login, resendOtp } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!lockUntil) { setCountdown(""); return }
+
+    const tick = () => {
+      const diff = lockUntil.getTime() - Date.now()
+      if (diff <= 0) {
+        setLockUntil(null)
+        setCountdown("")
+        if (countdownRef.current) clearInterval(countdownRef.current)
+        return
+      }
+      const m = Math.floor(diff / 60_000)
+      const s = Math.floor((diff % 60_000) / 1000)
+      setCountdown(`${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`)
+    }
+
+    tick()
+    countdownRef.current = setInterval(tick, 1000)
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current) }
+  }, [lockUntil])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,6 +76,9 @@ export default function LoginPage() {
       const code = err?.data?.code
       if (code === "EMAIL_NOT_VERIFIED") {
         setUnverifiedEmail(err?.data?.email || email)
+      } else if (code === "ACCOUNT_LOCKED") {
+        const until = err?.data?.lock_until ? new Date(err.data.lock_until) : new Date(Date.now() + 15 * 60_000)
+        setLockUntil(until)
       } else {
         setError(err.message || "Invalid email or password. Please try again.")
       }
@@ -110,6 +137,18 @@ export default function LoginPage() {
               <h1 className="text-3xl font-bold">Welcome back</h1>
               <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
             </div>
+
+            {/* Account locked banner with countdown */}
+            {lockUntil && (
+              <Alert className="border-red-300 bg-red-50 dark:bg-red-950/20">
+                <ShieldAlert className="h-4 w-4 text-red-600" />
+                <AlertTitle className="text-red-800 dark:text-red-400">Account Locked</AlertTitle>
+                <AlertDescription className="text-red-700 dark:text-red-300">
+                  Too many failed attempts. You can try again in{" "}
+                  <span className="font-mono font-bold text-red-800 dark:text-red-300">{countdown}</span>
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Unverified email persistent banner */}
             {unverifiedEmail && (
@@ -197,8 +236,8 @@ export default function LoginPage() {
                     </Link>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                    {loading ? "Signing in..." : "Sign in"}
+                  <Button type="submit" className="w-full" size="lg" disabled={loading || !!lockUntil}>
+                    {loading ? "Signing in..." : lockUntil ? `Locked (${countdown})` : "Sign in"}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </form>

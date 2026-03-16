@@ -164,7 +164,7 @@ export class AuthService {
     if (user.lock_until && user.lock_until > new Date()) {
       const minutesLeft = Math.ceil((user.lock_until.getTime() - Date.now()) / 60_000)
       throw new HttpException(
-        { message: `Account temporarily locked. Try again in ${minutesLeft} minute(s).`, code: "ACCOUNT_LOCKED" },
+        { message: `Account temporarily locked. Try again in ${minutesLeft} minute(s).`, code: "ACCOUNT_LOCKED", lock_until: user.lock_until.toISOString() },
         HttpStatus.TOO_MANY_REQUESTS,
       )
     }
@@ -186,8 +186,9 @@ export class AuthService {
       this.logger.warn(`Failed login for ${email} from ${ip} — attempt ${attempts}${shouldLock ? " → LOCKED" : ""}`)
 
       if (shouldLock) {
+        const lockUntil = new Date(Date.now() + this.LOCKOUT_MINUTES * 60_000)
         throw new HttpException(
-          { message: `Too many failed attempts. Account locked for ${this.LOCKOUT_MINUTES} minutes.`, code: "ACCOUNT_LOCKED" },
+          { message: `Too many failed attempts. Account locked for ${this.LOCKOUT_MINUTES} minutes.`, code: "ACCOUNT_LOCKED", lock_until: lockUntil.toISOString() },
           HttpStatus.TOO_MANY_REQUESTS,
         )
       }
