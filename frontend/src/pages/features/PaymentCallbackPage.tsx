@@ -82,13 +82,37 @@ export default function PaymentCallbackPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      {/* Background while modal loads */}
       <main className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-4">
         {status === "loading" && (
           <>
             <Loader2 className="h-12 w-12 text-primary animate-spin" />
             <h1 className="text-xl font-semibold">Verifying your payment…</h1>
             <p className="text-muted-foreground text-sm">Please keep this tab open.</p>
+          </>
+        )}
+        {status === "success" && !modalOpen && (
+          <>
+            <CheckCircle2 className="h-16 w-16 text-green-500" />
+            <h1 className="text-2xl font-bold text-green-600 dark:text-green-400">Payment Successful!</h1>
+            <p className="text-muted-foreground text-sm">{message}</p>
+            <div className="flex gap-3 mt-2">
+              <Button onClick={handleViewBol}>View BOL</Button>
+              <Button variant="outline" onClick={() => navigate("/marketplace")}>Back to Marketplace</Button>
+            </div>
+          </>
+        )}
+        {status === "failed" && !modalOpen && (
+          <>
+            <XCircle className="h-16 w-16 text-red-500" />
+            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">Verification Failed</h1>
+            <p className="text-muted-foreground text-sm">{message}</p>
+            <div className="flex gap-3 mt-2">
+              <Button onClick={verify}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/marketplace")}>Back to Marketplace</Button>
+            </div>
           </>
         )}
       </main>

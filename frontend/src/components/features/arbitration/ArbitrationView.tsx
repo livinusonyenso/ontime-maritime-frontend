@@ -204,7 +204,7 @@ export default function ArbitrationView() {
               <span className="text-sm font-medium">Powered by Grok 4.1</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              AI Arbitration &amp; Dispute Resolution
+              Marine Arbitration &amp; Dispute Resolution
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
               Intelligent dispute resolution for maritime issues including shipment delays,

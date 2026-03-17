@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom"
+import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom"
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
@@ -43,6 +43,7 @@ import {
   Loader2,
 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { PaymentSuccessModal, type PaymentVerifyStatus } from "@/components/payments/PaymentSuccessModal"
 
 // ─── Image Gallery ────────────────────────────────────────────────────────────
 
@@ -153,13 +154,35 @@ export default function MarketplaceListingDetailPage() {
 
   const listing = useAppSelector(selectSelectedListing) as MarketplaceListing | null
 
-  const [loading,             setLoading]             = useState(true)
-  const [notFound,            setNotFound]            = useState(false)
-  const [feedback,            setFeedback]            = useState<string | null>(null)
-  const [buyLoading,          setBuyLoading]          = useState(false)
-  const [buyError,            setBuyError]            = useState<string | null>(null)
-  const [bolProcessing,       setBolProcessing]       = useState(false)
-  const [bolError,            setBolError]            = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const [loading,       setLoading]       = useState(true)
+  const [notFound,      setNotFound]      = useState(false)
+  const [feedback,      setFeedback]      = useState<string | null>(null)
+  const [buyLoading,    setBuyLoading]    = useState(false)
+  const [buyError,      setBuyError]      = useState<string | null>(null)
+  const [bolProcessing, setBolProcessing] = useState(false)
+  const [bolError,      setBolError]      = useState<string | null>(null)
+  const [paymentStatus, setPaymentStatus] = useState<PaymentVerifyStatus>("idle")
+
+  // ── Detect Paystack callback (reference in URL) and verify inline ──────────
+  useEffect(() => {
+    const ref = searchParams.get("reference") || searchParams.get("trxref")
+    if (!ref || !id) return
+
+    // Strip the reference from the URL immediately so a refresh doesn't re-verify
+    setSearchParams({}, { replace: true })
+    setPaymentStatus("verifying")
+
+    api
+      .get(`/payments/verify/${ref}`)
+      .then(() => {
+        setPaymentStatus("success")
+        dispatch(fetchListingDetail(id))   // re-fetch so bolImage is populated
+      })
+      .catch(() => setPaymentStatus("error"))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Fetch on mount / id change
   useEffect(() => {
@@ -215,7 +238,9 @@ export default function MarketplaceListingDetailPage() {
     }
   }
 
-  // ── Unlock BOL (same-tab redirect) ─────────────────────────────────────────
+  // ── Unlock BOL ─────────────────────────────────────────────────────────────
+  // Paystack redirects back to this exact page with ?reference=XYZ appended.
+  // The useEffect above detects it, verifies inline, and shows the success modal.
 
   const handleUnlockBol = async () => {
     if (!isAuthenticated || !user) {
@@ -225,17 +250,18 @@ export default function MarketplaceListingDetailPage() {
     if (!listing) return
     setBolError(null)
     setBolProcessing(true)
+
     try {
-      // Already unlocked in a previous session — listing will already have bolImage
-      const callbackUrl = `${window.location.origin}/payment/callback`
+      // Callback URL = this listing page. Paystack appends ?reference=XXX automatically.
+      const callbackUrl = `${window.location.origin}/marketplace/${listing.id}`
       const res = await api.post(`/payments/bol-unlock/${listing.id}`, { callbackUrl })
-      sessionStorage.setItem("bol_return_listing_id", listing.id)
+      // Redirect to Paystack — user returns here after payment
       window.location.href = res.data.authorization_url
     } catch (err: any) {
-      const msg: string = err?.response?.data?.message ?? err?.message ?? ""
+      const msg: string = err?.data?.message ?? err?.message ?? ""
       if (msg.toLowerCase().includes("already unlocked")) {
-        // Re-fetch to pick up the bol_image
         dispatch(fetchListingDetail(listing.id))
+        setBolProcessing(false)
         return
       }
       setBolError(msg || "Failed to initialize payment. Please try again.")
@@ -390,7 +416,7 @@ export default function MarketplaceListingDetailPage() {
                 const hasBol        = !!(listing.bolHasImage ?? listing.bolVerified)
                 const isBolUnlocked = !!listing.bolImage
                 return (
-                  <div className="bg-muted/30 p-4 rounded-lg border border-border/50 space-y-3">
+                  <div id="bol-section" className="bg-muted/30 p-4 rounded-lg border border-border/50 space-y-3">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="h-5 w-5 text-primary" />
                       <h2 className="font-semibold">Ownership Verification</h2>
@@ -534,6 +560,17 @@ export default function MarketplaceListingDetailPage() {
       </main>
 
       <Footer />
+
+      {/* ── Payment success / verifying modal ── */}
+      <PaymentSuccessModal
+        status={paymentStatus}
+        onViewBol={() => {
+          setPaymentStatus("idle")
+          // Scroll to BOL section — it will already be visible since listing was re-fetched
+          document.getElementById("bol-section")?.scrollIntoView({ behavior: "smooth" })
+        }}
+        onClose={() => setPaymentStatus("idle")}
+      />
     </div>
   )
 }

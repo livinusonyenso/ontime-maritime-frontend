@@ -170,7 +170,7 @@ export interface SecurityContact {
   available24x7: boolean
 }
 
-// AI Arbitration & Dispute Resolution Types
+// Marine Arbitration & Dispute Resolution Types
 export interface DisputeCase {
   id: string
   caseNumber: string

@@ -56,13 +56,13 @@ const platformModules = [
     icon: Siren,
     color: "bg-red-500/10 text-red-600",
   },
-  {
-    title: "AI Arbitration",
-    description: "Grok 4.1 powered dispute resolution with settlement recommendations",
-    href: "/arbitration",
-    icon: Bot,
-    color: "bg-indigo-500/10 text-indigo-600",
-  },
+ {
+  title: "Marine Arbitration",
+  description: "Dispute resolution for shipping contracts, charterparty agreements, and cargo claims",
+  href: "/arbitration",
+  icon: Bot,
+  color: "bg-indigo-500/10 text-indigo-600",
+},
   {
     title: "Equipment Marketplace",
     description: "Buy/sell containers, cranes, warehouses, spare parts & insurance",
@@ -95,7 +95,7 @@ const features = [
     iconColor: "bg-primary/10 text-primary",
   },
   {
-    image: "https://images.unsplash.com/photo-1554224311-beee415c201f?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1621009063622-4467e453c3c1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRhYmxldCUyRmxhcHRvcCUyMHNob3dpbmclMjBkb2N1bWVudHN8ZW58MHx8MHx8fDA%3D?w=600&q=80",
     icon: FileText,
     title: "Digital Documents",
     description: "Manage bills of lading, invoices, and charterparty agreements digitally",

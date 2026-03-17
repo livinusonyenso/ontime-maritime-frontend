@@ -107,8 +107,7 @@ api.interceptors.response.use(
       const isSafePath  =
         currentPath === '/login' ||
         currentPath === '/register' ||
-        currentPath.startsWith('/admin/login') ||
-        currentPath.startsWith('/payment/callback')
+        currentPath.startsWith('/admin/login')
 
       if (isSafePath || originalRequest.url?.includes('/auth/refresh')) {
         if (!isSafePath) forceLogout(currentPath.startsWith('/admin'))
