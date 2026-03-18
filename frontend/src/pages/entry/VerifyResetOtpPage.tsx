@@ -32,7 +32,9 @@ export default function VerifyResetOtpPage() {
   const [resending, setResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [secondsLeft, setSecondsLeft] = useState(EXPIRY_SECONDS)
+  const [resendWait, setResendWait] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const waitRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Guard — must arrive here from the email step
   if (!email) {
@@ -55,7 +57,10 @@ export default function VerifyResetOtpPage() {
 
   useEffect(() => {
     startTimer()
-    return () => clearInterval(timerRef.current!)
+    return () => {
+      clearInterval(timerRef.current!)
+      clearInterval(waitRef.current!)
+    }
   }, [])
 
   const handleVerify = async () => {
@@ -85,13 +90,26 @@ export default function VerifyResetOtpPage() {
     }
   }
 
+  const startResendWait = () => {
+    clearInterval(waitRef.current!)
+    setResendWait(60)
+    waitRef.current = setInterval(() => {
+      setResendWait((s) => {
+        if (s <= 1) { clearInterval(waitRef.current!); return 0 }
+        return s - 1
+      })
+    }, 1000)
+  }
+
   const handleResend = async () => {
+    if (resendWait > 0) return
     setResending(true)
     setError(null)
 
     try {
       await api.post("/auth/forgot-password", { email })
       startTimer()
+      startResendWait()
       setOtp("")
       toast({ title: "New code sent!", description: "Check your inbox." })
     } catch (err: any) {
@@ -202,9 +220,9 @@ export default function VerifyResetOtpPage() {
               type="button"
               className="text-primary font-semibold hover:underline disabled:opacity-50"
               onClick={handleResend}
-              disabled={resending}
+              disabled={resending || resendWait > 0}
             >
-              {resending ? "Sending…" : "Resend code"}
+              {resending ? "Sending…" : resendWait > 0 ? `Resend in ${resendWait}s` : "Resend code"}
             </button>
           </p>
         </div>

@@ -96,7 +96,15 @@ export class AuthService {
     })
 
     const sent = await this.mailService.sendOtpEmail(email, otp_code)
-    if (!sent) this.logger.error(`OTP email failed to deliver to ${email}`)
+    if (!sent) {
+      // Clean up the pending record so the user can retry immediately
+      await this.prisma.pendingRegistration.delete({ where: { id: pending.id } }).catch(() => {})
+      this.logger.error(`OTP email failed to deliver to ${email} — MAIL env: host=${process.env.MAIL_HOST} port=${process.env.MAIL_PORT} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      throw new HttpException(
+        { message: "We could not send your verification email. Please check your email address and try again, or contact support." },
+        HttpStatus.SERVICE_UNAVAILABLE,
+      )
+    }
 
     return { pendingId: pending.id, message: "OTP sent to your email." }
   }
@@ -285,7 +293,13 @@ export class AuthService {
     })
 
     const sent = await this.mailService.sendOtpEmail(email, otp_code)
-    if (!sent) this.logger.error(`Resend OTP email failed for ${email}`)
+    if (!sent) {
+      this.logger.error(`Resend OTP email failed for ${email} — MAIL env: host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      throw new HttpException(
+        { message: "We could not resend your verification email. Please try again or contact support." },
+        HttpStatus.SERVICE_UNAVAILABLE,
+      )
+    }
 
     return { pendingId: updated.id, message: "A new OTP has been sent to your email." }
   }
@@ -316,9 +330,19 @@ export class AuthService {
       },
     })
 
-    this.mailService.sendPasswordResetEmail(email, otp).catch((err) =>
-      this.logger.error(`Password-reset email failed for ${email}: ${err.message}`),
-    )
+    const sent = await this.mailService.sendPasswordResetEmail(email, otp)
+    if (!sent) {
+      // Invalidate the OTP we just stored so it cannot be used with a manual guess
+      await this.prisma.otpToken.updateMany({
+        where: { email, purpose: "password_reset", is_used: false },
+        data: { is_used: true },
+      })
+      this.logger.error(`Password-reset email failed for ${email} — MAIL env: host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      throw new HttpException(
+        { message: "We could not send your password-reset email. Please try again or contact support." },
+        HttpStatus.SERVICE_UNAVAILABLE,
+      )
+    }
 
     return this.SAFE_RESET_RESPONSE
   }

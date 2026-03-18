@@ -33,7 +33,9 @@ export default function VerifyOtpPage() {
   const [resending, setResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [secondsLeft, setSecondsLeft] = useState(EXPIRY_SECONDS)
+  const [resendCooldown, setResendCooldown] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Guard: if landed here without a pendingId, send back to register
   if (!pendingId) {
@@ -83,15 +85,26 @@ export default function VerifyOtpPage() {
     }
   }
 
+  const startResendTimer = () => {
+    clearInterval(cooldownRef.current!)
+    setResendCooldown(60)
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown((s) => {
+        if (s <= 1) { clearInterval(cooldownRef.current!); return 0 }
+        return s - 1
+      })
+    }, 1000)
+  }
+
   const handleResend = async () => {
-    if (!email) return
+    if (!email || resendCooldown > 0) return
     setResending(true)
     setError(null)
 
     try {
       const result = await resendOtp(email)
 
-      // Reset countdown
+      // Reset expiry countdown
       clearInterval(timerRef.current!)
       setSecondsLeft(EXPIRY_SECONDS)
       setOtp("")
@@ -102,9 +115,9 @@ export default function VerifyOtpPage() {
         })
       }, 1000)
 
+      startResendTimer()
       toast({ title: "New code sent!", description: result.message })
 
-      // Update pendingId in state if backend rotated it
       if (result.pendingId && result.pendingId !== pendingId) {
         navigate("/verify-otp", {
           replace: true,
@@ -217,9 +230,9 @@ export default function VerifyOtpPage() {
               type="button"
               className="text-primary font-semibold hover:underline disabled:opacity-50"
               onClick={handleResend}
-              disabled={resending}
+              disabled={resending || resendCooldown > 0}
             >
-              {resending ? "Sending…" : "Resend code"}
+              {resending ? "Sending…" : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
             </button>
           </p>
         </div>

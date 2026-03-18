@@ -8,9 +8,17 @@ export class MailService {
   private readonly transporter: Transporter
 
   constructor() {
+    const missing = ['MAIL_HOST', 'MAIL_PORT', 'MAIL_USER', 'MAIL_PASS', 'MAIL_FROM']
+      .filter((k) => !process.env[k])
+    if (missing.length) {
+      this.logger.error(
+        `MAIL SERVICE MISCONFIGURED — missing env vars: ${missing.join(', ')}. OTP emails will fail.`,
+      )
+    }
+
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
+      port: Number(process.env.MAIL_PORT) || 587,
       secure: process.env.MAIL_SECURE === "true",
       auth: {
         user: process.env.MAIL_USER,
