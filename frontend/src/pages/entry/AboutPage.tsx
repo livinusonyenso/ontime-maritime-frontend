@@ -376,8 +376,8 @@ export default function AboutPage() {
               {[
   {
     name: "Barr. Enemuo Chinedu Christopher",
-    role: "CEO & Co-Founder",
-    img: "/ceo.jpg",
+    role: "CEO & Founder",
+    img: "https://res.cloudinary.com/dikhomv7m/image/upload/v1773847345/ceo_img_zk1cvt.jpg",
   },
   {
     name: "Chioma Adeyemi",
