@@ -18,6 +18,9 @@ import { UserRole } from "../../common/enums"
 const REFRESH_TOKEN_EXPIRY_DAYS = 7
 const REFRESH_COOKIE_NAME = "ontime_refresh"
 
+/** Always use UTC "now" so Node.js and MySQL agree on the current time. */
+const utcNow = () => new Date(new Date().toISOString())
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name)
@@ -32,7 +35,6 @@ export class AuthService {
 
   private generateAccessToken(user: { id: string; email: string; role: string }) {
     return this.jwtService.sign({ sub: user.id, email: user.email, role: user.role })
-    // expiry comes from JwtModule.registerAsync ({ expiresIn: '15m' })
   }
 
   private async generateAndStoreRefreshToken(userId: string): Promise<string> {
@@ -45,10 +47,9 @@ export class AuthService {
       data: { refresh_token: hashed, refresh_token_expiry: expiry },
     })
 
-    return raw  // raw token goes into the cookie; hashed stays in DB
+    return raw
   }
 
-  /** Attach the httpOnly refresh-token cookie to an Express response. */
   static setRefreshCookie(res: any, token: string) {
     res.cookie(REFRESH_COOKIE_NAME, token, {
       httpOnly: true,
@@ -59,9 +60,13 @@ export class AuthService {
     })
   }
 
-  /** Clear the refresh-token cookie (logout). */
   static clearRefreshCookie(res: any) {
-    res.clearCookie(REFRESH_COOKIE_NAME, { httpOnly: true, secure: true, sameSite: "strict", path: "/" })
+    res.clearCookie(REFRESH_COOKIE_NAME, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+    })
   }
 
   /* ------------------------------------------------------------------ */
@@ -77,6 +82,7 @@ export class AuthService {
       throw new BadRequestException("An account with this email or phone already exists.")
     }
 
+    // Clean up any previous pending registrations for this email/phone
     await this.prisma.pendingRegistration.deleteMany({
       where: { OR: [{ email }, { phone }] },
     })
@@ -86,8 +92,11 @@ export class AuthService {
 
     const pending = await this.prisma.pendingRegistration.create({
       data: {
-        email, phone, password_hash, role,
-        otp_code,
+        email,
+        phone,
+        password_hash,
+        role,
+        otp_code, // stored plain — temporary table, deleted after verification
         expires_at: new Date(Date.now() + 10 * 60 * 1000),
         company_name:     company_name     ?? null,
         business_address: business_address ?? null,
@@ -97,9 +106,10 @@ export class AuthService {
 
     const sent = await this.mailService.sendOtpEmail(email, otp_code)
     if (!sent) {
-      // Clean up the pending record so the user can retry immediately
       await this.prisma.pendingRegistration.delete({ where: { id: pending.id } }).catch(() => {})
-      this.logger.error(`OTP email failed to deliver to ${email} — MAIL env: host=${process.env.MAIL_HOST} port=${process.env.MAIL_PORT} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      this.logger.error(
+        `OTP email failed for ${email} — host=${process.env.MAIL_HOST} port=${process.env.MAIL_PORT} user=${process.env.MAIL_USER ? "***set***" : "MISSING"}`,
+      )
       throw new HttpException(
         { message: "We could not send your verification email. Please check your email address and try again, or contact support." },
         HttpStatus.SERVICE_UNAVAILABLE,
@@ -113,23 +123,37 @@ export class AuthService {
   /* VERIFY OTP — creates user, issues both tokens                       */
   /* ------------------------------------------------------------------ */
   async verifyOtp(pendingId: string, otpCode: string, res: any) {
-    const pending = await this.prisma.pendingRegistration.findFirst({
-      where: { id: pendingId, otp_code: otpCode, expires_at: { gt: new Date() } },
+    // Fetch pending record by ID first (no OTP in WHERE — compare manually below)
+    const pending = await this.prisma.pendingRegistration.findUnique({
+      where: { id: pendingId },
     })
 
-    if (!pending) throw new BadRequestException("Invalid or expired OTP.")
+    if (!pending) {
+      throw new BadRequestException("Invalid or expired OTP.")
+    }
+
+    // Check expiry using UTC now to avoid timezone mismatch
+    if (pending.expires_at < utcNow()) {
+      await this.prisma.pendingRegistration.delete({ where: { id: pending.id } }).catch(() => {})
+      throw new BadRequestException("OTP has expired. Please request a new one.")
+    }
+
+    // Plain string comparison (OTP stored as plain text in pending_registration)
+    if (pending.otp_code !== otpCode) {
+      throw new BadRequestException("Invalid OTP. Please check the code and try again.")
+    }
 
     const user = await this.prisma.user.create({
       data: {
-        email:            pending.email,
-        phone:            pending.phone,
-        password_hash:    pending.password_hash,
-        role:             pending.role as UserRole,
+        email:             pending.email,
+        phone:             pending.phone,
+        password_hash:     pending.password_hash,
+        role:              pending.role as UserRole,
         is_email_verified: true,
         is_phone_verified: true,
-        company_name:     pending.company_name     ?? null,
-        business_address: pending.business_address ?? null,
-        website:          pending.website          ?? null,
+        company_name:      pending.company_name     ?? null,
+        business_address:  pending.business_address ?? null,
+        website:           pending.website          ?? null,
       },
     })
 
@@ -139,8 +163,8 @@ export class AuthService {
       this.logger.error(`Welcome email failed for ${user.email}: ${err.message}`),
     )
 
-    const accessToken   = this.generateAccessToken(user)
-    const refreshToken  = await this.generateAndStoreRefreshToken(user.id)
+    const accessToken  = this.generateAccessToken(user)
+    const refreshToken = await this.generateAndStoreRefreshToken(user.id)
     AuthService.setRefreshCookie(res, refreshToken)
 
     const { password_hash, refresh_token, refresh_token_expiry, ...safe } = user as any
@@ -162,17 +186,26 @@ export class AuthService {
       const pending = await this.prisma.pendingRegistration.findUnique({ where: { email } })
       if (pending) {
         throw new HttpException(
-          { message: "Your registration is not complete. Please verify your email to continue.", code: "EMAIL_NOT_VERIFIED", email },
+          {
+            message: "Your registration is not complete. Please verify your email to continue.",
+            code: "EMAIL_NOT_VERIFIED",
+            email,
+          },
           HttpStatus.UNAUTHORIZED,
         )
       }
       throw new UnauthorizedException("Invalid credentials.")
     }
 
-    if (user.lock_until && user.lock_until > new Date()) {
+    // Check account lock using UTC now
+    if (user.lock_until && user.lock_until > utcNow()) {
       const minutesLeft = Math.ceil((user.lock_until.getTime() - Date.now()) / 60_000)
       throw new HttpException(
-        { message: `Account temporarily locked. Try again in ${minutesLeft} minute(s).`, code: "ACCOUNT_LOCKED", lock_until: user.lock_until.toISOString() },
+        {
+          message: `Account temporarily locked. Try again in ${minutesLeft} minute(s).`,
+          code: "ACCOUNT_LOCKED",
+          lock_until: user.lock_until.toISOString(),
+        },
         HttpStatus.TOO_MANY_REQUESTS,
       )
     }
@@ -182,24 +215,28 @@ export class AuthService {
     if (!isPasswordValid) {
       const attempts   = (user.failed_login_attempts ?? 0) + 1
       const shouldLock = attempts >= this.MAX_FAILED_ATTEMPTS
+      const lockUntil  = shouldLock ? new Date(Date.now() + this.LOCKOUT_MINUTES * 60_000) : null
 
       await this.prisma.user.update({
         where: { id: user.id },
-        data: {
-          failed_login_attempts: attempts,
-          lock_until: shouldLock ? new Date(Date.now() + this.LOCKOUT_MINUTES * 60_000) : null,
-        },
+        data: { failed_login_attempts: attempts, lock_until: lockUntil },
       })
 
-      this.logger.warn(`Failed login for ${email} from ${ip} — attempt ${attempts}${shouldLock ? " → LOCKED" : ""}`)
+      this.logger.warn(
+        `Failed login for ${email} from ${ip} — attempt ${attempts}${shouldLock ? " → LOCKED" : ""}`,
+      )
 
       if (shouldLock) {
-        const lockUntil = new Date(Date.now() + this.LOCKOUT_MINUTES * 60_000)
         throw new HttpException(
-          { message: `Too many failed attempts. Account locked for ${this.LOCKOUT_MINUTES} minutes.`, code: "ACCOUNT_LOCKED", lock_until: lockUntil.toISOString() },
+          {
+            message: `Too many failed attempts. Account locked for ${this.LOCKOUT_MINUTES} minutes.`,
+            code: "ACCOUNT_LOCKED",
+            lock_until: lockUntil!.toISOString(),
+          },
           HttpStatus.TOO_MANY_REQUESTS,
         )
       }
+
       throw new UnauthorizedException("Invalid credentials.")
     }
 
@@ -210,6 +247,7 @@ export class AuthService {
       )
     }
 
+    // Reset failed attempts on successful login
     if (user.failed_login_attempts > 0 || user.lock_until) {
       await this.prisma.user.update({
         where: { id: user.id },
@@ -231,20 +269,23 @@ export class AuthService {
   async refresh(cookieToken: string | undefined, res: any) {
     if (!cookieToken) throw new UnauthorizedException("No refresh token.")
 
-    // Find a user whose refresh token expiry is still valid
-    // We'll find all non-expired users and compare hashes (can't query by hash)
-    // For scale, a separate RefreshToken table is better; for now we scan active sessions
     const users = await this.prisma.user.findMany({
-      where: { refresh_token: { not: null }, refresh_token_expiry: { gt: new Date() } },
+      where: {
+        refresh_token: { not: null },
+        refresh_token_expiry: { gt: utcNow() },
+      },
       select: {
-        id: true, email: true, role: true,
-        refresh_token: true, refresh_token_expiry: true,
+        id: true,
+        email: true,
+        role: true,
+        refresh_token: true,
+        refresh_token_expiry: true,
       },
     })
 
-    let matchedUser: typeof users[0] | null = null
+    let matchedUser: (typeof users)[0] | null = null
     for (const u of users) {
-      if (u.refresh_token && await bcrypt.compare(cookieToken, u.refresh_token)) {
+      if (u.refresh_token && (await bcrypt.compare(cookieToken, u.refresh_token))) {
         matchedUser = u
         break
       }
@@ -255,7 +296,6 @@ export class AuthService {
       throw new UnauthorizedException("Invalid or expired refresh token.")
     }
 
-    // Rotate — generate brand-new tokens
     const accessToken  = this.generateAccessToken(matchedUser as any)
     const refreshToken = await this.generateAndStoreRefreshToken(matchedUser.id)
     AuthService.setRefreshCookie(res, refreshToken)
@@ -282,6 +322,7 @@ export class AuthService {
     const pending = await this.prisma.pendingRegistration.findUnique({ where: { email } })
 
     if (!pending) {
+      // Don't reveal whether the email exists
       return { message: "If a pending registration exists, a new OTP has been sent." }
     }
 
@@ -289,12 +330,17 @@ export class AuthService {
 
     const updated = await this.prisma.pendingRegistration.update({
       where: { id: pending.id },
-      data: { otp_code, expires_at: new Date(Date.now() + 10 * 60 * 1000) },
+      data: {
+        otp_code,
+        expires_at: new Date(Date.now() + 10 * 60 * 1000),
+      },
     })
 
     const sent = await this.mailService.sendOtpEmail(email, otp_code)
     if (!sent) {
-      this.logger.error(`Resend OTP email failed for ${email} — MAIL env: host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      this.logger.error(
+        `Resend OTP failed for ${email} — host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? "***set***" : "MISSING"}`,
+      )
       throw new HttpException(
         { message: "We could not resend your verification email. Please try again or contact support." },
         HttpStatus.SERVICE_UNAVAILABLE,
@@ -313,31 +359,35 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email } })
     if (!user) return this.SAFE_RESET_RESPONSE
 
+    // Invalidate any existing unused OTPs for this email
     await this.prisma.otpToken.updateMany({
       where: { email, purpose: "password_reset", is_used: false },
       data: { is_used: true },
     })
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    const otp     = Math.floor(100000 + Math.random() * 900000).toString()
     const otp_hash = await bcrypt.hash(otp, 10)
 
     await this.prisma.otpToken.create({
       data: {
-        user_id: user.id, email,
-        otp_code: otp_hash,
-        purpose: "password_reset",
+        user_id:    user.id,
+        email,
+        otp_code:   otp_hash,
+        purpose:    "password_reset",
         expires_at: new Date(Date.now() + 10 * 60 * 1000),
       },
     })
 
     const sent = await this.mailService.sendPasswordResetEmail(email, otp)
     if (!sent) {
-      // Invalidate the OTP we just stored so it cannot be used with a manual guess
+      // Revoke the OTP we just created so it can't be guessed
       await this.prisma.otpToken.updateMany({
         where: { email, purpose: "password_reset", is_used: false },
         data: { is_used: true },
       })
-      this.logger.error(`Password-reset email failed for ${email} — MAIL env: host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? '***set***' : 'MISSING'}`)
+      this.logger.error(
+        `Password-reset email failed for ${email} — host=${process.env.MAIL_HOST} user=${process.env.MAIL_USER ? "***set***" : "MISSING"}`,
+      )
       throw new HttpException(
         { message: "We could not send your password-reset email. Please try again or contact support." },
         HttpStatus.SERVICE_UNAVAILABLE,
@@ -351,15 +401,31 @@ export class AuthService {
   /* VERIFY RESET OTP                                                     */
   /* ------------------------------------------------------------------ */
   async verifyResetOtp(email: string, otp: string) {
+    // Fetch the latest unused, non-expired OTP for this email
     const token = await this.prisma.otpToken.findFirst({
-      where: { email, purpose: "password_reset", is_used: false, expires_at: { gt: new Date() } },
+      where: {
+        email,
+        purpose:    "password_reset",
+        is_used:    false,
+        expires_at: { gt: utcNow() }, // UTC comparison — fixes timezone mismatch
+      },
       orderBy: { created_at: "desc" },
     })
 
-    const invalid = !token || !(await bcrypt.compare(otp, token.otp_code))
-    if (invalid) throw new BadRequestException("Invalid or expired OTP.")
+    if (!token) {
+      throw new BadRequestException("OTP has expired or was already used. Please request a new one.")
+    }
 
-    await this.prisma.otpToken.update({ where: { id: token.id }, data: { is_used: true } })
+    const isValid = await bcrypt.compare(otp, token.otp_code)
+    if (!isValid) {
+      throw new BadRequestException("Invalid OTP. Please check the code and try again.")
+    }
+
+    // Mark as used immediately so it can't be reused
+    await this.prisma.otpToken.update({
+      where: { id: token.id },
+      data: { is_used: true },
+    })
 
     const resetToken = this.jwtService.sign(
       { email, purpose: "password_reset" },
@@ -381,10 +447,15 @@ export class AuthService {
       throw new BadRequestException("Invalid or expired reset token.")
     }
 
-    if (payload.purpose !== "password_reset") throw new BadRequestException("Invalid reset token.")
+    if (payload.purpose !== "password_reset") {
+      throw new BadRequestException("Invalid reset token.")
+    }
 
     const password_hash = await bcrypt.hash(newPassword, 10)
-    await this.prisma.user.update({ where: { email: payload.email }, data: { password_hash } })
+    await this.prisma.user.update({
+      where: { email: payload.email },
+      data: { password_hash },
+    })
 
     return { message: "Password reset successful." }
   }
