@@ -25,23 +25,25 @@ __decorate([
     __metadata("design:type", String)
 ], CreateKycDto.prototype, "bvn", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(["NIN", "passport", "voter_card", "drivers_license"]),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(["NIN", "passport", "voter_card", "drivers_license"], {
+        message: "id_type must be one of: NIN, passport, voter_card, drivers_license",
+    }),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateKycDto.prototype, "id_type", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateKycDto.prototype, "id_number", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateKycDto.prototype, "id_document_url", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateKycDto.prototype, "face_photo_url", void 0);
 //# sourceMappingURL=create-kyc.dto.js.map

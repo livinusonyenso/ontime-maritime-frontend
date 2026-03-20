@@ -35,4 +35,23 @@ __decorate([
     (0, class_validator_1.IsEnum)(enums_1.UserRole),
     __metadata("design:type", String)
 ], SignupDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.ValidateIf)((o) => o.role === enums_1.UserRole.organization),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(2),
+    (0, class_validator_1.MaxLength)(255),
+    __metadata("design:type", String)
+], SignupDto.prototype, "company_name", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(500),
+    __metadata("design:type", String)
+], SignupDto.prototype, "business_address", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(255),
+    __metadata("design:type", String)
+], SignupDto.prototype, "website", void 0);
 //# sourceMappingURL=signup.dto.js.map

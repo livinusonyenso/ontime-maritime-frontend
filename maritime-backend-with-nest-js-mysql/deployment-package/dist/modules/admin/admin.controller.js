@@ -14,22 +14,63 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
+const class_validator_1 = require("class-validator");
 const jwt_auth_guard_1 = require("../../guards/jwt-auth.guard");
 const admin_service_1 = require("./admin.service");
 class UpdateUserRoleDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpdateUserRoleDto.prototype, "role", void 0);
 class UpdateSubscriptionDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpdateSubscriptionDto.prototype, "subscription_status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateSubscriptionDto.prototype, "subscription_expiry", void 0);
 class SuspendUserDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], SuspendUserDto.prototype, "reason", void 0);
 class DeleteUserDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], DeleteUserDto.prototype, "reason", void 0);
 class RejectListingDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RejectListingDto.prototype, "reason", void 0);
 class ApproveKycDto {
 }
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ApproveKycDto.prototype, "comment", void 0);
 class RejectKycDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RejectKycDto.prototype, "comment", void 0);
 let AdminController = class AdminController {
     constructor(adminService) {
         this.adminService = adminService;
@@ -38,6 +79,17 @@ let AdminController = class AdminController {
         if (req.user.role !== "admin" && req.user.role !== "executive") {
             throw new common_1.ForbiddenException("Admin access required");
         }
+    }
+    getCtx(req) {
+        const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+            req.ip ||
+            req.socket?.remoteAddress ||
+            "0.0.0.0";
+        return {
+            ip,
+            ua: req.headers["user-agent"],
+            email: req.user?.email,
+        };
     }
     async getDashboardStats(req) {
         this.checkAdminRole(req);
@@ -57,33 +109,51 @@ let AdminController = class AdminController {
     }
     async updateUserRole(id, body, req) {
         this.checkAdminRole(req);
-        return this.adminService.updateUserRole(id, body.role, req.user.id);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.updateUserRole(id, body.role, req.user.id, ip, ua, email);
     }
     async updateUserSubscription(id, body, req) {
         this.checkAdminRole(req);
+        const { ip, ua, email } = this.getCtx(req);
         const expiry = body.subscription_expiry ? new Date(body.subscription_expiry) : null;
-        return this.adminService.updateUserSubscription(id, body.subscription_status, expiry, req.user.id);
+        return this.adminService.updateUserSubscription(id, body.subscription_status, expiry, req.user.id, ip, ua, email);
     }
     async suspendUser(id, body, req) {
         this.checkAdminRole(req);
-        return this.adminService.suspendUser(id, req.user.id, body.reason);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.suspendUser(id, req.user.id, body.reason, ip, ua, email);
     }
     async deleteUser(id, body, req) {
         this.checkAdminRole(req);
-        await this.adminService.deleteUser(id, req.user.id, body.reason);
+        const { ip, ua, email } = this.getCtx(req);
+        await this.adminService.deleteUser(id, req.user.id, body.reason, ip, ua, email);
         return { message: "User deleted successfully" };
+    }
+    async getKycStats(req) {
+        this.checkAdminRole(req);
+        return this.adminService.getKycStats();
     }
     async getPendingKyc(skip = "0", take = "20", req) {
         this.checkAdminRole(req);
         return this.adminService.getPendingKyc(parseInt(skip), parseInt(take));
     }
+    async getKycList(status = "pending", skip = "0", take = "20", req) {
+        this.checkAdminRole(req);
+        return this.adminService.getKycByStatus(status, parseInt(skip), parseInt(take));
+    }
     async approveKyc(id, body, req) {
         this.checkAdminRole(req);
-        return this.adminService.approveKyc(id, req.user.id, body.comment);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.approveKyc(id, req.user.id, body.comment, ip, ua, email);
     }
     async rejectKyc(id, body, req) {
         this.checkAdminRole(req);
-        return this.adminService.rejectKyc(id, req.user.id, body.comment);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.rejectKyc(id, req.user.id, body.comment, ip, ua, email);
+    }
+    async getListingStats(req) {
+        this.checkAdminRole(req);
+        return this.adminService.getListingStats();
     }
     async getAllListings(skip = "0", take = "20", req) {
         this.checkAdminRole(req);
@@ -95,11 +165,13 @@ let AdminController = class AdminController {
     }
     async approveListing(id, req) {
         this.checkAdminRole(req);
-        return this.adminService.approveHighValueListing(id, req.user.id);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.approveListing(id, req.user.id, ip, ua, email);
     }
     async rejectListing(id, body, req) {
         this.checkAdminRole(req);
-        return this.adminService.rejectListing(id, req.user.id, body.reason);
+        const { ip, ua, email } = this.getCtx(req);
+        return this.adminService.rejectListing(id, req.user.id, body.reason, ip, ua, email);
     }
     async getAllTransactions(skip = "0", take = "20", req) {
         this.checkAdminRole(req);
@@ -109,11 +181,19 @@ let AdminController = class AdminController {
         this.checkAdminRole(req);
         return this.adminService.getTransactionStats();
     }
-    async getAuditLogs(skip = "0", take = "20", req) {
+    async getAuditLogs(module, action, actorId, dateFrom, dateTo, skip = "0", take = "50", req) {
         this.checkAdminRole(req);
-        return this.adminService.getAuditLogs(parseInt(skip), parseInt(take));
+        return this.adminService.getAuditLogs({
+            module,
+            action,
+            actorId,
+            dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+            dateTo: dateTo ? new Date(dateTo) : undefined,
+            skip: parseInt(skip),
+            take: parseInt(take),
+        });
     }
-    async getAuditLogsByModule(module, skip = "0", take = "20", req) {
+    async getAuditLogsByModule(module, skip = "0", take = "50", req) {
         this.checkAdminRole(req);
         return this.adminService.getAuditLogsByModule(module, parseInt(skip), parseInt(take));
     }
@@ -195,6 +275,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "deleteUser", null);
 __decorate([
+    (0, common_1.Get)("kyc/stats"),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getKycStats", null);
+__decorate([
     (0, common_1.Get)("kyc/pending"),
     __param(0, (0, common_1.Query)("skip")),
     __param(1, (0, common_1.Query)("take")),
@@ -203,6 +290,16 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "getPendingKyc", null);
+__decorate([
+    (0, common_1.Get)("kyc/list"),
+    __param(0, (0, common_1.Query)("status")),
+    __param(1, (0, common_1.Query)("skip")),
+    __param(2, (0, common_1.Query)("take")),
+    __param(3, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getKycList", null);
 __decorate([
     (0, common_1.Post)("kyc/:id/approve"),
     __param(0, (0, common_1.Param)("id")),
@@ -221,6 +318,13 @@ __decorate([
     __metadata("design:paramtypes", [String, RejectKycDto, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "rejectKyc", null);
+__decorate([
+    (0, common_1.Get)("listings/stats"),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getListingStats", null);
 __decorate([
     (0, common_1.Get)("listings"),
     __param(0, (0, common_1.Query)("skip")),
@@ -275,15 +379,20 @@ __decorate([
 ], AdminController.prototype, "getTransactionStats", null);
 __decorate([
     (0, common_1.Get)("audit-logs"),
-    __param(0, (0, common_1.Query)("skip")),
-    __param(1, (0, common_1.Query)("take")),
-    __param(2, (0, common_1.Request)()),
+    __param(0, (0, common_1.Query)("module")),
+    __param(1, (0, common_1.Query)("action")),
+    __param(2, (0, common_1.Query)("actorId")),
+    __param(3, (0, common_1.Query)("dateFrom")),
+    __param(4, (0, common_1.Query)("dateTo")),
+    __param(5, (0, common_1.Query)("skip")),
+    __param(6, (0, common_1.Query)("take")),
+    __param(7, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "getAuditLogs", null);
 __decorate([
-    (0, common_1.Get)("audit-logs/:module"),
+    (0, common_1.Get)("audit-logs/module/:module"),
     __param(0, (0, common_1.Param)("module")),
     __param(1, (0, common_1.Query)("skip")),
     __param(2, (0, common_1.Query)("take")),

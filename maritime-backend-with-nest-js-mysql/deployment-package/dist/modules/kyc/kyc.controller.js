@@ -54,7 +54,7 @@ let KycController = class KycController {
 exports.KycController = KycController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_kyc_dto_1.CreateKycDto, Object]),
@@ -62,7 +62,6 @@ __decorate([
 ], KycController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)("my-kyc"),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -70,15 +69,14 @@ __decorate([
 ], KycController.prototype, "getMyKyc", null);
 __decorate([
     (0, common_1.Patch)(":id"),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_kyc_dto_1.UpdateKycDto]),
     __metadata("design:returntype", Promise)
 ], KycController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)("pending"),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -86,7 +84,6 @@ __decorate([
 ], KycController.prototype, "getPendingKyc", null);
 __decorate([
     (0, common_1.Patch)(":id/approve"),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -95,8 +92,8 @@ __decorate([
 ], KycController.prototype, "approveKyc", null);
 __decorate([
     (0, common_1.Patch)(":id/reject"),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Body)("comment")),
     __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Object]),
@@ -104,6 +101,7 @@ __decorate([
 ], KycController.prototype, "rejectKyc", null);
 exports.KycController = KycController = __decorate([
     (0, common_1.Controller)("kyc"),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [kyc_service_1.KycService])
 ], KycController);
 //# sourceMappingURL=kyc.controller.js.map

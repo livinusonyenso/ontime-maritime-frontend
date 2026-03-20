@@ -9,6 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const schedule_1 = require("@nestjs/schedule");
+const throttler_1 = require("@nestjs/throttler");
+const core_1 = require("@nestjs/core");
 const passport_1 = require("@nestjs/passport");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./modules/auth/auth.module");
@@ -25,7 +28,16 @@ const admin_module_1 = require("./modules/admin/admin.module");
 const ratings_module_1 = require("./modules/ratings/ratings.module");
 const arbitration_module_1 = require("./modules/arbitration/arbitration.module");
 const insurance_module_1 = require("./modules/insurance/insurance.module");
+const vessels_module_1 = require("./modules/vessels/vessels.module");
+const bol_module_1 = require("./modules/bol/bol.module");
+const disputes_module_1 = require("./modules/disputes/disputes.module");
+const security_module_1 = require("./modules/security/security.module");
+const legal_module_1 = require("./modules/legal/legal.module");
+const knowledge_module_1 = require("./modules/knowledge/knowledge.module");
+const marketplace_module_1 = require("./modules/marketplace/marketplace.module");
+const payments_module_1 = require("./modules/payments/payments.module");
 const app_controller_1 = require("./app.controller");
+const upload_module_1 = require("./modules/upload/upload.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +48,10 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
                 envFilePath: '.env',
             }),
+            throttler_1.ThrottlerModule.forRoot([
+                { ttl: 60_000, limit: 60 },
+            ]),
+            schedule_1.ScheduleModule.forRoot(),
             prisma_module_1.PrismaModule,
             passport_1.PassportModule,
             auth_module_1.AuthModule,
@@ -52,8 +68,20 @@ exports.AppModule = AppModule = __decorate([
             ratings_module_1.RatingsModule,
             arbitration_module_1.ArbitrationModule,
             insurance_module_1.InsuranceModule,
+            upload_module_1.UploadModule,
+            vessels_module_1.VesselsModule,
+            bol_module_1.BolModule,
+            disputes_module_1.DisputesModule,
+            security_module_1.SecurityModule,
+            legal_module_1.LegalModule,
+            knowledge_module_1.KnowledgeModule,
+            marketplace_module_1.MarketplaceModule,
+            payments_module_1.PaymentsModule,
         ],
         controllers: [app_controller_1.AppController],
+        providers: [
+            { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

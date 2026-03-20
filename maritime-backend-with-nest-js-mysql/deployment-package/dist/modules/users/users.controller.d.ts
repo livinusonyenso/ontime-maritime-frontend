@@ -14,6 +14,13 @@ export declare class UsersController {
         subscription_expiry: Date | null;
         first_name: string | null;
         last_name: string | null;
+        company_name: string | null;
+        business_address: string | null;
+        website: string | null;
+        failed_login_attempts: number;
+        lock_until: Date | null;
+        refresh_token: string | null;
+        refresh_token_expiry: Date | null;
         created_at: Date;
         updated_at: Date;
     }>;
@@ -29,6 +36,13 @@ export declare class UsersController {
         subscription_expiry: Date | null;
         first_name: string | null;
         last_name: string | null;
+        company_name: string | null;
+        business_address: string | null;
+        website: string | null;
+        failed_login_attempts: number;
+        lock_until: Date | null;
+        refresh_token: string | null;
+        refresh_token_expiry: Date | null;
         created_at: Date;
         updated_at: Date;
     }[]>;

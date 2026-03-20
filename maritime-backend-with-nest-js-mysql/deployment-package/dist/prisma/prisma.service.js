@@ -16,6 +16,7 @@ const client_1 = require("@prisma/client");
 let PrismaService = PrismaService_1 = class PrismaService extends client_1.PrismaClient {
     constructor() {
         super({
+            errorFormat: 'minimal',
             log: [
                 { emit: "event", level: "query" },
                 { emit: "event", level: "error" },

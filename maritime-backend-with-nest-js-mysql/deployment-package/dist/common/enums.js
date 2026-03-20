@@ -8,6 +8,7 @@ var UserRole;
     UserRole["admin"] = "admin";
     UserRole["executive"] = "executive";
     UserRole["expert"] = "expert";
+    UserRole["organization"] = "organization";
 })(UserRole || (exports.UserRole = UserRole = {}));
 var ListingCategory;
 (function (ListingCategory) {

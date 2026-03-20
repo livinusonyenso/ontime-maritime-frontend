@@ -1,0 +1,64 @@
+import { PrismaService } from "../../prisma/prisma.service";
+import { QueryMarketplaceDto } from "./dto/query-marketplace.dto";
+export declare class MarketplaceService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    findPublic(query: QueryMarketplaceDto): Promise<{
+        data: {
+            featured: any;
+            views: any;
+            inquiries: any;
+            availability: any;
+            created_at: any;
+            updated_at: any;
+            bol_image?: any;
+            id: any;
+            title: any;
+            description: any;
+            price: number;
+            price_type: any;
+            currency: any;
+            category: any;
+            condition: any;
+            images: string[];
+            preview_image: string;
+            location: any;
+            specifications: any;
+            seller_name: any;
+            seller_rating: number;
+            bol_required: any;
+            bol_verified: any;
+            bol_has_image: boolean;
+        }[];
+        total: number;
+        skip: number;
+        take: number;
+        hasMore: boolean;
+    }>;
+    findPublicById(id: string, buyerId?: string): Promise<{
+        featured: any;
+        views: any;
+        inquiries: any;
+        availability: any;
+        created_at: any;
+        updated_at: any;
+        bol_image?: any;
+        id: any;
+        title: any;
+        description: any;
+        price: number;
+        price_type: any;
+        currency: any;
+        category: any;
+        condition: any;
+        images: string[];
+        preview_image: string;
+        location: any;
+        specifications: any;
+        seller_name: any;
+        seller_rating: number;
+        bol_required: any;
+        bol_verified: any;
+        bol_has_image: boolean;
+    }>;
+}

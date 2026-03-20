@@ -4,4 +4,7 @@ export declare class SignupDto {
     phone: string;
     password: string;
     role: UserRole;
+    company_name?: string;
+    business_address?: string;
+    website?: string;
 }

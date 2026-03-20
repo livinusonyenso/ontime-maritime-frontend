@@ -1,6 +1,6 @@
-import { KycService } from './kyc.service';
-import { CreateKycDto } from './dto/create-kyc.dto';
-import { UpdateKycDto } from './dto/update-kyc.dto';
+import { KycService } from "./kyc.service";
+import { CreateKycDto } from "./dto/create-kyc.dto";
+import { UpdateKycDto } from "./dto/update-kyc.dto";
 export declare class KycController {
     private kycService;
     constructor(kycService: KycService);

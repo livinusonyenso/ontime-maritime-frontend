@@ -34,6 +34,9 @@ let ListingsController = class ListingsController {
     async findByCategory(category, skip = 0, take = 20) {
         return this.listingsService.findByCategory(category, skip, take);
     }
+    async findMySeller(req) {
+        return this.listingsService.findMySeller(req.user.id);
+    }
     async findById(id) {
         return this.listingsService.findById(id);
     }
@@ -81,6 +84,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ListingsController.prototype, "findByCategory", null);
+__decorate([
+    (0, common_1.Get)('my'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ListingsController.prototype, "findMySeller", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

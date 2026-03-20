@@ -10,6 +10,7 @@ exports.ListingsModule = void 0;
 const common_1 = require("@nestjs/common");
 const listings_service_1 = require("./listings.service");
 const listings_controller_1 = require("./listings.controller");
+const listings_cron_service_1 = require("./listings-cron.service");
 const executive_corner_module_1 = require("../executive-corner/executive-corner.module");
 const prisma_module_1 = require("../../prisma/prisma.module");
 const fraud_module_1 = require("../fraud/fraud.module");
@@ -20,7 +21,7 @@ exports.ListingsModule = ListingsModule = __decorate([
     (0, common_1.Module)({
         imports: [executive_corner_module_1.ExecutiveCornerModule, prisma_module_1.PrismaModule, fraud_module_1.FraudModule],
         controllers: [listings_controller_1.ListingsController],
-        providers: [listings_service_1.ListingsService],
+        providers: [listings_service_1.ListingsService, listings_cron_service_1.ListingsCronService],
         exports: [listings_service_1.ListingsService],
     })
 ], ListingsModule);

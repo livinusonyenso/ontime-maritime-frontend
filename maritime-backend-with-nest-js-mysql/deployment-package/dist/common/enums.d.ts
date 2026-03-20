@@ -3,7 +3,8 @@ export declare enum UserRole {
     seller = "seller",
     admin = "admin",
     executive = "executive",
-    expert = "expert"
+    expert = "expert",
+    organization = "organization"
 }
 export declare enum ListingCategory {
     cargo = "cargo",
