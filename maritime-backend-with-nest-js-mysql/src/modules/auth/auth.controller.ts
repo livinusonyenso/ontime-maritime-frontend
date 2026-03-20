@@ -84,4 +84,18 @@ export class AuthController {
   async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto.resetToken, dto.newPassword)
   }
+
+  // Resend email verification link (for registered users with is_email_verified=false): 3 / minute
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
+  @Post("resend-email-verification")
+  async resendEmailVerification(@Body() body: { email: string }) {
+    return this.authService.resendEmailVerification(body.email)
+  }
+
+  // Verify email via magic link token: 10 / minute
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Post("verify-email-token")
+  async verifyEmailToken(@Body() body: { email: string; token: string }) {
+    return this.authService.verifyEmailToken(body.email, body.token)
+  }
 }

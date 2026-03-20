@@ -459,4 +459,79 @@ export class AuthService {
 
     return { message: "Password reset successful." }
   }
+
+  /* ------------------------------------------------------------------ */
+  /* RESEND EMAIL VERIFICATION (magic link for users already in DB)      */
+  /* ------------------------------------------------------------------ */
+  async resendEmailVerification(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+
+    // Always return success to avoid email enumeration
+    if (!user || user.is_email_verified) {
+      return { message: "If your account exists and is unverified, a link has been sent." }
+    }
+
+    // Invalidate any previous unused email-verification tokens
+    await this.prisma.otpToken.updateMany({
+      where: { email, purpose: "email_verification", is_used: false },
+      data: { is_used: true },
+    })
+
+    const rawToken  = randomBytes(32).toString("hex")       // 64-char hex
+    const tokenHash = await bcrypt.hash(rawToken, 10)
+
+    await this.prisma.otpToken.create({
+      data: {
+        user_id:    user.id,
+        email,
+        otp_code:   tokenHash,
+        purpose:    "email_verification",
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 h
+      },
+    })
+
+    const sent = await this.mailService.sendEmailVerificationLink(email, rawToken)
+    if (!sent) {
+      await this.prisma.otpToken.updateMany({
+        where: { email, purpose: "email_verification", is_used: false },
+        data: { is_used: true },
+      })
+      this.logger.error(`Email verification link failed for ${email}`)
+      throw new HttpException(
+        { message: "Could not send verification email. Please try again or contact support." },
+        HttpStatus.SERVICE_UNAVAILABLE,
+      )
+    }
+
+    return { message: "A verification link has been sent to your email." }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* VERIFY EMAIL TOKEN (called when user clicks magic link)             */
+  /* ------------------------------------------------------------------ */
+  async verifyEmailToken(email: string, rawToken: string) {
+    const token = await this.prisma.otpToken.findFirst({
+      where: {
+        email,
+        purpose:    "email_verification",
+        is_used:    false,
+        expires_at: { gt: utcNow() },
+      },
+      orderBy: { created_at: "desc" },
+    })
+
+    if (!token) {
+      throw new BadRequestException("Verification link is invalid or has expired. Please request a new one.")
+    }
+
+    const isValid = await bcrypt.compare(rawToken, token.otp_code)
+    if (!isValid) {
+      throw new BadRequestException("Verification link is invalid or has expired. Please request a new one.")
+    }
+
+    await this.prisma.otpToken.update({ where: { id: token.id }, data: { is_used: true } })
+    await this.prisma.user.update({ where: { email }, data: { is_email_verified: true } })
+
+    return { message: "Email verified successfully. You can now log in." }
+  }
 }

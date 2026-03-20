@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import api from "@/lib/api"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -92,18 +93,13 @@ export default function LoginPage() {
     setResending(true)
 
     try {
-      const result = await resendOtp(unverifiedEmail)
+      // For users already in the users table (is_email_verified=false),
+      // send a magic link instead of an OTP code.
+      await api.post("/auth/resend-email-verification", { email: unverifiedEmail })
       toast({
         title: "Verification email sent!",
-        description: result.message,
+        description: "Check your inbox for a verification link. It expires in 24 hours.",
       })
-
-      // Navigate to OTP page with the pendingId if returned
-      if (result.pendingId) {
-        navigate("/verify-otp", {
-          state: { pendingId: result.pendingId, email: unverifiedEmail },
-        })
-      }
     } catch (err: any) {
       toast({
         title: "Failed to resend",

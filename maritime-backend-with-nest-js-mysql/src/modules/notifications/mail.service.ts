@@ -209,6 +209,44 @@ export class MailService {
     return this.sendMail(to, subject, html)
   }
 
+  async sendEmailVerificationLink(to: string, rawToken: string): Promise<boolean> {
+    const frontendUrl = process.env.FRONTEND_URL || "https://ontimemaritime.com"
+    const link = `${frontendUrl}/verify-email?token=${rawToken}&email=${encodeURIComponent(to)}`
+    const subject = "Verify your OnTime Maritime email"
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:0;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+        <div style="background:#1a3c5e;padding:24px;text-align:center">
+          <h2 style="color:#ffffff;margin:0;font-size:20px">OnTime Maritime</h2>
+          <p style="color:#a8c4e0;margin:4px 0 0;font-size:13px">Cargo Meet Tech</p>
+        </div>
+        <div style="padding:32px 24px">
+          <h3 style="color:#1a3c5e;margin-top:0">Verify your email address</h3>
+          <p style="color:#333;line-height:1.6">
+            Click the button below to verify your email address and activate your account.
+            This link expires in <strong>24 hours</strong>.
+          </p>
+          <div style="text-align:center;margin:32px 0">
+            <a href="${link}"
+               style="background:#1a3c5e;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">
+              Verify Email Address
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px;line-height:1.6">
+            If you did not create an account, you can safely ignore this email.<br/>
+            Or copy and paste this link into your browser:<br/>
+            <a href="${link}" style="color:#1a3c5e;word-break:break-all">${link}</a>
+          </p>
+        </div>
+        <div style="background:#f4f8fc;padding:16px 24px;text-align:center">
+          <p style="color:#aaa;font-size:11px;margin:0">
+            &copy; ${new Date().getFullYear()} OnTime Maritime. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `
+    return this.sendMail(to, subject, html)
+  }
+
   async sendOtpEmail(to: string, otpCode: string): Promise<boolean> {
     const subject = "Your OnTime Maritime verification code"
     const html = `

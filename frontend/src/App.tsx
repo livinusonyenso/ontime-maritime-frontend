@@ -14,6 +14,7 @@ import WelcomePage from "./pages/entry/WelcomePage"
 import ForgotPasswordPage from "./pages/entry/ForgotPasswordPage"
 import VerifyResetOtpPage from "./pages/entry/VerifyResetOtpPage"
 import ResetPasswordPage from "./pages/entry/ResetPasswordPage"
+import VerifyEmailPage from "./pages/entry/VerifyEmailPage"
 import ServicesPage from "./pages/entry/ServicesPage"
 import OntimeStorePage from "./pages/entry/OntimeStorePage"
 import ProductDetailPage from "./pages/entry/ProductDetailPage"
@@ -96,6 +97,7 @@ function App() {
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/forgot-password/verify" element={<VerifyResetOtpPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/forgot-password/reset" element={<ResetPasswordPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/store" element={<OntimeStorePage />} />
