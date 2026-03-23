@@ -3,45 +3,73 @@
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/contexts/auth-context"
-import { useNotification } from "@/contexts/notification-context"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { FileText, DollarSign, Package, Plus, LogOut, BarChartIcon, TrendingUp, Users } from "lucide-react"
+import { FileText, DollarSign, Package, Plus, BarChartIcon, TrendingUp, Users } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 import { selectSellerListings } from "@/store/slices/sellerListingSlice"
 import { CreateListingModal } from "@/components/marketplace/CreateListingModal"
 import { SellerListingsView } from "@/components/marketplace/SellerListingsView"
-import type { MarketplaceListing } from "@/types/maritime"
+import api from "@/lib/api"
 
-// Mock data for seller revenue
-const revenueData = [
-  { name: "Jan", revenue: 12000 },
-  { name: "Feb", revenue: 19000 },
-  { name: "Mar", revenue: 15000 },
-  { name: "Apr", revenue: 25000 },
-  { name: "May", revenue: 32000 },
-  { name: "Jun", revenue: 28000 },
-]
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+interface Sale {
+  id: string
+  buyer_id: string
+  amount: string
+  payout_status: "pending" | "completed" | "failed"
+  created_at: string
+  listing?: { title?: string }
+  buyer?: { first_name?: string; last_name?: string }
+}
+
+const PAYOUT_LABEL: Record<string, string> = {
+  pending:   "Processing",
+  completed: "Delivered",
+  failed:    "Failed",
+}
 
 export default function SellerDashboardPage() {
-  const { user, isAuthenticated, loading, logout } = useAuth()
-  const { unreadCount } = useNotification()
+  const { isAuthenticated, loading } = useAuth()
   const navigate = useNavigate()
-  
-  // Redux hooks for marketplace listings
-  const dispatch = useDispatch()
+
   const myListings = useSelector(selectSellerListings)
-  
-  // Modal state
+
   const [createModalOpen, setCreateModalOpen] = useState(false)
+  const [sales, setSales]       = useState<Sale[]>([])
+  const [salesLoading, setSalesLoading] = useState(true)
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       navigate("/login")
     }
   }, [isAuthenticated, loading, navigate])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    api
+      .get<Sale[]>("/transactions/my-sales?take=100")
+      .then((res) => setSales(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setSales([]))
+      .finally(() => setSalesLoading(false))
+  }, [isAuthenticated])
+
+  // Derived stats
+  const totalRevenue   = sales.reduce((sum, tx) => sum + Number(tx.amount ?? 0), 0)
+  const totalCustomers = new Set(sales.map((tx) => tx.buyer_id)).size
+  const pendingOrders  = sales.filter((tx) => tx.payout_status === "pending").length
+
+  const revenueByMonth = sales.reduce<Record<string, number>>((acc, tx) => {
+    const month = MONTHS[new Date(tx.created_at).getMonth()]
+    acc[month] = (acc[month] ?? 0) + Number(tx.amount ?? 0)
+    return acc
+  }, {})
+  const revenueData = MONTHS.map((name) => ({ name, revenue: revenueByMonth[name] ?? 0 }))
+
+  const recentOrders = sales.slice(0, 5)
 
   if (loading) {
     return (
@@ -89,9 +117,11 @@ export default function SellerDashboardPage() {
                 <DollarSign className="h-4 w-4 text-green-600" />
               </div>
               <div className="flex items-center justify-between pt-2">
-                <h3 className="text-2xl font-bold">$131,200</h3>
+                <h3 className="text-2xl font-bold">
+                  {salesLoading ? "—" : `$${totalRevenue.toLocaleString()}`}
+                </h3>
                 <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
-                  <TrendingUp className="h-3 w-3 mr-1" /> +15%
+                  <TrendingUp className="h-3 w-3 mr-1" /> Live
                 </Badge>
               </div>
             </CardContent>
@@ -104,9 +134,9 @@ export default function SellerDashboardPage() {
                 <Package className="h-4 w-4 text-blue-600" />
               </div>
               <div className="flex items-center justify-between pt-2">
-                <h3 className="text-2xl font-bold">12</h3>
+                <h3 className="text-2xl font-bold">{myListings.length}</h3>
                 <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                  +3 New
+                  Total
                 </Badge>
               </div>
             </CardContent>
@@ -119,9 +149,11 @@ export default function SellerDashboardPage() {
                 <Users className="h-4 w-4 text-purple-600" />
               </div>
               <div className="flex items-center justify-between pt-2">
-                <h3 className="text-2xl font-bold">48</h3>
+                <h3 className="text-2xl font-bold">
+                  {salesLoading ? "—" : totalCustomers}
+                </h3>
                 <Badge variant="secondary" className="bg-purple-100 text-purple-700 hover:bg-purple-100">
-                  +2 This Week
+                  Unique
                 </Badge>
               </div>
             </CardContent>
@@ -134,7 +166,9 @@ export default function SellerDashboardPage() {
                 <FileText className="h-4 w-4 text-orange-600" />
               </div>
               <div className="flex items-center justify-between pt-2">
-                <h3 className="text-2xl font-bold">5</h3>
+                <h3 className="text-2xl font-bold">
+                  {salesLoading ? "—" : pendingOrders}
+                </h3>
                 <Badge variant="secondary" className="bg-orange-100 text-orange-700 hover:bg-orange-100">
                   Needs Action
                 </Badge>
@@ -211,57 +245,49 @@ export default function SellerDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {[
-                        {
-                          id: "#ORD-7782",
-                          item: "Marine Engine Parts",
-                          date: "Today, 10:23 AM",
-                          amount: "$4,200",
-                          status: "Processing",
-                        },
-                        {
-                          id: "#ORD-7781",
-                          item: "Navigation System",
-                          date: "Yesterday, 4:15 PM",
-                          amount: "$12,500",
-                          status: "Shipped",
-                        },
-                        {
-                          id: "#ORD-7780",
-                          item: "Safety Equipment",
-                          date: "Oct 24, 2023",
-                          amount: "$1,800",
-                          status: "Delivered",
-                        },
-                        {
-                          id: "#ORD-7779",
-                          item: "Cargo Containers (x2)",
-                          date: "Oct 22, 2023",
-                          amount: "$8,400",
-                          status: "Delivered",
-                        },
-                      ].map((order) => (
-                        <tr key={order.id} className="group hover:bg-muted/50 transition-colors">
-                          <td className="py-4 font-medium">{order.id}</td>
-                          <td className="py-4">{order.item}</td>
-                          <td className="py-4 text-muted-foreground">{order.date}</td>
-                          <td className="py-4 font-bold">{order.amount}</td>
-                          <td className="py-4">
-                            <Badge
-                              variant={order.status === "Delivered" ? "outline" : "secondary"}
-                              className={
-                                order.status === "Processing"
-                                  ? "bg-orange-100 text-orange-700"
-                                  : order.status === "Shipped"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : "bg-green-100 text-green-700 border-green-200"
-                              }
-                            >
-                              {order.status}
-                            </Badge>
+                      {salesLoading ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                            Loading…
                           </td>
                         </tr>
-                      ))}
+                      ) : recentOrders.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                            No orders yet.
+                          </td>
+                        </tr>
+                      ) : (
+                        recentOrders.map((tx) => {
+                          const label = PAYOUT_LABEL[tx.payout_status] ?? tx.payout_status
+                          return (
+                            <tr key={tx.id} className="group hover:bg-muted/50 transition-colors">
+                              <td className="py-4 font-medium">#{tx.id.slice(0, 8).toUpperCase()}</td>
+                              <td className="py-4">{tx.listing?.title ?? "—"}</td>
+                              <td className="py-4 text-muted-foreground">
+                                {new Date(tx.created_at).toLocaleDateString(undefined, {
+                                  month: "short", day: "numeric", year: "numeric",
+                                })}
+                              </td>
+                              <td className="py-4 font-bold">${Number(tx.amount).toLocaleString()}</td>
+                              <td className="py-4">
+                                <Badge
+                                  variant={tx.payout_status === "completed" ? "outline" : "secondary"}
+                                  className={
+                                    tx.payout_status === "pending"
+                                      ? "bg-orange-100 text-orange-700"
+                                      : tx.payout_status === "failed"
+                                        ? "bg-red-100 text-red-700"
+                                        : "bg-green-100 text-green-700 border-green-200"
+                                  }
+                                >
+                                  {label}
+                                </Badge>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -311,16 +337,33 @@ export default function SellerDashboardPage() {
                 <CardDescription>Target: $50,000</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Progress</span>
-                    <span className="font-bold">90%</span>
-                  </div>
-                  <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 w-[90%]" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">Just $4,800 more to hit your monthly target!</p>
-                </div>
+                {(() => {
+                  const target = 50_000
+                  const thisMonth = new Date().getMonth()
+                  const monthRevenue = sales
+                    .filter((tx) => new Date(tx.created_at).getMonth() === thisMonth)
+                    .reduce((sum, tx) => sum + Number(tx.amount ?? 0), 0)
+                  const pct = Math.min(100, Math.round((monthRevenue / target) * 100))
+                  const remaining = Math.max(0, target - monthRevenue)
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Progress</span>
+                        <span className="font-bold">{salesLoading ? "—" : `${pct}%`}</span>
+                      </div>
+                      <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                        <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {salesLoading
+                          ? "Loading…"
+                          : remaining > 0
+                            ? `$${remaining.toLocaleString()} more to hit your monthly target!`
+                            : "Monthly target reached!"}
+                      </p>
+                    </div>
+                  )
+                })()}
               </CardContent>
             </Card>
           </div>
