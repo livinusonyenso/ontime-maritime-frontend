@@ -334,11 +334,36 @@ export default function SellerDashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Monthly Goal</CardTitle>
-                <CardDescription>Target: $50,000</CardDescription>
+                <CardDescription>
+                  {salesLoading
+                    ? "Calculating…"
+                    : (() => {
+                        const bestMonth = Math.max(0, ...revenueData.map((d) => d.revenue))
+                        const target = bestMonth > 0 ? Math.ceil((bestMonth * 1.2) / 1000) * 1000 : null
+                        return target ? `Target: $${target.toLocaleString()}` : "No sales data yet"
+                      })()}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                {(() => {
-                  const target = 50_000
+                {salesLoading ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Progress</span>
+                      <span className="font-bold">—</span>
+                    </div>
+                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden" />
+                    <p className="text-xs text-muted-foreground mt-2">Loading…</p>
+                  </div>
+                ) : (() => {
+                  const bestMonth = Math.max(0, ...revenueData.map((d) => d.revenue))
+                  const target = bestMonth > 0 ? Math.ceil((bestMonth * 1.2) / 1000) * 1000 : null
+                  if (!target) {
+                    return (
+                      <p className="text-sm text-muted-foreground">
+                        Complete your first sale to start tracking monthly goals.
+                      </p>
+                    )
+                  }
                   const thisMonth = new Date().getMonth()
                   const monthRevenue = sales
                     .filter((tx) => new Date(tx.created_at).getMonth() === thisMonth)
@@ -349,17 +374,15 @@ export default function SellerDashboardPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span>Progress</span>
-                        <span className="font-bold">{salesLoading ? "—" : `${pct}%`}</span>
+                        <span className="font-bold">{pct}%</span>
                       </div>
                       <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                         <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
                       </div>
                       <p className="text-xs text-muted-foreground mt-2">
-                        {salesLoading
-                          ? "Loading…"
-                          : remaining > 0
-                            ? `$${remaining.toLocaleString()} more to hit your monthly target!`
-                            : "Monthly target reached!"}
+                        {remaining > 0
+                          ? `$${remaining.toLocaleString()} more to hit your monthly target!`
+                          : "Monthly target reached!"}
                       </p>
                     </div>
                   )
