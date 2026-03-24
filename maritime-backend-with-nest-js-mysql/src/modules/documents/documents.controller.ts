@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from "@nestjs/common"
+import { Controller, Post, Get, Body, Param, UseGuards, Request } from "@nestjs/common"
 import { JwtAuthGuard } from "../../guards/jwt-auth.guard"
 import { DocumentsService } from "./documents.service"
 import {  CreateDocumentDto  } from './dto/create-document.dto'
@@ -11,6 +11,12 @@ export class DocumentsController {
   @UseGuards(JwtAuthGuard)
   async create(@Body() createDocumentDto: CreateDocumentDto) {
     return this.documentsService.create(createDocumentDto);
+  }
+
+  @Get("my")
+  @UseGuards(JwtAuthGuard)
+  async getMyDocuments(@Request() req) {
+    return this.documentsService.findByUser(req.user.id)
   }
 
   @Get(':id')

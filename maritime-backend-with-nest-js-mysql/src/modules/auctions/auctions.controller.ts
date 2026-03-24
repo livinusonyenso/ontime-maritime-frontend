@@ -16,7 +16,7 @@ export class AuctionsController {
 
   @Get()
   async findActive(@Query('skip') skip = 0, @Query('take') take = 20) {
-    return this.auctionsService.findActive(skip, take)
+    return this.auctionsService.findActive(+skip, +take)
   }
 
   @Get(':id')

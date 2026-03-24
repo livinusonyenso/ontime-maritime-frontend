@@ -16,17 +16,17 @@ export class ListingsController {
 
   @Get()
   async findAll(@Query('skip') skip = 0, @Query('take') take = 20) {
-    return this.listingsService.findAll(skip, take)
+    return this.listingsService.findAll(+skip, +take)
   }
 
   @Get("search")
   async search(@Query('q') query: string, @Query('skip') skip = 0, @Query('take') take = 20) {
-    return this.listingsService.search(query, skip, take)
+    return this.listingsService.search(query, +skip, +take)
   }
 
   @Get("category/:category")
   async findByCategory(@Param('category') category: string, @Query('skip') skip = 0, @Query('take') take = 20) {
-    return this.listingsService.findByCategory(category as any, skip, take)
+    return this.listingsService.findByCategory(category as any, +skip, +take)
   }
 
   @Get('my')

@@ -1,17 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import {
-  FileText,
-  Ship,
-  ArrowRightLeft,
-  CheckCircle2,
-  Clock,
-} from "lucide-react"
-
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { FileText, Ship, CheckCircle2, Clock } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import api from "@/lib/api"
 
 /* ===================== TYPES ===================== */
 
@@ -20,86 +13,82 @@ type EbolStatus = "draft" | "issued" | "transferred" | "released"
 interface Ebol {
   id: string
   bolNumber: string
-  vesselName: string
-  voyage: string
-  shipper: string
-  consignee: string
+  title: string
   portOfLoading: string
   portOfDischarge: string
   issuedDate: string
+  bolVerified: boolean
   status: EbolStatus
+}
+
+/* ===================== MAPPER ===================== */
+
+function toEbol(listing: any): Ebol {
+  const listingStatus: string = listing.status ?? "pending"
+  const bolVerified: boolean  = listing.bol_verified ?? false
+
+  let status: EbolStatus = "draft"
+  if      (listingStatus === "sold")                        status = "released"
+  else if (listingStatus === "active" && bolVerified)       status = "transferred"
+  else if (listingStatus === "active" && !bolVerified)      status = "issued"
+
+  return {
+    id:              listing.id ?? "",
+    bolNumber:       listing.bol_number ?? `BOL-${(listing.id ?? "").slice(0, 8).toUpperCase()}`,
+    title:           listing.title ?? "—",
+    portOfLoading:   listing.origin_port ?? "—",
+    portOfDischarge: listing.destination_port ?? "—",
+    issuedDate:      listing.created_at
+                       ? new Date(listing.created_at).toISOString().slice(0, 10)
+                       : "—",
+    bolVerified,
+    status,
+  }
+}
+
+const STATUS_COLOR: Record<EbolStatus, string> = {
+  draft:       "bg-gray-500",
+  issued:      "bg-blue-500",
+  transferred: "bg-purple-500",
+  released:    "bg-green-500",
 }
 
 /* ===================== COMPONENT ===================== */
 
 export default function SellerEBOLPage() {
-  const [ebols] = useState<Ebol[]>([
-    {
-      id: "1",
-      bolNumber: "EBOL-2025-001",
-      vesselName: "MV Atlantic Grace",
-      voyage: "AG-0925",
-      shipper: "Pillar Pole Ltd",
-      consignee: "BlueWave Shipping",
-      portOfLoading: "Lagos",
-      portOfDischarge: "Rotterdam",
-      issuedDate: "2025-09-12",
-      status: "issued",
-    },
-    {
-      id: "2",
-      bolNumber: "EBOL-2025-002",
-      vesselName: "MV Ocean Crown",
-      voyage: "OC-104",
-      shipper: "Kazfield Integrated",
-      consignee: "EuroTrade BV",
-      portOfLoading: "Onne",
-      portOfDischarge: "Antwerp",
-      issuedDate: "2025-09-18",
-      status: "transferred",
-    },
-    {
-      id: "3",
-      bolNumber: "EBOL-2025-003",
-      vesselName: "MV Blue Horizon",
-      voyage: "BH-221",
-      shipper: "D’roid Logistics",
-      consignee: "Global Imports Ltd",
-      portOfLoading: "Apapa",
-      portOfDischarge: "Hamburg",
-      issuedDate: "2025-09-25",
-      status: "released",
-    },
-  ])
+  const [ebols, setEbols]     = useState<Ebol[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState<string | null>(null)
 
-  const getStatusBadge = (status: EbolStatus) => {
-    switch (status) {
-      case "draft":
-        return "bg-gray-500"
-      case "issued":
-        return "bg-blue-500"
-      case "transferred":
-        return "bg-purple-500"
-      case "released":
-        return "bg-green-500"
-      default:
-        return "bg-gray-500"
-    }
-  }
+  useEffect(() => {
+    api
+      .get("/listings/my")
+      .then((res) => {
+        const all = Array.isArray(res.data) ? res.data : []
+        setEbols(
+          all
+            .filter((l: any) => l.bol_required === true || Boolean(l.bol_number))
+            .map(toEbol)
+        )
+      })
+      .catch(() => setError("Could not load eBOL data."))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const inTransit = ebols.filter((e) => e.status === "issued" || e.status === "transferred").length
+  const released  = ebols.filter((e) => e.status === "released").length
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          My e-Bills of Lading
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">My e-Bills of Lading</h1>
         <p className="text-muted-foreground mt-1">
           View, track, and manage your electronic Bills of Lading.
         </p>
       </div>
 
-      {/* Summary */}
+      {/* Summary cards */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -109,7 +98,7 @@ export default function SellerEBOLPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{ebols.length}</p>
+            <p className="text-3xl font-semibold">{loading ? "—" : ebols.length}</p>
           </CardContent>
         </Card>
 
@@ -121,9 +110,7 @@ export default function SellerEBOLPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">
-              {ebols.filter((e) => e.status === "issued" || e.status === "transferred").length}
-            </p>
+            <p className="text-3xl font-semibold">{loading ? "—" : inTransit}</p>
           </CardContent>
         </Card>
 
@@ -135,69 +122,69 @@ export default function SellerEBOLPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">
-              {ebols.filter((e) => e.status === "released").length}
-            </p>
+            <p className="text-3xl font-semibold">{loading ? "—" : released}</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* eBOL List */}
+      {/* eBOL list */}
       <div className="grid gap-4">
-        {ebols.map((ebol) => (
-          <Card key={ebol.id}>
-            <CardContent className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div className="space-y-1">
-                <div className="flex items-center gap-3">
-                  <Ship className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-mono text-sm text-muted-foreground">
-                    {ebol.bolNumber}
-                  </span>
-                </div>
-
-                <div className="font-semibold">
-                  {ebol.vesselName} — {ebol.voyage}
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  {ebol.portOfLoading} → {ebol.portOfDischarge}
-                </div>
-
-                <div className="text-xs text-muted-foreground">
-                  Issued: {ebol.issuedDate}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <Badge className={`${getStatusBadge(ebol.status)} text-white capitalize`}>
-                  {ebol.status}
-                </Badge>
-
-                <Button size="sm" variant="outline">
-                  View
-                </Button>
-
-                {ebol.status === "issued" && (
-                  <Button size="sm">
-                    <ArrowRightLeft className="h-4 w-4 mr-2" />
-                    Transfer
-                  </Button>
-                )}
-              </div>
+        {loading ? (
+          <Card>
+            <CardContent className="py-12 text-center text-muted-foreground">
+              Loading…
             </CardContent>
           </Card>
-        ))}
-
-        {ebols.length === 0 && (
+        ) : error ? (
+          <Card>
+            <CardContent className="py-12 text-center text-destructive">
+              {error}
+            </CardContent>
+          </Card>
+        ) : ebols.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="font-semibold mb-2">No eBOLs Found</h3>
               <p className="text-muted-foreground">
-                Your electronic Bills of Lading will appear here.
+                Listings with BOL requirements will appear here.
               </p>
             </CardContent>
           </Card>
+        ) : (
+          ebols.map((ebol) => (
+            <Card key={ebol.id}>
+              <CardContent className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <Ship className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-mono text-sm text-muted-foreground">
+                      {ebol.bolNumber}
+                    </span>
+                    {ebol.bolVerified && (
+                      <Badge variant="outline" className="text-green-600 border-green-300 text-xs">
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="font-semibold">{ebol.title}</div>
+
+                  <div className="text-sm text-muted-foreground">
+                    {ebol.portOfLoading} → {ebol.portOfDischarge}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    Issued: {ebol.issuedDate}
+                  </div>
+                </div>
+
+                <Badge className={`${STATUS_COLOR[ebol.status]} text-white capitalize`}>
+                  {ebol.status}
+                </Badge>
+              </CardContent>
+            </Card>
+          ))
         )}
       </div>
     </div>

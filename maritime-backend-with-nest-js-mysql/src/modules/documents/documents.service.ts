@@ -34,6 +34,20 @@ export class DocumentsService {
     })
   }
 
+  async findByUser(userId: string): Promise<Document[]> {
+    return this.prisma.document.findMany({
+      where: {
+        is_revoked: false,
+        OR: [
+          { listing:     { seller_id: userId } },
+          { transaction: { seller_id: userId } },
+        ],
+      },
+      include: { listing: true, transaction: true },
+      orderBy: { created_at: "desc" },
+    })
+  }
+
   async findByListing(listingId: string): Promise<Document[]> {
     return this.prisma.document.findMany({
       where: { listing_id: listingId },

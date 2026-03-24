@@ -53,18 +53,8 @@ export default function UserInsuranceDashboard() {
     },
   ]);
 
-  const [activeInsurance, setActiveInsurance] =
-    useState<ActiveInsurance[]>([]);
+  const [activeInsurance] = useState<ActiveInsurance[]>([]);
 
-  const insurePlan = (plan: InsurancePlan) => {
-    setActiveInsurance((prev) => [
-      ...prev,
-      {
-        ...plan,
-        insuredDate: new Date().toLocaleDateString(),
-      },
-    ]);
-  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -166,15 +156,10 @@ export default function UserInsuranceDashboard() {
                   </div>
 
                   <button
-                    disabled={alreadyInsured}
-                    onClick={() => insurePlan(plan)}
-                    className={`mt-auto rounded-lg px-4 py-2 text-sm font-medium ${
-                      alreadyInsured
-                        ? "bg-green-100 text-green-700 cursor-not-allowed"
-                        : "bg-slate-900 text-white hover:bg-slate-800"
-                    }`}
+                    disabled
+                    className="mt-auto rounded-lg px-4 py-2 text-sm font-medium bg-slate-100 text-slate-400 cursor-not-allowed"
                   >
-                    {alreadyInsured ? "Already Insured" : "Insure Now"}
+                    Coming Soon
                   </button>
                 </div>
               );

@@ -16,7 +16,7 @@ export class NotificationsController {
   @Get("my-notifications")
   @UseGuards(JwtAuthGuard)
   async getMyNotifications(@Request() req, @Query('skip') skip = 0, @Query('take') take = 20) {
-    return this.notificationsService.findByUser(req.user.id, skip, take)
+    return this.notificationsService.findByUser(req.user.id, +skip, +take)
   }
 
   @Get(':id')
