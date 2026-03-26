@@ -1,4 +1,6 @@
-import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common"
+import { Injectable, BadRequestException, NotFoundException, Inject } from "@nestjs/common"
+import { CACHE_MANAGER } from "@nestjs/cache-manager"
+import { Cache } from "cache-manager"
 import { PrismaService } from "../../prisma/prisma.service"
 import { MailService } from "../notifications/mail.service"
 import { User, UserRole, Listing, ListingStatus, Transaction, AuditLog, Kyc, KycStatus, Prisma } from "@prisma/client"
@@ -8,6 +10,7 @@ export class AdminService {
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   // ==================== USER MANAGEMENT ====================
@@ -278,6 +281,10 @@ export class AdminService {
       ipAddress, actorEmail, userAgent,
     )
 
+    // Invalidate marketplace cache so fresh data is served
+    await this.cacheManager.del("marketplace_listings").catch(() => {})
+    await this.cacheManager.del(`marketplace_listing_${listingId}`).catch(() => {})
+
     // Fire-and-forget — don't block the response if email fails
     if ((listing as any).seller?.email) {
       this.mailService.sendListingApprovedEmail((listing as any).seller.email, listing.title).catch(() => {})
@@ -314,6 +321,10 @@ export class AdminService {
       { reason, title: listing.title, sellerId: listing.seller_id },
       ipAddress, actorEmail, userAgent,
     )
+
+    // Invalidate marketplace cache so fresh data is served
+    await this.cacheManager.del("marketplace_listings").catch(() => {})
+    await this.cacheManager.del(`marketplace_listing_${listingId}`).catch(() => {})
 
     // Fire-and-forget — don't block the response if email fails
     if ((listing as any).seller?.email) {

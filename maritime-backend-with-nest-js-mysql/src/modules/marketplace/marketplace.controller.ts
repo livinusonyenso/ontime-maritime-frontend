@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common"
+import { Controller, Get, Param, Query, Req, UseGuards, UseInterceptors } from "@nestjs/common"
 import { Request } from "express"
+import { CacheInterceptor, CacheKey, CacheTTL } from "@nestjs/cache-manager"
 import { MarketplaceService } from "./marketplace.service"
 import { QueryMarketplaceDto } from "./dto/query-marketplace.dto"
 import { OptionalJwtAuthGuard } from "../../guards/optional-jwt-auth.guard"
@@ -36,6 +37,9 @@ export class MarketplaceController {
    * Response: { data: Listing[], total: number, skip, take, hasMore }
    */
   @Get("listings")
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey("marketplace_listings")
+  @CacheTTL(60)
   async getListings(@Query() query: QueryMarketplaceDto) {
     return this.marketplaceService.findPublic(query)
   }
@@ -49,6 +53,9 @@ export class MarketplaceController {
    */
   @Get("listings/:id")
   @UseGuards(OptionalJwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey("marketplace_listing")
+  @CacheTTL(30)
   async getListingById(@Param("id") id: string, @Req() req: Request) {
     const buyerId: string | undefined = (req as any).user?.id
     return this.marketplaceService.findPublicById(id, buyerId)

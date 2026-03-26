@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
+import { CacheModule } from '@nestjs/cache-manager'
+import * as redisStore from 'cache-manager-redis-store'
 
 import { PassportModule } from '@nestjs/passport'
 import { PrismaModule } from './prisma/prisma.module'
@@ -42,6 +44,14 @@ import { UploadModule }  from './modules/upload/upload.module'
     ThrottlerModule.forRoot([
       { ttl: 60_000, limit: 60 }, // 60 req / minute global default
     ]),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: () => ({
+        store: redisStore,
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+        ttl: 60,
+      }),
+    }),
     ScheduleModule.forRoot(),
     PrismaModule,
     PassportModule,

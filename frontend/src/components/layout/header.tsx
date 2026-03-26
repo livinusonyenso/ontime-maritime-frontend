@@ -85,9 +85,9 @@ export function Header() {
               <Link to="/marketplace">
                 <Button variant="ghost" size="sm">Marketplace</Button>
               </Link>
-              <Link to="/store">
+              {/* <Link to="/store">
                 <Button variant="ghost" size="sm">OnTime Store</Button>
-              </Link>
+              </Link> */}
               <Link to="/legal-hub">
                 <Button variant="ghost" size="sm">MarineTech Solicitors</Button>
               </Link>
@@ -189,7 +189,7 @@ export function Header() {
                 { to: "/about", label: "About" },
                 { to: "/services", label: "Services" },
                 { to: "/marketplace", label: "Marketplace" },
-                { to: "/store", label: "OnTime Store" },
+                // { to: "/store", label: "OnTime Store" },
                 { to: "/legal-hub", label: "MarineTech Solicitors" },
                 { to: "/security-hotline", label: "Security Hotline" },
               ].map((item) => (
