@@ -128,8 +128,8 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<BuyerMarketPage />} />
-          <Route path="overview" element={<BuyerDashboardPage />} />
+          <Route index element={<BuyerDashboardPage />} />
+          <Route path="overview" element={<BuyerMarketPage />} />
           <Route path="tracking" element={<BuyerTrackingPage />} />
           <Route path="auctions" element={<BuyerAuctionsPage />} />
           <Route path="insurance" element={<BuyersInsurance />} />

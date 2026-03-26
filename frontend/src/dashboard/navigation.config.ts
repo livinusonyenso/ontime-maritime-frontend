@@ -34,10 +34,10 @@ export interface NavigationConfig {
 
 export const navigationConfig: NavigationConfig = {
   buyer: [
-    { href: "/dashboard/buyer", label: "Market", icon: Store },
+    { href: "/dashboard/buyer",  label: "Overview",  icon: Store },
     {
       href: "/dashboard/buyer/overview",
-      label: "Overview",
+      label: "Market",
       icon: LayoutDashboard,
     },
     { href: "/dashboard/buyer/ebol", label: "e-BOL", icon: FileText },
