@@ -23,14 +23,14 @@ export interface TickerItem {
   value:   string
   icon:    React.ReactNode
   trend?:  "up" | "down" | "neutral"
-  accent?: string // tailwind text colour class
+  accent?: string
 }
 
 interface ShippingActivityTickerProps {
   /** Pass items directly to skip the auto-fetch (e.g. for seller dashboard) */
-  items?:    TickerItem[]
-  /** Seconds to complete one full scroll cycle. Default 30. */
-  speed?:    number
+  items?:     TickerItem[]
+  /** Seconds to complete one full scroll cycle. Default 35. */
+  speed?:     number
   className?: string
 }
 
@@ -56,7 +56,7 @@ function TickerPill({ item }: { item: TickerItem }) {
 
   return (
     <span className="inline-flex items-center gap-2 whitespace-nowrap">
-      <span className={`${item.accent ?? "text-sky-400"}`}>{item.icon}</span>
+      <span className={item.accent ?? "text-sky-400"}>{item.icon}</span>
       <span className="text-white/50 text-xs font-medium tracking-wide uppercase">
         {item.label}
       </span>
@@ -79,8 +79,8 @@ export function ShippingActivityTicker({
 }: ShippingActivityTickerProps) {
   const [items,   setItems]   = useState<TickerItem[]>(externalItems ?? [])
   const [loading, setLoading] = useState(!externalItems)
-  const trackRef  = useRef<HTMLDivElement>(null)
-  const animRef   = useRef<Animation | null>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const animRef  = useRef<Animation | null>(null)
 
   // ── Fetch buyer metrics when no items are provided ─────────────────────────
   useEffect(() => {
@@ -91,17 +91,16 @@ export function ShippingActivityTicker({
       .then((res) => {
         const txs: any[] = Array.isArray(res.data) ? res.data : res.data?.data ?? []
 
-        const completed = txs.filter((t) => t.payout_status === "completed")
-        const pending   = txs.filter((t) => t.payout_status === "pending")
-        const failed    = txs.filter((t) => t.payout_status === "failed")
+        const completed  = txs.filter((t) => t.payout_status === "completed")
+        const pending    = txs.filter((t) => t.payout_status === "pending")
+        const failed     = txs.filter((t) => t.payout_status === "failed")
         const totalSpent = completed.reduce((s: number, t: any) => s + Number(t.amount ?? 0), 0)
 
-        // Unique routes from listing origin/destination ports
         const routes = Array.from(
           new Set(
             completed
               .filter((t: any) => t.listing?.origin_port && t.listing?.destination_port)
-              .map((t: any) => `${t.listing.origin_port} → ${t.listing.destination_port}`)
+              .map((t: any) => `${t.listing.origin_port} → ${t.listing.destination_port}`),
           ),
         ).slice(0, 3)
 
@@ -169,10 +168,7 @@ export function ShippingActivityTicker({
 
         setItems(derived)
       })
-      .catch(() => {
-        // Fallback static items so the ticker is never empty
-        setItems(FALLBACK_ITEMS)
-      })
+      .catch(() => setItems(FALLBACK_ITEMS))
       .finally(() => setLoading(false))
   }, [externalItems])
 
@@ -181,25 +177,21 @@ export function ShippingActivityTicker({
     const el = trackRef.current
     if (!el || items.length === 0) return
 
-    // Each set is duplicated so the scroll wraps seamlessly at 50%
-    const duration = speed * 1000
-
     animRef.current?.cancel()
     animRef.current = el.animate(
       [{ transform: "translateX(0)" }, { transform: "translateX(-50%)" }],
-      { duration, iterations: Infinity, easing: "linear" },
+      { duration: speed * 1000, iterations: Infinity, easing: "linear" },
     )
 
     return () => { animRef.current?.cancel() }
   }, [items, speed])
 
-  // Pause on hover for readability
   const pause  = () => animRef.current?.pause()
   const resume = () => animRef.current?.play()
 
   if (loading) {
     return (
-      <div className={`h-9 bg-[#0D1B2A] animate-pulse rounded-none ${className}`} />
+      <div className={`h-9 w-full max-w-full bg-[#0D1B2A] animate-pulse rounded-none ${className}`} />
     )
   }
 
@@ -207,7 +199,7 @@ export function ShippingActivityTicker({
 
   return (
     <div
-      className={`relative overflow-hidden bg-[#0D1B2A] border-b border-white/[0.06] h-9 flex items-center ${className}`}
+      className={`relative overflow-hidden bg-[#0D1B2A] border-b border-white/[0.06] h-9 flex items-center w-full max-w-full ${className}`}
       onMouseEnter={pause}
       onMouseLeave={resume}
       onTouchStart={pause}
@@ -236,11 +228,11 @@ export function ShippingActivityTicker({
 // ── Fallback items (shown if API fails or user has no data) ───────────────────
 
 const FALLBACK_ITEMS: TickerItem[] = [
-  { id: "f1", label: "Platform",        value: "Ontime Maritime Live",  icon: <Anchor      className="h-3.5 w-3.5" />, accent: "text-sky-400"     },
-  { id: "f2", label: "Active Routes",   value: "Lagos → Rotterdam",      icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
-  { id: "f3", label: "Active Routes",   value: "Onne → Antwerp",         icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
-  { id: "f4", label: "Active Routes",   value: "Apapa → Hamburg",        icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
-  { id: "f5", label: "Shipping",        value: "24/7 Support",           icon: <Ship        className="h-3.5 w-3.5" />, accent: "text-sky-400"     },
-  { id: "f6", label: "Marketplace",     value: "Buy · Sell · Ship",      icon: <Package     className="h-3.5 w-3.5" />, accent: "text-violet-400"  },
-  { id: "f7", label: "Secure Payments", value: "Powered by Paystack",    icon: <DollarSign  className="h-3.5 w-3.5" />, accent: "text-emerald-400" },
+  { id: "f1", label: "Platform",        value: "Ontime Maritime Live", icon: <Anchor      className="h-3.5 w-3.5" />, accent: "text-sky-400"     },
+  { id: "f2", label: "Active Routes",   value: "Lagos → Rotterdam",    icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
+  { id: "f3", label: "Active Routes",   value: "Onne → Antwerp",       icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
+  { id: "f4", label: "Active Routes",   value: "Apapa → Hamburg",      icon: <MapPin      className="h-3.5 w-3.5" />, accent: "text-teal-400"    },
+  { id: "f5", label: "Shipping",        value: "24/7 Support",         icon: <Ship        className="h-3.5 w-3.5" />, accent: "text-sky-400"     },
+  { id: "f6", label: "Marketplace",     value: "Buy · Sell · Ship",    icon: <Package     className="h-3.5 w-3.5" />, accent: "text-violet-400"  },
+  { id: "f7", label: "Secure Payments", value: "Powered by Paystack",  icon: <DollarSign  className="h-3.5 w-3.5" />, accent: "text-emerald-400" },
 ]
