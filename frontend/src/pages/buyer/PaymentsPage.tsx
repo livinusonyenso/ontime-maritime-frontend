@@ -38,34 +38,40 @@ function amountNGN(raw: string | number) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function BuyerPaymentsPage() {
-  const [transactions,  setTransactions]  = useState<Transaction[]>([])
-  const [loading,       setLoading]       = useState(true)
-  const [error,         setError]         = useState<string | null>(null)
-  const [verifying,     setVerifying]     = useState<string | null>(null)  // reference being verified
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading,      setLoading]      = useState(true)
+  const [error,        setError]        = useState<string | null>(null)
 
-  const load = () => {
+  // Fetch transactions then silently verify any that are still pending
+  const load = async () => {
     setLoading(true)
     setError(null)
-    api
-      .get("/transactions/my-purchases")
-      .then((res) => {
-        setTransactions(Array.isArray(res.data) ? res.data : res.data.data ?? [])
-      })
-      .catch((err) => setError(err?.message || "Failed to load transactions."))
-      .finally(() => setLoading(false))
+    try {
+      const res  = await api.get("/transactions/my-purchases")
+      const data: Transaction[] = Array.isArray(res.data) ? res.data : res.data.data ?? []
+      setTransactions(data)
+
+      // Auto-sync: fire verify for every pending transaction that has a reference.
+      // Runs in parallel, silently — errors are swallowed so the page never breaks.
+      const pending = data.filter(
+        (t) => t.payout_status === "pending" && t.gateway_reference,
+      )
+      if (pending.length > 0) {
+        await Promise.allSettled(
+          pending.map((t) => api.get(`/payments/verify/${t.gateway_reference}`)),
+        )
+        // Re-fetch once after all verifications complete to show updated statuses
+        const refreshed = await api.get("/transactions/my-purchases")
+        setTransactions(Array.isArray(refreshed.data) ? refreshed.data : refreshed.data.data ?? [])
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to load transactions.")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Manually sync a pending transaction's status with Paystack
-  const syncStatus = (reference: string) => {
-    setVerifying(reference)
-    api
-      .get(`/payments/verify/${reference}`)
-      .then(() => load())          // re-fetch to reflect updated status
-      .catch(() => load())         // re-fetch even on error — status may have been set to "failed"
-      .finally(() => setVerifying(null))
-  }
-
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Derived stats ────────────────────────────────────────────────────────
   const totalPaid    = transactions.filter((t) => t.payout_status === "completed").reduce((s, t) => s + Number(t.amount), 0)
@@ -206,17 +212,6 @@ export default function BuyerPaymentsPage() {
                         {tx.payout_status}
                       </Badge>
                     </div>
-                    {tx.payout_status === "pending" && tx.gateway_reference && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={verifying === tx.gateway_reference}
-                        onClick={() => syncStatus(tx.gateway_reference!)}
-                      >
-                        <RefreshCw className={`h-3 w-3 mr-1 ${verifying === tx.gateway_reference ? "animate-spin" : ""}`} />
-                        Sync
-                      </Button>
-                    )}
                   </div>
                 </div>
               ))}
