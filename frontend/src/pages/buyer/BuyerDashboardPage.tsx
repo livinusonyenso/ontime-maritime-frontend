@@ -22,6 +22,7 @@ import {
   AlertCircle,
 } from "lucide-react"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 
 // Mock data for the chart
 const shipmentData = [
@@ -58,6 +59,7 @@ export default function BuyerDashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/10">
+      <ShippingActivityTicker />
       <main className="flex-1 p-4 md:p-8 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

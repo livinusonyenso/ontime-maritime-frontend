@@ -1,16 +1,3 @@
-"use client"
-
-/**
- * MarketView — Premium Maritime Marketplace
- * ─────────────────────────────────────────
- * Redesigned for elegance, clarity, and trust.
- * Drop-in replacement for the original MarketView.
- *
- * Design system:
- *   Fonts    — DM Serif Display (headings) · DM Sans (body)
- *   Palette  — Midnight Navy #0D1B2A · Gold #C9A84C · Slate #4A5568
- *   Motion   — CSS transitions only; no layout shift
- */
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
