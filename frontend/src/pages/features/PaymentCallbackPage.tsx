@@ -29,8 +29,10 @@ export default function PaymentCallbackPage() {
   const [txData,    setTxData]    = useState<any>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
-  // Listing ID stored by ListingDetailModal before redirecting to Paystack
-  const returnListingId = sessionStorage.getItem("bol_return_listing_id")
+  // Listing IDs stored before redirecting to Paystack (BOL unlock vs buy-now)
+  const returnListingId =
+    sessionStorage.getItem("bol_return_listing_id") ??
+    sessionStorage.getItem("buy_return_listing_id")
 
   const verify = () => {
     if (!reference) {
@@ -52,10 +54,9 @@ export default function PaymentCallbackPage() {
         setMessage("Your payment was confirmed successfully.")
         setModalOpen(true)
 
-        // Clear the stored listing ID after a successful BOL unlock
-        if (data?.metadata?.type === "bol_unlock") {
-          sessionStorage.removeItem("bol_return_listing_id")
-        }
+        // Clear stored listing IDs after successful payment
+        sessionStorage.removeItem("bol_return_listing_id")
+        sessionStorage.removeItem("buy_return_listing_id")
       })
       .catch((err) => {
         setStatus("failed")

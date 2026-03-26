@@ -112,18 +112,26 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
     if (!user) { window.location.href = "/login"; return }
     setBuyLoading(true)
     try {
-      const amountKobo = Math.round(Number(listing!.price) * 100)
+      const amountKobo  = Math.round(Number(listing!.price) * 100)
+      const callbackUrl = `${window.location.origin}/payment/callback`
+
+      // Store listing ID so the callback page can offer a "back to listing" link
+      sessionStorage.setItem("buy_return_listing_id", listing!.id)
+
       const res = await api.post("/payments/initialize", {
         email: user.email,
         amount: amountKobo,
         metadata: { listingId: listing!.id, listingTitle: listing!.title },
+        callbackUrl,
       })
-      window.open(res.data.authorization_url, "_blank", "noopener,noreferrer")
+
+      // Same-tab redirect — mirrors the BOL flow so /payment/callback is always hit,
+      // verifyPayment() runs, and the transaction is flipped to "completed".
+      window.location.href = res.data.authorization_url
     } catch {
-      // ignore
-    } finally {
       setBuyLoading(false)
     }
+    // Don't reset buyLoading on success — page is navigating away
   }
 
   // ── Unlock BOL ───────────────────────────────────────────────────────────────

@@ -32,6 +32,7 @@ export class PaymentsController {
       dto.amount,
       dto.metadata ?? {},
       buyerId,
+      dto.callbackUrl,
     )
     return {
       authorization_url: result.authorization_url,

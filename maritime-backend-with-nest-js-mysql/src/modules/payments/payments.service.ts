@@ -31,11 +31,18 @@ export class PaymentsService {
     amount: number,
     metadata: Record<string, any> = {},
     buyerId?: string,
+    callbackUrl?: string,
   ) {
     // Paystack expects amount in kobo (smallest currency unit)
     const response = await axios.post(
       `${this.paystackBaseUrl}/transaction/initialize`,
-      { email, amount, metadata, currency: 'NGN' },
+      {
+        email,
+        amount,
+        metadata,
+        currency: 'NGN',
+        ...(callbackUrl ? { callback_url: callbackUrl } : {}),
+      },
       {
         headers: {
           Authorization: `Bearer ${this.secretKey}`,
@@ -158,22 +165,33 @@ export class PaymentsService {
 
     const data = response.data.data
 
-    if (data.status !== 'success') {
-      throw new BadRequestException(`Payment not successful. Status: ${data.status}`)
-    }
-
-    // Sync the transaction status in DB if it exists
+    // Always sync the DB regardless of outcome — never leave a transaction stuck in "pending"
     try {
-      await this.prisma.transaction.updateMany({
-        where: { gateway_reference: reference },
-        data: {
-          payout_status: PayoutStatus.completed,
-          payment_status: 'success',
-          paid_at: new Date(),
-        },
-      })
+      if (data.status === 'success') {
+        await this.prisma.transaction.updateMany({
+          where: { gateway_reference: reference },
+          data: {
+            payout_status: PayoutStatus.completed,
+            payment_status: 'success',
+            paid_at: new Date(data.paid_at ?? Date.now()),
+          },
+        })
+      } else {
+        // abandoned / failed — mark it so the buyer knows it's not pending
+        await this.prisma.transaction.updateMany({
+          where: { gateway_reference: reference, payment_status: 'pending' },
+          data: {
+            payout_status: PayoutStatus.failed,
+            payment_status: data.status ?? 'failed',
+          },
+        })
+      }
     } catch (err) {
       this.logger.warn(`Could not update transaction on verify for ref ${reference}`, err)
+    }
+
+    if (data.status !== 'success') {
+      throw new BadRequestException(`Payment not successful. Status: ${data.status}`)
     }
 
     // For BOL unlock payments — upsert the BolUnlock record immediately so the

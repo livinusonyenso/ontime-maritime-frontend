@@ -38,9 +38,10 @@ function amountNGN(raw: string | number) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function BuyerPaymentsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [loading,      setLoading]      = useState(true)
-  const [error,        setError]        = useState<string | null>(null)
+  const [transactions,  setTransactions]  = useState<Transaction[]>([])
+  const [loading,       setLoading]       = useState(true)
+  const [error,         setError]         = useState<string | null>(null)
+  const [verifying,     setVerifying]     = useState<string | null>(null)  // reference being verified
 
   const load = () => {
     setLoading(true)
@@ -52,6 +53,16 @@ export default function BuyerPaymentsPage() {
       })
       .catch((err) => setError(err?.message || "Failed to load transactions."))
       .finally(() => setLoading(false))
+  }
+
+  // Manually sync a pending transaction's status with Paystack
+  const syncStatus = (reference: string) => {
+    setVerifying(reference)
+    api
+      .get(`/payments/verify/${reference}`)
+      .then(() => load())          // re-fetch to reflect updated status
+      .catch(() => load())         // re-fetch even on error — status may have been set to "failed"
+      .finally(() => setVerifying(null))
   }
 
   useEffect(() => { load() }, [])
@@ -195,6 +206,17 @@ export default function BuyerPaymentsPage() {
                         {tx.payout_status}
                       </Badge>
                     </div>
+                    {tx.payout_status === "pending" && tx.gateway_reference && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={verifying === tx.gateway_reference}
+                        onClick={() => syncStatus(tx.gateway_reference!)}
+                      >
+                        <RefreshCw className={`h-3 w-3 mr-1 ${verifying === tx.gateway_reference ? "animate-spin" : ""}`} />
+                        Sync
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}
