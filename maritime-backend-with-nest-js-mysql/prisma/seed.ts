@@ -414,7 +414,7 @@ async function main() {
         seller_id: admin.id,
         category: 'service' as any,
         marketplace_category: 'repairs',
-        title: 'Underwater Hull Inspection & Cleaning Service',
+        title: 'vm',
         description: 'Professional underwater hull inspection using ROV and certified divers. Includes fouling removal, anode replacement, and class survey preparation.',
         price_usd: 12000,
         price_type: 'fixed',

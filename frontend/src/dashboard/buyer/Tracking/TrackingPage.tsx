@@ -110,7 +110,7 @@ export default function BuyerListingsPage() {
         ))}
       </div>
     </div>
-      <Footer/>
+    
   </>
   );
 }

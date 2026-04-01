@@ -16,6 +16,7 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:seed:listings": "ts-node prisma/seed-listings.ts",
     "prisma:studio": "prisma studio",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
