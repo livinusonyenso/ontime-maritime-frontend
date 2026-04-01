@@ -933,22 +933,28 @@ export function MarketView() {
     dispatch(fetchListings({ take: PAGE_SIZE }))
   }, [dispatch])
 
-  function buildParams(skip = 0) {
+  function buildParams(skip = 0, overrides: Record<string, any> = {}) {
+    const cat  = overrides.category  ?? category
+    const cond = overrides.condition ?? condition
+    const q    = overrides.search    ?? search.trim()
+    const s    = overrides.sort      ?? sort
+    const min  = overrides.minPrice  ?? minPrice
+    const max  = overrides.maxPrice  ?? maxPrice
     return {
-      ...(search.trim()      ? { search: search.trim() }      : {}),
-      ...(category !== "all" ? { category }                   : {}),
-      ...(condition !== "all"? { condition }                  : {}),
-      ...(sort               ? { sort }                       : {}),
-      ...(minPrice           ? { minPrice: Number(minPrice) } : {}),
-      ...(maxPrice           ? { maxPrice: Number(maxPrice) } : {}),
+      ...(q              ? { search: q }              : {}),
+      ...(cat  !== "all" ? { category: cat }          : {}),
+      ...(cond !== "all" ? { condition: cond }        : {}),
+      ...(s              ? { sort: s }                : {}),
+      ...(min            ? { minPrice: Number(min) }  : {}),
+      ...(max            ? { maxPrice: Number(max) }  : {}),
       skip,
       take: PAGE_SIZE,
     }
   }
 
-  function applyFilters() {
+  function applyFilters(overrides: Record<string, any> = {}) {
     skipRef.current = 0
-    dispatch(fetchListings(buildParams(0)))
+    dispatch(fetchListings(buildParams(0, overrides)))
   }
 
   function clearFilters() {
@@ -1063,7 +1069,7 @@ export function MarketView() {
             <SearchInput value={search} onChange={setSearch} onSearch={applyFilters} />
             <Select
               value={sort}
-              onChange={(v) => setSort(v as typeof sort)}
+              onChange={(v) => { setSort(v as typeof sort); applyFilters({ sort: v }) }}
               options={SORT_OPTIONS}
               style={{ minWidth: 180 }}
             />
@@ -1115,7 +1121,7 @@ export function MarketView() {
                 key={cat.value}
                 cat={cat}
                 active={category === cat.value}
-                onClick={() => { setCategory(cat.value); applyFilters() }}
+                onClick={() => { setCategory(cat.value); applyFilters({ category: cat.value }) }}
               />
             ))}
           </div>
@@ -1133,7 +1139,7 @@ export function MarketView() {
               }}
             >
               <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}`}</style>
-              <Select value={condition} onChange={setCondition} options={CONDITIONS} />
+              <Select value={condition} onChange={(v) => { setCondition(v); applyFilters({ condition: v }) }} options={CONDITIONS} />
               <input
                 type="number"
                 placeholder="Min price (USD)"
