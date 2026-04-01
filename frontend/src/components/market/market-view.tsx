@@ -623,13 +623,11 @@ function ListingCard({ listing, onClick, onBuyNow, buying }: ListingCardProps) {
           </PrimaryButton>
           <PrimaryButton
             variant="solid"
-            onClick={onBuyNow}
-            disabled={buying}
-            loading={buying}
+            disabled
             style={{ flex: 1, height: 38, fontSize: 12 }}
           >
             <Icon.Cart />
-            {buying ? "Redirecting…" : "Buy Now"}
+            Coming Soon
           </PrimaryButton>
         </div>
       </div>

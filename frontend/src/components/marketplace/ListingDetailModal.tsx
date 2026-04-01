@@ -288,7 +288,8 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
                       className="w-full"
                       size="lg"
                       onClick={handleUnlockBol}
-                      disabled={isProcessingPayment}
+                      // disabled={isProcessingPayment}
+                      disabled={true}
                     >
                       {isProcessingPayment ? (
                         <>
@@ -326,16 +327,9 @@ export function ListingDetailModal({ open, onClose, listing }: ListingDetailModa
               <Button type="button" variant="secondary" onClick={onClose}>
                 Close
               </Button>
-              <Button
-                type="button"
-                disabled={buyLoading}
-                onClick={handleBuyNow}
-              >
-                {buyLoading
-                  ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  : <ShoppingCart className="h-4 w-4 mr-2" />
-                }
-                {buyLoading ? "Redirecting…" : "Buy Now"}
+              <Button type="button" disabled>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Coming Soon
               </Button>
             </div>
           </div>
