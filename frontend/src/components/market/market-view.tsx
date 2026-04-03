@@ -635,7 +635,20 @@ function ListingCard({ listing, onClick, onBuyNow, buying }: ListingCardProps) {
   )
 }
 
-// ─── Category pill filter ─────────────────────────────────────────────────────
+// ─── Responsive hook ──────────────────────────────────────────────────────────
+function useWindowWidth() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  )
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth)
+    window.addEventListener("resize", handler)
+    return () => window.removeEventListener("resize", handler)
+  }, [])
+  return width
+}
+
+// ─── Category pill (tablet+desktop) ──────────────────────────────────────────
 function CategoryPill({
   cat,
   active,
@@ -666,10 +679,83 @@ function CategoryPill({
         transition: "all 0.16s ease",
         whiteSpace: "nowrap",
         fontFamily: T.sans,
+        flexShrink: 0,
       }}
     >
       {cat.icon} {cat.label}
     </button>
+  )
+}
+
+// ─── Category filter (responsive) ────────────────────────────────────────────
+function CategoryFilter({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (v: string) => void
+}) {
+  const width = useWindowWidth()
+  const isMobile = width < 640
+
+  if (isMobile) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <label
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: T.slateL,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            fontFamily: T.sans,
+          }}
+        >
+          Category
+        </label>
+        <Select
+          value={value}
+          onChange={onChange}
+          options={CATEGORIES.map((c) => ({ value: c.value, label: `${c.icon}  ${c.label}` }))}
+          style={{ width: "100%" }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: 8,
+        overflowX: "auto",
+        paddingBottom: 4,
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
+      <style>{`.cat-scroll::-webkit-scrollbar{display:none}`}</style>
+      <div
+        className="cat-scroll"
+        style={{
+          display: "flex",
+          gap: 8,
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          width: "100%",
+        }}
+      >
+        {CATEGORIES.map((cat) => (
+          <CategoryPill
+            key={cat.value}
+            cat={cat}
+            active={value === cat.value}
+            onClick={() => onChange(cat.value)}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -1071,7 +1157,7 @@ export function MarketView() {
               value={sort}
               onChange={(v) => { setSort(v as typeof sort); applyFilters({ sort: v }) }}
               options={SORT_OPTIONS}
-              style={{ minWidth: 180 }}
+              style={{ minWidth: 160, flex: 1 }}
             />
             <button
               onClick={() => setShowAdv((v) => !v)}
@@ -1114,17 +1200,11 @@ export function MarketView() {
             </button>
           </div>
 
-          {/* Category pills */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {CATEGORIES.map((cat) => (
-              <CategoryPill
-                key={cat.value}
-                cat={cat}
-                active={category === cat.value}
-                onClick={() => { setCategory(cat.value); applyFilters({ category: cat.value }) }}
-              />
-            ))}
-          </div>
+          {/* Category filter — select on mobile, scrollable pills on tablet/desktop */}
+          <CategoryFilter
+            value={category}
+            onChange={(v) => { setCategory(v); applyFilters({ category: v }) }}
+          />
 
           {/* Advanced filters (collapsible) */}
           {showAdv && (
