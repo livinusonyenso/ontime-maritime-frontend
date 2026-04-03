@@ -100,7 +100,7 @@ export default function BuyerDocumentsPage() {
           </div>
         </div>
 
-        <Button className="gap-2">
+        <Button className="gap-2" disabled={true}>
           <Upload className="h-4 w-4" />
           Upload Document
         </Button>
@@ -109,45 +109,61 @@ export default function BuyerDocumentsPage() {
       <Separator className="mb-6" />
 
       {/* DOCUMENT CARDS */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {documents.map((doc, index) => (
-          <Card key={index} className="border-0 shadow-sm bg-background/50">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  {doc.icon}
-                </div>
-                <div>
-                  <CardTitle className="text-base">{doc.name}</CardTitle>
-                  <CardDescription className="text-xs">
-                    {doc.type} Document
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {documents.map((doc, index) => (
+    <Card
+      key={index}
+      className="flex flex-col justify-between border-0 shadow-sm bg-background/50 h-full"
+    >
+      <CardHeader>
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
+            {doc.icon}
+          </div>
 
-            <CardContent className="space-y-4">
-              <div>{statusBadge(doc.status)}</div>
+          <div className="min-w-0">
+            <CardTitle className="text-base truncate">
+              {doc.name}
+            </CardTitle>
 
-              <p className="text-xs text-muted-foreground">
-                Last updated: {doc.lastUpdated}
-              </p>
+            <CardDescription className="text-xs">
+              {doc.type} Document
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
 
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="w-full gap-2">
-                  <Eye className="h-4 w-4" />
-                  View
-                </Button>
+      <CardContent className="flex flex-col gap-4 flex-1">
+        <div>{statusBadge(doc.status)}</div>
 
-                <Button variant="outline" size="sm" className="w-full gap-2">
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        <p className="text-xs text-muted-foreground">
+          Last updated: {doc.lastUpdated}
+        </p>
+
+        {/* Action buttons — always side-by-side, share available width equally */}
+        <div className="flex gap-2 mt-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2 min-w-0"
+          >
+            <Eye className="h-4 w-4 shrink-0" />
+            <span className="truncate">View</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2 min-w-0"
+          >
+            <Download className="h-4 w-4 shrink-0" />
+            <span className="truncate">Download</span>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
 
       {/* FOOTER NOTE */}
       <div className="mt-8 p-4 border rounded-lg bg-background/50">
