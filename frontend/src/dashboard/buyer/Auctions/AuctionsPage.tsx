@@ -616,7 +616,6 @@ export default function BuyerAuctionsPage() {
         </div>
       </div>
     </div>
-    <Footer/>
    </>
   );
 }
