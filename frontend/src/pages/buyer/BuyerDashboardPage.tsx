@@ -76,15 +76,8 @@ export default function BuyerDashboardPage() {
             <p className="text-muted-foreground">Here's what's happening with your shipments today.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={logout}>
-              <LogOut className="mr-2 h-4 w-4" /> Logout
-            </Button>
-            <Link to="/dashboard/buyer/notifications">
-              <Button variant="outline" size="icon" className="relative bg-transparent">
-                <Bell className="h-4 w-4" />
-                {unreadCount > 0 && <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />}
-              </Button>
-            </Link>
+           
+        
           </div>
         </div>
 
