@@ -1,4 +1,5 @@
 import { Header } from "@/components/layout/header"
+import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 import { Footer } from "@/components/layout/footer"
 import { HeroVideo } from "@/components/hero-video"
 import { FloatingChatButton } from "@/components/features/security-hotline/FloatingChatButton"
@@ -120,6 +121,7 @@ const features = [
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ShippingActivityTicker />
       <Header />
 
       <main className="flex-1">

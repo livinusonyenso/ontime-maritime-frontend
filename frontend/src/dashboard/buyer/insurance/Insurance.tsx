@@ -32,7 +32,7 @@ export default function BuyersInsurance() {
             <ShieldCheck className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold">2</div>
+            <div className="text-2xl font-semibold">0</div>
             <p className="text-xs text-muted-foreground mt-1">
               Your shipments currently under insurance coverage.
             </p>
@@ -45,7 +45,7 @@ export default function BuyersInsurance() {
             <AlertTriangle className="h-5 w-5 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold">1</div>
+            <div className="text-2xl font-semibold">0</div>
             <p className="text-xs text-muted-foreground mt-1">Pending review by insurer.</p>
           </CardContent>
         </Card>
@@ -56,7 +56,7 @@ export default function BuyersInsurance() {
             <Wallet className="h-5 w-5 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold">$1,850</div>
+            <div className="text-2xl font-semibold">0</div>
             <p className="text-xs text-muted-foreground mt-1">Total across all policies.</p>
           </CardContent>
         </Card>

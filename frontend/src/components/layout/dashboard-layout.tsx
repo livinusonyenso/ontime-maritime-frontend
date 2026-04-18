@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Outlet } from "react-router-dom"
 import { DashboardSidebar, MobileSidebar, DashboardHeader } from "@/dashboard/components"
 import { navigationConfig } from "@/dashboard/navigation.config"
-import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 
 interface DashboardLayoutProps {
   role: "buyer" | "seller" | "admin" | "executive" | "organization"
@@ -28,12 +27,6 @@ export function DashboardLayout({ role }: DashboardLayoutProps) {
             isOpen={isMobileOpen}
             onOpenChange={setIsMobileOpen}
           />
-          {role === "buyer" && (
-            <div className="flex-1 w-0 min-w-0 overflow-hidden mx-2">
-
-              <ShippingActivityTicker className="rounded-md" />
-            </div>
-          )}
           <DashboardHeader />
         </header>
 

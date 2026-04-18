@@ -131,7 +131,7 @@ export default function BuyerAuctionsPage() {
 
   return (
    <>
-   <Header/>
+   
     <div className="flex-1 px-4 py-6 md:px-6 lg:px-10 bg-muted/40">
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
@@ -616,7 +616,6 @@ export default function BuyerAuctionsPage() {
         </div>
       </div>
     </div>
-    <Footer/>
    </>
   );
 }

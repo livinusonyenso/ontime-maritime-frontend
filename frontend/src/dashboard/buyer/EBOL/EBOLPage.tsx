@@ -32,29 +32,29 @@ export type EbolFile = {
 };
 
 const initialFolders: EbolFolder[] = [
-  { id: "1", name: "February Shipments", created: "2025-02-01" },
-  { id: "2", name: "January Shipments", created: "2025-01-04" },
+  // { id: "1", name: "February Shipments", created: "2025-02-01" },
+  // { id: "2", name: "January Shipments", created: "2025-01-04" },
 ];
 
 const initialFiles: EbolFile[] = [
-  {
-    id: "1",
-    bolNumber: "BOL-ONTM-9021",
-    folder: "February Shipments",
-    platform: "CargoX",
-    status: "verified",
-    issueDate: "2025-02-14",
-    url: "https://example.com/sample-bol-9021.pdf",
-  },
-  {
-    id: "2",
-    bolNumber: "BOL-ONTM-8874",
-    folder: "February Shipments",
-    platform: "WAVE BL",
-    status: "pending",
-    issueDate: "2025-02-02",
-    url: "https://example.com/sample-bol-8874.pdf",
-  },
+  // {
+  //   id: "1",
+  //   bolNumber: "BOL-ONTM-9021",
+  //   folder: "February Shipments",
+  //   platform: "CargoX",
+  //   status: "verified",
+  //   issueDate: "2025-02-14",
+  //   url: "https://example.com/sample-bol-9021.pdf",
+  // },
+  // {
+  //   id: "2",
+  //   bolNumber: "BOL-ONTM-8874",
+  //   folder: "February Shipments",
+  //   platform: "WAVE BL",
+  //   status: "pending",
+  //   issueDate: "2025-02-02",
+  //   url: "https://example.com/sample-bol-8874.pdf",
+  // },
 ];
 
 function createId() {

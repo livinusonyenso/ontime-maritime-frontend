@@ -53,7 +53,7 @@ export default function BuyerListingsPage() {
   return (
     
   <>
-      <Header/>
+     
     <div className="flex-1 px-4 py-6 md:px-6 lg:px-10 bg-muted/40">
       {/* PAGE HEADER */}
       <div className="flex flex-col gap-3 mb-8">
@@ -110,7 +110,7 @@ export default function BuyerListingsPage() {
         ))}
       </div>
     </div>
-      <Footer/>
+    
   </>
   );
 }

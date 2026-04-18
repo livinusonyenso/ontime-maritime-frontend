@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mysql -u root -p\"Onyenso@123\" -P 8080 -e \"SELECT 1;\")",
+      "Bash(mysql -u root -p\"Onyenso@123\" -P 3306 -e \"SELECT 1;\")"
+    ]
+  }
+}

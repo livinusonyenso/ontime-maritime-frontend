@@ -623,13 +623,11 @@ function ListingCard({ listing, onClick, onBuyNow, buying }: ListingCardProps) {
           </PrimaryButton>
           <PrimaryButton
             variant="solid"
-            onClick={onBuyNow}
-            disabled={buying}
-            loading={buying}
+            disabled
             style={{ flex: 1, height: 38, fontSize: 12 }}
           >
             <Icon.Cart />
-            {buying ? "Redirecting…" : "Buy Now"}
+            Coming Soon
           </PrimaryButton>
         </div>
       </div>
@@ -637,7 +635,20 @@ function ListingCard({ listing, onClick, onBuyNow, buying }: ListingCardProps) {
   )
 }
 
-// ─── Category pill filter ─────────────────────────────────────────────────────
+// ─── Responsive hook ──────────────────────────────────────────────────────────
+function useWindowWidth() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  )
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth)
+    window.addEventListener("resize", handler)
+    return () => window.removeEventListener("resize", handler)
+  }, [])
+  return width
+}
+
+// ─── Category pill (tablet+desktop) ──────────────────────────────────────────
 function CategoryPill({
   cat,
   active,
@@ -668,6 +679,7 @@ function CategoryPill({
         transition: "all 0.16s ease",
         whiteSpace: "nowrap",
         fontFamily: T.sans,
+        flexShrink: 0,
       }}
     >
       {cat.icon} {cat.label}
@@ -675,7 +687,79 @@ function CategoryPill({
   )
 }
 
-// ─── Select dropdown ──────────────────────────────────────────────────────────
+// ─── Category filter (responsive) ────────────────────────────────────────────
+function CategoryFilter({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (v: string) => void
+}) {
+  const width = useWindowWidth()
+  const isMobile = width < 640
+
+  if (isMobile) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <label
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: T.slateL,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            fontFamily: T.sans,
+          }}
+        >
+          Category
+        </label>
+        <Select
+          value={value}
+          onChange={onChange}
+          options={CATEGORIES.map((c) => ({ value: c.value, label: `${c.icon}  ${c.label}` }))}
+          style={{ width: "100%" }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: 8,
+        overflowX: "auto",
+        paddingBottom: 4,
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
+      <style>{`.cat-scroll::-webkit-scrollbar{display:none}`}</style>
+      <div
+        className="cat-scroll"
+        style={{
+          display: "flex",
+          gap: 8,
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          width: "100%",
+        }}
+      >
+        {CATEGORIES.map((cat) => (
+          <CategoryPill
+            key={cat.value}
+            cat={cat}
+            active={value === cat.value}
+            onClick={() => onChange(cat.value)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Custom dropdown ──────────────────────────────────────────────────────────
 function Select({
   value,
   onChange,
@@ -689,45 +773,145 @@ function Select({
   placeholder?: string
   style?: React.CSSProperties
 }) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const selected = options.find((o) => o.value === value)
+
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    function onEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("mousedown", onOutside)
+    document.addEventListener("keydown", onEscape)
+    return () => {
+      document.removeEventListener("mousedown", onOutside)
+      document.removeEventListener("keydown", onEscape)
+    }
+  }, [])
+
   return (
-    <div style={{ position: "relative", display: "inline-flex", ...style }}>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+    <div ref={containerRef} style={{ position: "relative", minWidth: 0, ...style }}>
+      {/* Trigger button */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
         style={{
-          appearance: "none",
-          WebkitAppearance: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          width: "100%",
+          height: 40,
+          padding: "0 10px 0 12px",
           fontFamily: T.sans,
           fontSize: 13,
+          fontWeight: 500,
           color: T.navy,
           background: T.white,
-          border: `1.5px solid ${T.border}`,
+          border: `1.5px solid ${open ? T.gold : T.border}`,
           borderRadius: T.radiusS,
-          padding: "0 36px 0 12px",
-          height: 40,
           cursor: "pointer",
           outline: "none",
-          width: "100%",
-          fontWeight: 500,
+          transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+          boxShadow: open ? `0 0 0 3px ${T.gold}22` : "none",
+          whiteSpace: "nowrap",
         }}
       >
-        {placeholder && <option value="" disabled>{placeholder}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
-      <span
-        style={{
-          position: "absolute",
-          right: 10,
-          top: "50%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-          color: T.slate,
-        }}
-      >
-        <Icon.ChevronDown />
-      </span>
+        <span
+          style={{
+            flex: 1,
+            textAlign: "left",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {selected?.label ?? placeholder ?? "Select…"}
+        </span>
+        <span
+          style={{
+            flexShrink: 0,
+            color: T.slateL,
+            display: "flex",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s ease",
+          }}
+        >
+          <Icon.ChevronDown />
+        </span>
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          role="listbox"
+          style={{
+            position: "absolute",
+            top: "calc(100% + 5px)",
+            left: 0,
+            minWidth: "100%",
+            background: T.white,
+            border: `1.5px solid ${T.border}`,
+            borderRadius: T.radiusS,
+            boxShadow: T.shadowH,
+            zIndex: 300,
+            overflow: "hidden",
+            animation: "fadeIn 0.15s ease",
+          }}
+        >
+          {options.map((o, i) => {
+            const isActive = o.value === value
+            return (
+              <button
+                key={o.value}
+                role="option"
+                aria-selected={isActive}
+                type="button"
+                onClick={() => { onChange(o.value); setOpen(false) }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 8,
+                  width: "100%",
+                  padding: "10px 14px",
+                  background: isActive ? T.fog2 : T.white,
+                  color: isActive ? T.navy : T.slate,
+                  fontFamily: T.sans,
+                  fontSize: 13,
+                  fontWeight: isActive ? 600 : 400,
+                  border: "none",
+                  borderBottom: i < options.length - 1 ? `1px solid ${T.border}` : "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  whiteSpace: "nowrap",
+                  transition: "background 0.1s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = T.fog
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = isActive ? T.fog2 : T.white
+                }}
+              >
+                <span>{o.label}</span>
+                {isActive && (
+                  <span style={{ flexShrink: 0, color: T.gold }}>
+                    <Icon.Check />
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -935,22 +1119,28 @@ export function MarketView() {
     dispatch(fetchListings({ take: PAGE_SIZE }))
   }, [dispatch])
 
-  function buildParams(skip = 0) {
+  function buildParams(skip = 0, overrides: Record<string, any> = {}) {
+    const cat  = overrides.category  ?? category
+    const cond = overrides.condition ?? condition
+    const q    = overrides.search    ?? search.trim()
+    const s    = overrides.sort      ?? sort
+    const min  = overrides.minPrice  ?? minPrice
+    const max  = overrides.maxPrice  ?? maxPrice
     return {
-      ...(search.trim()      ? { search: search.trim() }      : {}),
-      ...(category !== "all" ? { category }                   : {}),
-      ...(condition !== "all"? { condition }                  : {}),
-      ...(sort               ? { sort }                       : {}),
-      ...(minPrice           ? { minPrice: Number(minPrice) } : {}),
-      ...(maxPrice           ? { maxPrice: Number(maxPrice) } : {}),
+      ...(q              ? { search: q }              : {}),
+      ...(cat  !== "all" ? { category: cat }          : {}),
+      ...(cond !== "all" ? { condition: cond }        : {}),
+      ...(s              ? { sort: s }                : {}),
+      ...(min            ? { minPrice: Number(min) }  : {}),
+      ...(max            ? { maxPrice: Number(max) }  : {}),
       skip,
       take: PAGE_SIZE,
     }
   }
 
-  function applyFilters() {
+  function applyFilters(overrides: Record<string, any> = {}) {
     skipRef.current = 0
-    dispatch(fetchListings(buildParams(0)))
+    dispatch(fetchListings(buildParams(0, overrides)))
   }
 
   function clearFilters() {
@@ -1065,9 +1255,9 @@ export function MarketView() {
             <SearchInput value={search} onChange={setSearch} onSearch={applyFilters} />
             <Select
               value={sort}
-              onChange={(v) => setSort(v as typeof sort)}
+              onChange={(v) => { setSort(v as typeof sort); applyFilters({ sort: v }) }}
               options={SORT_OPTIONS}
-              style={{ minWidth: 180 }}
+              style={{ minWidth: 160, flex: 1 }}
             />
             <button
               onClick={() => setShowAdv((v) => !v)}
@@ -1110,17 +1300,11 @@ export function MarketView() {
             </button>
           </div>
 
-          {/* Category pills */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {CATEGORIES.map((cat) => (
-              <CategoryPill
-                key={cat.value}
-                cat={cat}
-                active={category === cat.value}
-                onClick={() => { setCategory(cat.value); applyFilters() }}
-              />
-            ))}
-          </div>
+          {/* Category filter — select on mobile, scrollable pills on tablet/desktop */}
+          <CategoryFilter
+            value={category}
+            onChange={(v) => { setCategory(v); applyFilters({ category: v }) }}
+          />
 
           {/* Advanced filters (collapsible) */}
           {showAdv && (
@@ -1135,7 +1319,7 @@ export function MarketView() {
               }}
             >
               <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}`}</style>
-              <Select value={condition} onChange={setCondition} options={CONDITIONS} />
+              <Select value={condition} onChange={(v) => { setCondition(v); applyFilters({ condition: v }) }} options={CONDITIONS} />
               <input
                 type="number"
                 placeholder="Min price (USD)"

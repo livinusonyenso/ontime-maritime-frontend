@@ -16,6 +16,7 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:seed:listings": "ts-node prisma/seed-listings.ts",
     "prisma:studio": "prisma studio",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
@@ -39,7 +40,7 @@
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/websockets": "^10.3.10",
-    "@prisma/client": "5.10.0",
+    "@prisma/client": "^5.10.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/multer": "^2.0.0",
     "axios": "^1.13.6",
@@ -54,12 +55,16 @@
     "helmet": "^8.1.0",
     "ioredis": "^5.10.1",
     "multer": "^2.0.2",
+    "mysql2": "^3.20.0",
     "nodemailer": "^8.0.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",
