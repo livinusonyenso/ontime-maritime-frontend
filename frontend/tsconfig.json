@@ -18,6 +18,7 @@
     // <CHANGE> Updated JSX to react-jsx for Vite
     "jsx": "react-jsx",
     "incremental": true,
+    "ignoreDeprecations": "6.0",
     // <CHANGE> Removed Next.js plugin
     "plugins": [],
     // <CHANGE> Added baseUrl for path alias resolution

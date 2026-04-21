@@ -1,0 +1,634 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "marketplace": "Marketplace",
+    "legalHub": "MarineTech Solicitors",
+    "securityHotline": "Security Hotline",
+    "login": "Login",
+    "register": "Register",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "tagline": "Cargo Meet Tech",
+    "brand": "MARITIME"
+  },
+  "hero": {
+    "slide1": {
+      "title": "Cargo Meet Tech",
+      "subtitle": "Revolutionary Maritime Platform",
+      "description": "Real-time tracking, automated documentation, and digital marketplaces for global shipping"
+    },
+    "slide2": {
+      "title": "Track Every Shipment",
+      "subtitle": "Real-Time Visibility",
+      "description": "Monitor your cargo across oceans with GPS tracking and automated status updates"
+    },
+    "slide3": {
+      "title": "Digital Marketplace",
+      "subtitle": "Auctions & Insurance",
+      "description": "Bid on container slots and secure cargo insurance through our integrated platform"
+    },
+    "getStarted": "Get Started",
+    "trackShipment": "Track Shipment",
+    "uptime": "99.9% Uptime",
+    "countries": "150+ Countries",
+    "support": "24/7 Support",
+    "scroll": "Scroll"
+  },
+  "features": {
+    "sectionTitle": "Comprehensive Maritime Solutions",
+    "sectionDescription": "Everything you need to manage your cargo operations efficiently",
+    "realTimeTracking": {
+      "title": "Real-Time Tracking",
+      "description": "Monitor your shipments in real-time with GPS tracking and automated status updates"
+    },
+    "digitalDocuments": {
+      "title": "Digital Documents",
+      "description": "Manage bills of lading, invoices, and charterparty agreements digitally"
+    },
+    "cargoAuctions": {
+      "title": "Cargo Auctions",
+      "description": "Bid on container slots and charter vessels through our digital marketplace"
+    },
+    "analyticsInsights": {
+      "title": "Analytics & Insights",
+      "description": "Make data-driven decisions with comprehensive shipping analytics"
+    }
+  },
+  "modules": {
+    "sectionTitle": "Complete Maritime Platform",
+    "sectionDescription": "Seven integrated modules covering every aspect of maritime operations",
+    "explore": "Explore",
+    "vesselTracking": {
+      "title": "Vessel Tracking",
+      "description": "Real-time vessel tracking via MarineTraffic & VesselFinder AIS data"
+    },
+    "digitalBOL": {
+      "title": "Digital Bill of Lading",
+      "description": "Blockchain-verified e-BOL system with automatic validation. $50 per BOL"
+    },
+    "legalHub": {
+      "title": "Legal & Compliance Hub",
+      "description": "Access verified maritime lawyers, templates, and compliance consulting"
+    },
+    "securityHotline": {
+      "title": "Security Hotline",
+      "description": "Report fraud, piracy, missing shipments, and maritime crimes"
+    },
+    "arbitration": {
+      "title": "Marine Arbitration",
+      "description": "Dispute resolution for shipping contracts, charterparty agreements, and cargo claims"
+    },
+    "marketplace": {
+      "title": "Equipment Marketplace",
+      "description": "Buy/sell containers, cranes, warehouses, spare parts & insurance"
+    },
+    "store": {
+      "title": "OnTime Store",
+      "description": "Imported marine equipment, generators, radar systems & hydraulic parts"
+    },
+    "knowledge": {
+      "title": "Knowledge Center",
+      "description": "PDF guides, training materials, IMO standards & customs resources"
+    }
+  },
+  "industrySolutions": {
+    "sectionTitle": "Built for Every Maritime Need",
+    "sectionDescription": "Tailored solutions for freight forwarders, shipping companies, and import/export businesses",
+    "freightForwarders": {
+      "title": "Freight Forwarders",
+      "description": "Streamline operations with automated documentation, real-time tracking, and integrated payment processing.",
+      "feature1": "Multi-shipment management",
+      "feature2": "Client portal access",
+      "feature3": "Automated invoicing"
+    },
+    "shippingCompanies": {
+      "title": "Shipping Companies",
+      "description": "Optimize vessel utilization with our auction marketplace and manage charterparty agreements digitally.",
+      "feature1": "Fleet management dashboard",
+      "feature2": "Digital charterparty contracts",
+      "feature3": "Capacity optimization"
+    },
+    "importExport": {
+      "title": "Import/Export",
+      "description": "Simplify international trade with end-to-end visibility, automated customs, and integrated insurance.",
+      "feature1": "Customs clearance tracking",
+      "feature2": "Cargo insurance quotes",
+      "feature3": "Compliance management"
+    }
+  },
+  "integrations": {
+    "sectionTitle": "Powered by Industry-Leading Integrations",
+    "sectionDescription": "Seamlessly connected to the world's top maritime and logistics platforms",
+    "marineTraffic": {
+      "title": "MarineTraffic",
+      "description": "Real-time vessel tracking with global AIS data coverage"
+    },
+    "alibabaTrade": {
+      "title": "Alibaba Trade",
+      "description": "Direct integration with global B2B marketplace"
+    },
+    "paystack": {
+      "title": "Paystack",
+      "description": "Secure payment processing for all transactions"
+    }
+  },
+  "whyChooseUs": {
+    "sectionTitle": "Why Choose Ontime Maritime",
+    "sectionDescription": "The most comprehensive and secure maritime platform in the industry",
+    "security": {
+      "title": "Bank-Level Security",
+      "description": "256-bit encryption and blockchain verification for all transactions and mission-critical documents."
+    },
+    "reliability": {
+      "title": "24/7 Reliability",
+      "description": "99.9% uptime SLA backed by round-the-clock monitoring and technical support."
+    },
+    "globalReach": {
+      "title": "Global Reach",
+      "description": "Active in 150+ countries with multilingual support and region-aware compliance."
+    }
+  },
+  "testimonials": {
+    "sectionTitle": "Trusted by Industry Leaders",
+    "sectionDescription": "See what our clients say about our platform",
+    "testimonial1": {
+      "quote": "Ontime Maritime has revolutionized how we manage our global shipments. The real-time tracking saves us countless hours.",
+      "name": "Chukwuemeka Okafor",
+      "role": "CEO, Global Freight Ltd"
+    },
+    "testimonial2": {
+      "quote": "The auction marketplace helped us optimize our vessel capacity by 40%. Outstanding platform with excellent support.",
+      "name": "Amina Bello",
+      "role": "Director, Pacific Shipping Co"
+    },
+    "testimonial3": {
+      "quote": "Best maritime platform we've used. The analytics dashboard gives us insights we never had before. Highly recommended!",
+      "name": "Oluwaseun Adeyemi",
+      "role": "Manager, Lagos Trade Hub"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Maritime Operations?",
+    "description": "Join thousands of companies already using Ontime Maritime",
+    "startFreeTrial": "Start Free Trial",
+    "learnMore": "Learn More"
+  },
+  "securityhotline": {
+    "chatbuttontoolpic": "Need help? Chat with us!",
+    "hero": {
+      "badge": "Security & Enforcement Hotline",
+      "title": "Report Maritime Crimes",
+      "description": "Quick-response hotline for reporting maritime-related crimes including fraud, piracy, missing shipments, fake documents, and maritime scams.",
+      "emergencyTitle": "Emergency Contacts",
+      "maritimePolice": "Maritime Police",
+      "efcc": "EFCC",
+      "coastGuard": "Coast Guard"
+    },
+    "tabs": {
+      "report": "Report Incident",
+      "myReports": "My Reports",
+      "contacts": "Agency Contacts"
+    },
+    "form": {
+      "successTitle": "Report Submitted Successfully",
+      "successDesc": "Your report has been submitted. You will receive a case number via email.",
+      "dismiss": "Dismiss",
+      "cardTitle": "File a Report",
+      "cardDesc": "Provide details about the maritime incident you want to report. All reports are handled confidentially.",
+      "incidentType": "Incident Type *",
+      "selectType": "Select type",
+      "fraud": "Fraud",
+      "piracy": "Piracy",
+      "missingShipment": "Missing Shipment",
+      "fakeDocuments": "Fake Documents",
+      "maritimeScam": "Maritime Scam",
+      "other": "Other",
+      "urgencyLevel": "Urgency Level",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical - Immediate Action Required",
+      "reportTo": "Report To *",
+      "nigerianPolice": "Nigerian Maritime Police",
+      "efccUnit": "EFCC Maritime Fraud Unit",
+      "navyCoastGuard": "Nigerian Navy Coast Guard",
+      "incidentTitle": "Incident Title *",
+      "titlePlaceholder": "Brief title describing the incident",
+      "description": "Description *",
+      "descPlaceholder": "Provide detailed information about the incident...",
+      "location": "Location",
+      "locationPlaceholder": "Where did this incident occur?",
+      "contactInfo": "Your Contact Information",
+      "anonymous": "Submit anonymously",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "phone": "Phone",
+      "submit": "Submit Report"
+    },
+    "reports": {
+      "caseNo": "Case #:",
+      "view": "View",
+      "noReports": "No Reports Yet",
+      "noReportsDesc": "You haven't submitted any reports yet.",
+      "fileReport": "File a Report"
+    },
+    "dialog": {
+      "urgency": "Urgency",
+      "description": "Description",
+      "location": "Location",
+      "reportedTo": "Reported To",
+      "submitted": "Submitted:",
+      "lastUpdated": "Last Updated:"
+    },
+    "contacts": {
+      "callNow": "Call Now"
+    }
+  },
+  "legalhub": {
+    "hero": {
+      "badge": "Legal Chamber Maritime",
+      "est": "• Est. 2015",
+      "title": "Maritime Legal Expertise",
+      "titleHighlight": "You Can Trust",
+      "description": "Specialist legal counsel for shipping, offshore operations, cargo claims, and international maritime disputes.",
+      "cta": "Speak to a Maritime Lawyer",
+      "searchTitle": "Find Legal Help Instantly",
+      "searchPlaceholder": "Search shipping law, cargo claims, P&I insurance…",
+      "searchBtn": "Search Lawyers"
+    },
+    "stats": {
+      "lawyers": "Verified Maritime Lawyers",
+      "templates": "Legal Templates",
+      "jurisdictions": "Global Jurisdictions",
+      "support": "Emergency Support"
+    },
+    "practiceAreas": {
+      "badge": "Our Expertise",
+      "title": "Maritime Legal Practice Areas",
+      "description": "Comprehensive legal coverage across all aspects of maritime and shipping law",
+      "learnMore": "Learn More",
+      "shipping": { "title": "Shipping & Charterparty", "desc": "Voyage charters, time charters, and bareboat agreements" },
+      "cargo": { "title": "Cargo & Trade", "desc": "Bills of lading, cargo claims, and trade finance" },
+      "insurance": { "title": "Marine Insurance", "desc": "P&I coverage, hull insurance, and claims handling" },
+      "disputes": { "title": "Maritime Disputes", "desc": "Arbitration, litigation, and dispute resolution" }
+    },
+    "tabs": {
+      "sectionTitle": "Legal Resources & Services",
+      "sectionDesc": "Everything you need for maritime legal compliance",
+      "lawyers": "Lawyers",
+      "templates": "Templates",
+      "services": "Services",
+      "resources": "Resources"
+    },
+    "consultants": {
+      "title": "Expert Maritime Lawyers",
+      "description": "Verified legal professionals specializing in maritime law",
+      "searchPlaceholder": "Search lawyers by name or specialization...",
+      "available": "Available",
+      "busy": "Busy",
+      "specializations": "Specializations",
+      "jurisdictions": "Jurisdictions",
+      "experience": "Experience",
+      "years": "years",
+      "hourlyRate": "Hourly Rate",
+      "viewProfile": "View Full Profile",
+      "noFound": "No Lawyers Found",
+      "noFoundDesc": "We couldn't find any maritime lawyers matching \"{{query}}\". Please try a different search term or contact our representative for personalized assistance.",
+      "clearSearch": "Clear Search",
+      "callUs": "Call us:",
+      "reviews": "reviews"
+    },
+    "templates": {
+      "all": "All Templates",
+      "charterparty": "Charterparty",
+      "bol": "Bill of Lading",
+      "nvocc": "NVOCC",
+      "compliance": "Compliance",
+      "premium": "Premium",
+      "downloads": "downloads",
+      "download": "Download"
+    },
+    "services": {
+      "duration": "Duration:",
+      "request": "Request Service"
+    },
+    "resources": {
+      "access": "Access",
+      "premium": "Premium"
+    },
+    "testimonials": {
+      "badge": "Client Testimonials",
+      "title": "Trusted by Industry Leaders",
+      "description": "See what our clients say about their experience with Legal Chamber Maritime",
+      "t1quote": "Their expertise in charterparty disputes saved our company millions. Exceptional legal counsel.",
+      "t1author": "James Morrison",
+      "t1role": "CEO, Atlantic Shipping Ltd",
+      "t2quote": "The team handled our complex P&I claim with professionalism and achieved an outstanding settlement.",
+      "t2author": "Sarah Chen",
+      "t2role": "Director, Pacific Maritime",
+      "t3quote": "Best maritime law firm we've worked with. Their knowledge of international regulations is unmatched.",
+      "t3author": "Michael Okonkwo",
+      "t3role": "Fleet Manager, Global Carriers"
+    },
+    "cta": {
+      "title": "Ready to Navigate Your Legal Challenges?",
+      "description": "Schedule a consultation with our expert maritime lawyers today. Get the legal guidance you need to protect your interests.",
+      "findLawyer": "Find a Lawyer",
+      "call": "Call: +234 808984499"
+    },
+    "dialog": {
+      "title": "Consultant Profile",
+      "desc": "Maritime Legal Expert Profile",
+      "availableNow": "Available Now",
+      "currentlyBusy": "Currently Busy",
+      "yearsExp": "years experience",
+      "about": "About",
+      "specializations": "Specializations",
+      "jurisdictions": "Jurisdictions",
+      "consultationRate": "Consultation Rate",
+      "perHour": "/hour",
+      "bookConsultation": "Book Consultation"
+    }
+  },
+  "marketplacepage": {
+    "hero": {
+      "badge": "Maritime Marketplace",
+      "title": "Equipment & Warehouse Marketplace",
+      "description": "Browse verified maritime equipment, warehouses, containers, cranes, spare parts, and more — no account needed."
+    },
+    "categories": {
+      "all": "All Categories",
+      "equipment": "Equipment",
+      "vessel": "Vessel",
+      "container": "Container",
+      "crane": "Crane",
+      "spare_parts": "Spare Parts",
+      "repairs": "Repairs",
+      "insurance": "Insurance",
+      "warehouse": "Warehouse"
+    },
+    "sort": {
+      "newest": "Newest First",
+      "price_asc": "Price: Low to High",
+      "price_desc": "Price: High to Low",
+      "featured": "Featured"
+    },
+    "filters": {
+      "searchPlaceholder": "Search listings…"
+    },
+    "results": {
+      "found_one": "{{count}} listing found",
+      "found_other": "{{count}} listings found",
+      "noResults": "No listings found",
+      "noResultsDesc": "Try adjusting your search or category filter."
+    },
+    "card": {
+      "featured": "Featured",
+      "bolVerified": "BOL Verified",
+      "by": "by",
+      "buyNow": "Buy Now",
+      "redirecting": "Redirecting…"
+    },
+    "loadMore": "Load More ({{count}} remaining)",
+    "loading": "Loading…"
+  },
+  "marketplace": {
+    "hero": {
+      "badge": "Maritime Marketplace",
+      "title": "Equipment & Warehouse Marketplace",
+      "description": "Buy and sell maritime equipment, warehouse space, containers, cranes, spare parts and repair services.",
+      "becomeSeller": "Become a Seller",
+      "postListing": "Post a Listing",
+      "searchPlaceholder": "Search equipment, warehouses, containers...",
+      "categoryPlaceholder": "Category"
+    },
+    "categories": {
+      "popular": "Popular:",
+      "all": "All Categories",
+      "equipment": "Equipment",
+      "warehouse": "Warehouses",
+      "container": "Containers",
+      "crane": "Cranes",
+      "spare_parts": "Spare Parts",
+      "repairs": "Repairs",
+      "insurance": "Insurance"
+    },
+    "listings": {
+      "title": "Browse Listings",
+      "available": "{{count}} listings available",
+      "sortPlaceholder": "Sort by",
+      "newest": "Newest First",
+      "priceLow": "Price: Low to High",
+      "priceHigh": "Price: High to Low",
+      "highestRated": "Highest Rated",
+      "featured": "Featured",
+      "bolVerified": "BOL Verified",
+      "noResults": "No Listings Found",
+      "noResultsDesc": "Try adjusting your search or filters.",
+      "contact": "Contact"
+    },
+    "purchase": {
+      "title": "Verify & Purchase",
+      "description": "AI/Grok validates BOL details and shipment information.",
+      "bolLabel": "Bill of Lading Number",
+      "bolPlaceholder": "Enter BOL number",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Any message to seller...",
+      "verifying": "Verifying with AI...",
+      "runVerification": "Run AI Verification",
+      "verifyPay": "Verify & Pay",
+      "verificationComplete": "Verification Complete",
+      "bolValid": "BOL Valid",
+      "ownershipVerified": "Ownership Verified",
+      "originVerified": "Origin Verified",
+      "destinationVerified": "Destination Verified",
+      "proceedPayment": "Proceed to Payment",
+      "paymentSuccess": "Payment Successful!",
+      "transactionId": "Transaction ID",
+      "done": "Done"
+    },
+    "seller": {
+      "title": "Become a Seller",
+      "description": "Simple onboarding. Start posting goods instantly.",
+      "businessName": "Business Name",
+      "email": "Email",
+      "phone": "Phone",
+      "country": "Country",
+      "register": "Register",
+      "cancel": "Cancel"
+    },
+    "createListing": {
+      "title": "Create New Listing",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "Select Category",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "priceLabel": "Price",
+      "locationLabel": "Location Country",
+      "create": "Create Listing",
+      "cancel": "Cancel"
+    }
+  },
+  "services": {
+    "hero": {
+      "badge": "Our Services",
+      "title": "Complete Maritime Solutions",
+      "description": "Everything you need to manage cargo operations from port to port"
+    },
+    "tracking": {
+      "title": "Real-Time Cargo Tracking",
+      "description": "Monitor your shipments anywhere in the world with live GPS tracking and automated status updates",
+      "f1": "Live vessel position tracking with MarineTraffic integration",
+      "f2": "Automated milestone notifications (departure, transit, arrival)",
+      "f3": "ETA predictions with weather and port congestion analysis",
+      "f4": "Multi-shipment dashboard with customizable views",
+      "cta": "Track Your Shipment"
+    },
+    "documents": {
+      "title": "Digital Document Management",
+      "description": "Eliminate paperwork with secure digital bills of lading, invoices, and charterparty agreements",
+      "f1": "Blockchain-verified bills of lading and certificates",
+      "f2": "Automated customs documentation generation",
+      "f3": "Digital signature and approval workflows",
+      "f4": "Secure cloud storage with version control",
+      "cta": "Manage Documents"
+    },
+    "auctions": {
+      "title": "Cargo Auction Marketplace",
+      "description": "Bid on container slots and charter vessels in our transparent digital marketplace",
+      "f1": "Real-time bidding on available cargo space",
+      "f2": "Full vessel charter auctions for bulk cargo",
+      "f3": "Automated contract generation for winning bids",
+      "f4": "Secure payment escrow through Paystack",
+      "cta": "Browse Auctions"
+    },
+    "insurance": {
+      "title": "Cargo Insurance Marketplace",
+      "description": "Compare and purchase cargo insurance from top providers with instant quotes",
+      "f1": "Instant quotes from 20+ insurance providers",
+      "f2": "Coverage for all cargo types and routes",
+      "f3": "Simplified claims process with digital documentation",
+      "f4": "Automatic policy binding and certificate generation",
+      "cta": "Get Insurance Quote"
+    },
+    "analytics": {
+      "title": "Analytics & Business Intelligence",
+      "description": "Make data-driven decisions with comprehensive shipping analytics and insights",
+      "f1": "Real-time dashboards with KPI tracking",
+      "f2": "Route optimization and cost analysis",
+      "f3": "Carrier performance benchmarking",
+      "f4": "Custom reports and data exports"
+    },
+    "charterparty": {
+      "title": "Charterparty Management",
+      "description": "Streamline vessel chartering with digital contracts and automated workflows",
+      "f1": "Standard charterparty templates (Gencon, NYPE, etc.)",
+      "f2": "Digital negotiations and amendments tracking",
+      "f3": "Automated laytime calculations and demurrage",
+      "f4": "Multi-party signing with legal validity"
+    },
+    "comingSoon": "Coming Soon",
+    "why": {
+      "sectionTitle": "Why Choose Our Services",
+      "sectionDescription": "Industry-leading features that set us apart",
+      "support": "24/7 Support",
+      "supportDesc": "Round-the-clock technical assistance",
+      "pricing": "Transparent Pricing",
+      "pricingDesc": "No hidden fees or surprises",
+      "security": "Bank-Level Security",
+      "securityDesc": "256-bit encryption for all data",
+      "coverage": "Global Coverage",
+      "coverageDesc": "Available in 150+ countries"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "About Us",
+      "title": "Revolutionizing Global Maritime Trade",
+      "description": "ONTIME RESOURCES LIMITED is at the forefront of maritime technology, connecting the world through innovative cargo solutions."
+    },
+    "story": {
+      "sectionTitle": "Who We Are",
+      "sectionDescription": "The story behind Ontime Maritime and our mission to modernize global shipping",
+      "label": "Our Story",
+      "title": "Building the Digital Backbone of Modern Maritime Logistics",
+      "p1": "Founded in 2020, Ontime Maritime emerged from a simple observation: the maritime industry was decades behind in digital transformation. While other sectors embraced technology, cargo shipping remained trapped in paperwork and inefficiency.",
+      "p2": "Our founders — veterans of both global shipping and Silicon Valley — saw an opportunity to bridge this gap. They brought together maritime experts, software engineers, and logistics professionals with one mission: modernize how cargo moves across the world.",
+      "p3": "Today, Ontime Maritime supports over 5,000 companies in 150+ countries, processing millions of containers annually and powering critical supply chains worldwide."
+    },
+    "impact": {
+      "sectionTitle": "Ontime Maritime by the Numbers",
+      "sectionDescription": "Measurable impact across global maritime operations",
+      "stat1Title": "Countries Covered",
+      "stat1Desc": "Active presence across major global ports",
+      "stat2Title": "Active Companies",
+      "stat2Desc": "Logistics firms, shippers, and operators",
+      "stat3Title": "Shipments Tracked",
+      "stat3Desc": "Digitized and monitored end-to-end",
+      "stat4Title": "Platform Uptime",
+      "stat4Desc": "Enterprise-grade reliability and availability"
+    },
+    "purpose": {
+      "sectionTitle": "Our Purpose",
+      "sectionDescription": "The mission and vision guiding Ontime Maritime's impact on global trade",
+      "missionTitle": "Our Mission",
+      "missionDesc": "To democratize access to global maritime trade by providing cutting-edge technology that makes shipping faster, more transparent, and more efficient for businesses of all sizes. We believe every company deserves enterprise-level logistics capabilities.",
+      "mission1": "Simplify complex maritime operations",
+      "mission2": "Connect global trade partners seamlessly",
+      "mission3": "Enable sustainable shipping practices",
+      "visionTitle": "Our Vision",
+      "visionDesc": "To become the world's most trusted maritime technology platform, where every shipment is tracked, every document is digital, and every transaction is seamless. We envision a future where global trade is accessible to all.",
+      "vision1": "Zero-paper maritime industry by 2030",
+      "vision2": "Platform in every major port worldwide",
+      "vision3": "Industry standard for maritime technology"
+    },
+    "values": {
+      "sectionTitle": "Our Core Values",
+      "sectionDescription": "The principles that guide everything we do",
+      "excellence": "Excellence",
+      "excellenceDesc": "We strive for excellence in every feature, every interaction, and every customer experience.",
+      "collaboration": "Collaboration",
+      "collaborationDesc": "We believe in the power of partnership and building connections across the maritime ecosystem.",
+      "innovation": "Innovation",
+      "innovationDesc": "We continuously push boundaries to deliver cutting-edge solutions for modern maritime challenges.",
+      "integrity": "Integrity",
+      "integrityDesc": "We operate with transparency, honesty, and accountability in all our business dealings."
+    },
+    "team": {
+      "sectionTitle": "Leadership Team",
+      "sectionDescription": "Meet the experts driving maritime innovation",
+      "ceoRole": "CEO & Founder",
+      "ctoRole": "CTO & Co-Founder",
+      "opsRole": "Head of Operations",
+      "csRole": "Head of Customer Success"
+    }
+  },
+  "footer": {
+    "brand": "MARITIME",
+    "tagline": "Cargo Meet Tech",
+    "about": "Revolutionary maritime cargo platform connecting shippers, carriers, and logistics providers worldwide.",
+    "quickLinks": "Quick Links",
+    "links": {
+      "aboutUs": "About Us",
+      "services": "Services",
+      "tracking": "Tracking",
+      "auctions": "Auctions",
+      "insurance": "Insurance"
+    },
+    "contactUs": "Contact Us",
+    "address": "123 Maritime Plaza, Lagos, Nigeria",
+    "followUs": "Follow Us",
+    "socialTagline": "Stay updated with the latest maritime technology innovations and cargo solutions.",
+    "copyright": "© {{year}} ONTIME RESOURCES LIMITED. All rights reserved."
+  },
+  "qrcode": {
+    "quickacess": "Quick Access",
+    "Preparing" : "Preparing your QR code...",
+    "Downloadpng": "Download PNG",
+    "title": " Scan to Visit Our Website",
+    "description": "Scan the QR code with your phone to visit the OnTime Maritime platform instantly."
+  }
+}

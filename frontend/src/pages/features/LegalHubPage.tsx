@@ -26,6 +26,7 @@ import {
   incrementTemplateDownloads,
 } from "@/store/slices/legalHubSlice"
 import { PaystackPayment, usePaystackPayment } from  "@/components/payments/PaystackPayment"
+import { useTranslation } from "react-i18next"
 import {
   Scale,
   Search,
@@ -57,6 +58,7 @@ import {
 } from "lucide-react"
 
 export default function LegalHubPage() {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { consultants, templates, services, resources, selectedConsultant, searchQuery, filterCategory } =
     useAppSelector((state) => state.legalHub)
@@ -156,22 +158,21 @@ export default function LegalHubPage() {
       {/* Badge */}
       <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full text-sm">
         <Anchor className="h-4 w-4 text-cyan-400" />
-        <span className="text-cyan-400 font-semibold">Legal Chamber Maritime</span>
-        <span className="text-white/60">• Est. 2015</span>
+        <span className="text-cyan-400 font-semibold">{t("legalhub.hero.badge")}</span>
+        <span className="text-white/60">{t("legalhub.hero.est")}</span>
       </div>
 
       {/* Headline */}
       <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-        Maritime Legal Expertise
+        {t("legalhub.hero.title")}
         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-          You Can Trust
+          {t("legalhub.hero.titleHighlight")}
         </span>
       </h1>
 
       {/* Subtext */}
       <p className="text-lg text-slate-300 max-w-xl">
-        Specialist legal counsel for shipping, offshore operations, cargo claims,
-        and international maritime disputes.
+        {t("legalhub.hero.description")}
       </p>
 
       {/* Primary CTA */}
@@ -181,7 +182,7 @@ export default function LegalHubPage() {
         onClick={scrollToConsultants}
       >
         <Users className="mr-2 h-5 w-5" />
-        Speak to a Maritime Lawyer
+        {t("legalhub.hero.cta")}
       </Button>
     </div>
 
@@ -189,13 +190,13 @@ export default function LegalHubPage() {
     <div className="hidden lg:block">
       <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
         <h3 className="text-white font-semibold mb-3">
-          Find Legal Help Instantly
+          {t("legalhub.hero.searchTitle")}
         </h3>
 
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
           <Input
-            placeholder="Search shipping law, cargo claims, P&I insurance…"
+            placeholder={t("legalhub.hero.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => dispatch(setSearchQuery(e.target.value))}
             onKeyDown={(e) => {
@@ -211,7 +212,7 @@ export default function LegalHubPage() {
           className="w-full mt-4 bg-cyan-600 hover:bg-cyan-700 rounded-xl h-12"
           onClick={scrollToConsultants}
         >
-          Search Lawyers
+          {t("legalhub.hero.searchBtn")}
         </Button>
       </div>
     </div>
@@ -231,7 +232,7 @@ export default function LegalHubPage() {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">{consultants.length}+</div>
-                  <div className="text-sm text-slate-400">Verified Maritime Lawyers</div>
+                  <div className="text-sm text-slate-400">{t("legalhub.stats.lawyers")}</div>
                 </div>
               </div>
               <div className="hidden sm:block w-px h-12 bg-slate-700" />
@@ -241,7 +242,7 @@ export default function LegalHubPage() {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">{templates.length}+</div>
-                  <div className="text-sm text-slate-400">Legal Templates</div>
+                  <div className="text-sm text-slate-400">{t("legalhub.stats.templates")}</div>
                 </div>
               </div>
               <div className="hidden sm:block w-px h-12 bg-slate-700" />
@@ -251,7 +252,7 @@ export default function LegalHubPage() {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">50+</div>
-                  <div className="text-sm text-slate-400">Global Jurisdictions</div>
+                  <div className="text-sm text-slate-400">{t("legalhub.stats.jurisdictions")}</div>
                 </div>
               </div>
               <div className="hidden sm:block w-px h-12 bg-slate-700" />
@@ -261,7 +262,7 @@ export default function LegalHubPage() {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">24/7</div>
-                  <div className="text-sm text-slate-400">Emergency Support</div>
+                  <div className="text-sm text-slate-400">{t("legalhub.stats.support")}</div>
                 </div>
               </div>
             </div>
@@ -273,13 +274,13 @@ export default function LegalHubPage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 px-4 py-1.5 text-cyan-600 border-cyan-200 bg-cyan-50">
-                Our Expertise
+                {t("legalhub.practiceAreas.badge")}
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-                Maritime Legal Practice Areas
+                {t("legalhub.practiceAreas.title")}
               </h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                Comprehensive legal coverage across all aspects of maritime and shipping law
+                {t("legalhub.practiceAreas.description")}
               </p>
             </div>
 
@@ -287,29 +288,29 @@ export default function LegalHubPage() {
               {[
                 {
                   icon: Ship,
-                  title: "Shipping & Charterparty",
-                  description: "Voyage charters, time charters, and bareboat agreements",
+                  title: t("legalhub.practiceAreas.shipping.title"),
+                  description: t("legalhub.practiceAreas.shipping.desc"),
                   color: "cyan",
                   image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?q=80&w=400"
                 },
                 {
                   icon: Briefcase,
-                  title: "Cargo & Trade",
-                  description: "Bills of lading, cargo claims, and trade finance",
+                  title: t("legalhub.practiceAreas.cargo.title"),
+                  description: t("legalhub.practiceAreas.cargo.desc"),
                   color: "blue",
                   image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=400"
                 },
                 {
                   icon: Shield,
-                  title: "Marine Insurance",
-                  description: "P&I coverage, hull insurance, and claims handling",
+                  title: t("legalhub.practiceAreas.insurance.title"),
+                  description: t("legalhub.practiceAreas.insurance.desc"),
                   color: "teal",
                   image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=400"
                 },
                 {
                   icon: Anchor,
-                  title: "Maritime Disputes",
-                  description: "Arbitration, litigation, and dispute resolution",
+                  title: t("legalhub.practiceAreas.disputes.title"),
+                  description: t("legalhub.practiceAreas.disputes.desc"),
                   color: "indigo",
                   image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=400"
                 },
@@ -336,7 +337,7 @@ export default function LegalHubPage() {
                     </h3>
                     <p className="text-slate-600">{area.description}</p>
                     <Button variant="link" className="p-0 mt-4 text-cyan-600 group-hover:text-cyan-700">
-                      Learn More <ChevronRight className="ml-1 h-4 w-4" />
+                      {t("legalhub.practiceAreas.learnMore")} <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>
                   </CardContent>
                 </Card>
@@ -352,34 +353,34 @@ export default function LegalHubPage() {
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-                    Legal Resources & Services
+                    {t("legalhub.tabs.sectionTitle")}
                   </h2>
-                  <p className="text-slate-600">Everything you need for maritime legal compliance</p>
+                  <p className="text-slate-600">{t("legalhub.tabs.sectionDesc")}</p>
                 </div>
                 <TabsList className="bg-white shadow-md p-1.5 rounded-xl">
                   <TabsTrigger 
                     value="consultants" 
                     className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <Users className="h-4 w-4" /> Lawyers
+                    <Users className="h-4 w-4" /> {t("legalhub.tabs.lawyers")}
                   </TabsTrigger>
-                  <TabsTrigger 
-                    value="templates" 
+                  <TabsTrigger
+                    value="templates"
                     className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <FileText className="h-4 w-4" /> Templates
+                    <FileText className="h-4 w-4" /> {t("legalhub.tabs.templates")}
                   </TabsTrigger>
-                  <TabsTrigger 
-                    value="services" 
+                  <TabsTrigger
+                    value="services"
                     className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <Briefcase className="h-4 w-4" /> Services
+                    <Briefcase className="h-4 w-4" /> {t("legalhub.tabs.services")}
                   </TabsTrigger>
-                  <TabsTrigger 
-                    value="resources" 
+                  <TabsTrigger
+                    value="resources"
                     className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <BookOpen className="h-4 w-4" /> Resources
+                    <BookOpen className="h-4 w-4" /> {t("legalhub.tabs.resources")}
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -393,8 +394,8 @@ export default function LegalHubPage() {
                       <Scale className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900">Expert Maritime Lawyers</h3>
-                      <p className="text-slate-600">Verified legal professionals specializing in maritime law</p>
+                      <h3 className="text-2xl font-bold text-slate-900">{t("legalhub.consultants.title")}</h3>
+                      <p className="text-slate-600">{t("legalhub.consultants.description")}</p>
                     </div>
                   </div>
                   
@@ -402,7 +403,7 @@ export default function LegalHubPage() {
                   <div className="lg:hidden relative mb-6">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                     <Input
-                      placeholder="Search lawyers by name or specialization..."
+                      placeholder={t("legalhub.consultants.searchPlaceholder")}
                       value={searchQuery}
                       onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                       className="pl-12 h-14 rounded-xl"
@@ -416,11 +417,10 @@ export default function LegalHubPage() {
                       <Search className="h-12 w-12 text-slate-400" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-3">
-                      No Lawyers Found
+                      {t("legalhub.consultants.noFound")}
                     </h3>
                     <p className="text-slate-600 text-center max-w-md mb-6">
-                      We couldn't find any maritime lawyers matching "{searchQuery}". 
-                      Please try a different search term or contact our representative for personalized assistance.
+                      {t("legalhub.consultants.noFoundDesc", { query: searchQuery })}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 items-center">
                       <Button
@@ -428,11 +428,11 @@ export default function LegalHubPage() {
                         onClick={() => dispatch(setSearchQuery(""))}
                         className="rounded-xl px-6"
                       >
-                        Clear Search
+                        {t("legalhub.consultants.clearSearch")}
                       </Button>
                       <div className="flex items-center gap-2 text-slate-700">
                         <Phone className="h-5 w-5 text-cyan-600" />
-                        <span className="font-semibold">Call us:</span>
+                        <span className="font-semibold">{t("legalhub.consultants.callUs")}</span>
                         <a 
                           href="tel:+2348000000000" 
                           className="text-cyan-600 hover:text-cyan-700 font-bold"
@@ -462,10 +462,10 @@ export default function LegalHubPage() {
                           {consultant.available ? (
                             <Badge className="bg-emerald-500 text-white shadow-lg">
                               <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse" />
-                              Available
+                              {t("legalhub.consultants.available")}
                             </Badge>
                           ) : (
-                            <Badge variant="secondary" className="bg-slate-600 text-white">Busy</Badge>
+                            <Badge variant="secondary" className="bg-slate-600 text-white">{t("legalhub.consultants.busy")}</Badge>
                           )}
                         </div>
                       </div>
@@ -496,12 +496,12 @@ export default function LegalHubPage() {
                             ))}
                           </div>
                           <span className="font-semibold text-slate-900">{consultant.rating}</span>
-                          <span className="text-sm text-slate-500">({consultant.reviewCount} reviews)</span>
+                          <span className="text-sm text-slate-500">({consultant.reviewCount} {t("legalhub.consultants.reviews")})</span>
                         </div>
 
                         {/* Specializations */}
                         <div className="mb-4">
-                          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Specializations</div>
+                          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{t("legalhub.consultants.specializations")}</div>
                           <div className="flex flex-wrap gap-1.5">
                             {consultant.specialization.slice(0, 3).map((spec) => (
                               <Badge key={spec} variant="outline" className="text-xs bg-slate-50 border-slate-200">
@@ -518,7 +518,7 @@ export default function LegalHubPage() {
 
                         {/* Jurisdictions */}
                         <div className="mb-4">
-                          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Jurisdictions</div>
+                          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{t("legalhub.consultants.jurisdictions")}</div>
                           <div className="flex flex-wrap gap-1.5">
                             {consultant.jurisdiction.map((j) => (
                               <Badge key={j} className="text-xs bg-blue-50 text-blue-700 border-0">
@@ -532,11 +532,11 @@ export default function LegalHubPage() {
                         {/* Stats */}
                         <div className="flex items-center justify-between py-4 border-t border-slate-100">
                           <div>
-                            <div className="text-xs text-slate-500">Experience</div>
-                            <div className="font-bold text-slate-900">{consultant.experience} years</div>
+                            <div className="text-xs text-slate-500">{t("legalhub.consultants.experience")}</div>
+                            <div className="font-bold text-slate-900">{consultant.experience} {t("legalhub.consultants.years")}</div>
                           </div>
                           <div className="text-right">
-                            <div className="text-xs text-slate-500">Hourly Rate</div>
+                            <div className="text-xs text-slate-500">{t("legalhub.consultants.hourlyRate")}</div>
                             <div className="font-bold text-cyan-600 text-lg">
                               ${consultant.hourlyRate}
                             </div>
@@ -549,7 +549,7 @@ export default function LegalHubPage() {
                           className="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 rounded-xl h-12 shadow-md"
                           onClick={() => dispatch(selectConsultant(consultant.id))}
                         >
-                          View Full Profile
+                          {t("legalhub.consultants.viewProfile")}
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </CardFooter>
@@ -564,11 +564,11 @@ export default function LegalHubPage() {
                 <div className="mb-8">
                   <div className="flex flex-wrap gap-3">
                     {[
-                      { key: "all", label: "All Templates" },
-                      { key: "charterparty", label: "Charterparty" },
-                      { key: "bol", label: "Bill of Lading" },
-                      { key: "nvocc", label: "NVOCC" },
-                      { key: "compliance", label: "Compliance" },
+                      { key: "all", label: t("legalhub.templates.all") },
+                      { key: "charterparty", label: t("legalhub.templates.charterparty") },
+                      { key: "bol", label: t("legalhub.templates.bol") },
+                      { key: "nvocc", label: t("legalhub.templates.nvocc") },
+                      { key: "compliance", label: t("legalhub.templates.compliance") },
                     ].map((filter) => (
                       <Button
                         key={filter.key}
@@ -600,7 +600,7 @@ export default function LegalHubPage() {
                                 <h3 className="font-bold text-lg text-slate-900">{template.name}</h3>
                                 {template.premium && (
                                   <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0">
-                                    <Crown className="h-3 w-3 mr-1" /> Premium
+                                    <Crown className="h-3 w-3 mr-1" /> {t("legalhub.templates.premium")}
                                   </Badge>
                                 )}
                               </div>
@@ -611,7 +611,7 @@ export default function LegalHubPage() {
                                 </Badge>
                                 <span className="flex items-center gap-1 text-slate-500">
                                   <Download className="h-4 w-4" />
-                                  {template.downloads.toLocaleString()} downloads
+                                  {template.downloads.toLocaleString()} {t("legalhub.templates.downloads")}
                                 </span>
                               </div>
                             </div>
@@ -621,7 +621,7 @@ export default function LegalHubPage() {
                             className="bg-slate-900 hover:bg-slate-800 rounded-xl px-6"
                           >
                             <Download className="h-4 w-4 mr-2" />
-                            Download
+                            {t("legalhub.templates.download")}
                           </Button>
                         </div>
                       </CardContent>
@@ -656,7 +656,7 @@ export default function LegalHubPage() {
                       <CardContent className="pb-4">
                         <div className="flex items-center gap-3 text-slate-600 bg-slate-50 px-4 py-3 rounded-xl">
                           <Clock className="h-5 w-5 text-cyan-500" />
-                          <span>Duration: <strong>{service.duration}</strong></span>
+                          <span>{t("legalhub.services.duration")} <strong>{service.duration}</strong></span>
                         </div>
                       </CardContent>
                       <CardFooter className="pt-0">
@@ -664,7 +664,7 @@ export default function LegalHubPage() {
                           className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl h-12 shadow-md"
                           onClick={() => handleServicePurchase(service)}
                         >
-                          Request Service
+                          {t("legalhub.services.request")}
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </CardFooter>
@@ -699,7 +699,7 @@ export default function LegalHubPage() {
                                   <h3 className="font-bold text-lg text-slate-900">{resource.title}</h3>
                                   {resource.premium && (
                                     <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0">
-                                      <Crown className="h-3 w-3 mr-1" /> Premium
+                                      <Crown className="h-3 w-3 mr-1" /> {t("legalhub.resources.premium")}
                                     </Badge>
                                   )}
                                 </div>
@@ -715,7 +715,7 @@ export default function LegalHubPage() {
                             </div>
                             <Button variant="outline" className="rounded-xl px-6">
                               <Download className="h-4 w-4 mr-2" />
-                              Access
+                              {t("legalhub.resources.access")}
                             </Button>
                           </div>
                         </CardContent>
@@ -739,36 +739,36 @@ export default function LegalHubPage() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
               <Badge className="mb-4 bg-white/10 text-cyan-400 border-0 px-4 py-1.5">
-                Client Testimonials
+                {t("legalhub.testimonials.badge")}
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Trusted by Industry Leaders
+                {t("legalhub.testimonials.title")}
               </h2>
               <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-                See what our clients say about their experience with Legal Chamber Maritime
+                {t("legalhub.testimonials.description")}
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  quote: "Their expertise in charterparty disputes saved our company millions. Exceptional legal counsel.",
-                  author: "James Morrison",
-                  role: "CEO, Atlantic Shipping Ltd",
+                  quote: t("legalhub.testimonials.t1quote"),
+                  author: t("legalhub.testimonials.t1author"),
+                  role: t("legalhub.testimonials.t1role"),
                   avatar: "JM",
                   rating: 5
                 },
                 {
-                  quote: "The team handled our complex P&I claim with professionalism and achieved an outstanding settlement.",
-                  author: "Sarah Chen",
-                  role: "Director, Pacific Maritime",
+                  quote: t("legalhub.testimonials.t2quote"),
+                  author: t("legalhub.testimonials.t2author"),
+                  role: t("legalhub.testimonials.t2role"),
                   avatar: "SC",
                   rating: 5
                 },
                 {
-                  quote: "Best maritime law firm we've worked with. Their knowledge of international regulations is unmatched.",
-                  author: "Michael Okonkwo",
-                  role: "Fleet Manager, Global Carriers",
+                  quote: t("legalhub.testimonials.t3quote"),
+                  author: t("legalhub.testimonials.t3author"),
+                  role: t("legalhub.testimonials.t3role"),
                   avatar: "MO",
                   rating: 5
                 },
@@ -816,28 +816,27 @@ export default function LegalHubPage() {
 
               <div className="relative z-10 max-w-3xl">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  Ready to Navigate Your Legal Challenges?
+                  {t("legalhub.cta.title")}
                 </h2>
                 <p className="text-xl text-white/80 mb-8">
-                  Schedule a consultation with our expert maritime lawyers today. 
-                  Get the legal guidance you need to protect your interests.
+                  {t("legalhub.cta.description")}
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="bg-white text-cyan-600 hover:bg-white/90 px-8 py-6 text-lg rounded-xl shadow-lg"
                     onClick={() => setActiveTab("consultants")}
                   >
                     <Users className="mr-2 h-5 w-5" />
-                    Find a Lawyer
+                    {t("legalhub.cta.findLawyer")}
                   </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
+                  <Button
+                    size="lg"
+                    variant="outline"
                     className="border-white/30 text-cyan-600 hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
                   >
                     <Phone className="mr-2 h-5 w-5" />
-                    Call: +234 808984499
+                    {t("legalhub.cta.call")}
                   </Button>
                 </div>
               </div>
@@ -850,8 +849,8 @@ export default function LegalHubPage() {
           <Dialog open={!!selectedConsultant} onOpenChange={() => dispatch(clearSelectedConsultant())}>
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader className="sr-only">
-                <DialogTitle>Consultant Profile</DialogTitle>
-                <DialogDescription>Maritime Legal Expert Profile</DialogDescription>
+                <DialogTitle>{t("legalhub.dialog.title")}</DialogTitle>
+                <DialogDescription>{t("legalhub.dialog.desc")}</DialogDescription>
               </DialogHeader>
 
               {/* Header Banner */}
@@ -878,10 +877,10 @@ export default function LegalHubPage() {
                       {selectedConsultant.available ? (
                         <Badge className="bg-emerald-500 text-white">
                           <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse" />
-                          Available Now
+                          {t("legalhub.dialog.availableNow")}
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Currently Busy</Badge>
+                        <Badge variant="secondary">{t("legalhub.dialog.currentlyBusy")}</Badge>
                       )}
                     </div>
                     <p className="text-slate-600">{selectedConsultant.title}</p>
@@ -894,17 +893,17 @@ export default function LegalHubPage() {
                           />
                         ))}
                         <span className="font-semibold ml-1">{selectedConsultant.rating}</span>
-                        <span className="text-slate-500">({selectedConsultant.reviewCount} reviews)</span>
+                        <span className="text-slate-500">({selectedConsultant.reviewCount} {t("legalhub.consultants.reviews")})</span>
                       </div>
                       <span className="text-slate-400">•</span>
-                      <span className="text-slate-600">{selectedConsultant.experience} years experience</span>
+                      <span className="text-slate-600">{selectedConsultant.experience} {t("legalhub.dialog.yearsExp")}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Bio */}
                 <div className="mb-6">
-                  <h4 className="font-semibold text-slate-900 mb-2">About</h4>
+                  <h4 className="font-semibold text-slate-900 mb-2">{t("legalhub.dialog.about")}</h4>
                   <p className="text-slate-600 leading-relaxed">{selectedConsultant.bio}</p>
                 </div>
 
@@ -913,7 +912,7 @@ export default function LegalHubPage() {
                   <div className="bg-slate-50 p-5 rounded-xl">
                     <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
                       <Award className="h-5 w-5 text-cyan-500" />
-                      Specializations
+                      {t("legalhub.dialog.specializations")}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedConsultant.specialization.map((spec) => (
@@ -926,7 +925,7 @@ export default function LegalHubPage() {
                   <div className="bg-slate-50 p-5 rounded-xl">
                     <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
                       <Globe className="h-5 w-5 text-blue-500" />
-                      Jurisdictions
+                      {t("legalhub.dialog.jurisdictions")}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedConsultant.jurisdiction.map((j) => (
@@ -943,10 +942,10 @@ export default function LegalHubPage() {
                 <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl mb-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-slate-400 text-sm mb-1">Consultation Rate</div>
+                      <div className="text-slate-400 text-sm mb-1">{t("legalhub.dialog.consultationRate")}</div>
                       <div className="text-3xl font-bold text-white">
                         ${selectedConsultant.hourlyRate}
-                        <span className="text-lg text-slate-400 font-normal">/hour</span>
+                        <span className="text-lg text-slate-400 font-normal">{t("legalhub.dialog.perHour")}</span>
                       </div>
                     </div>
                     <Button 
@@ -954,7 +953,7 @@ export default function LegalHubPage() {
                       className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl px-8 shadow-lg shadow-cyan-500/30"
                       onClick={() => handleBookConsultation(selectedConsultant)}
                     >
-                      Book Consultation
+                      {t("legalhub.dialog.bookConsultation")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </div>
