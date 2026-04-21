@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { Header } from "@/components/layout/header"
 import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 import { Footer } from "@/components/layout/footer"
@@ -28,97 +29,99 @@ import {
   Siren,
 } from "lucide-react"
 
-const platformModules = [
-  {
-    title: "Vessel Tracking",
-    description: "Real-time vessel tracking via MarineTraffic & VesselFinder AIS data",
-    href: "/vessel-tracking",
-    icon: Ship,
-    color: "bg-blue-500/10 text-blue-600",
-  },
-  {
-    title: "Digital Bill of Lading",
-    description: "Blockchain-verified e-BOL system with automatic validation. $50 per BOL",
-    href: "/e-bol",
-    icon: FileText,
-    color: "bg-green-500/10 text-green-600",
-  },
-  {
-    title: "Legal & Compliance Hub",
-    description: "Access verified maritime lawyers, templates, and compliance consulting",
-    href: "/legal-hub",
-    icon: Scale,
-    color: "bg-purple-500/10 text-purple-600",
-  },
-  {
-    title: "Security Hotline",
-    description: "Report fraud, piracy, missing shipments, and maritime crimes",
-    href: "/security-hotline",
-    icon: Siren,
-    color: "bg-red-500/10 text-red-600",
-  },
- {
-  title: "Marine Arbitration",
-  description: "Dispute resolution for shipping contracts, charterparty agreements, and cargo claims",
-  href: "/arbitration",
-  icon: Bot,
-  color: "bg-indigo-500/10 text-indigo-600",
-},
-  {
-    title: "Equipment Marketplace",
-    description: "Buy/sell containers, cranes, warehouses, spare parts & insurance",
-    href: "/marketplace",
-    icon: Store,
-    color: "bg-orange-500/10 text-orange-600",
-  },
-  {
-    title: "OnTime Store",
-    description: "Imported marine equipment, generators, radar systems & hydraulic parts",
-    href: "/store",
-    icon: Store,
-    color: "bg-emerald-500/10 text-emerald-600",
-  },
-  {
-    title: "Knowledge Center",
-    description: "PDF guides, training materials, IMO standards & customs resources",
-    href: "/knowledge",
-    icon: BookOpen,
-    color: "bg-teal-500/10 text-teal-600",
-  },
-]
-
-const features = [
-  {
-    image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80",
-    icon: Ship,
-    title: "Real-Time Tracking",
-    description: "Monitor your shipments in real-time with GPS tracking and automated status updates",
-    iconColor: "bg-primary/10 text-primary",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1621009063622-4467e453c3c1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRhYmxldCUyRmxhcHRvcCUyMHNob3dpbmclMjBkb2N1bWVudHN8ZW58MHx8MHx8fDA%3D?w=600&q=80",
-    icon: FileText,
-    title: "Digital Documents",
-    description: "Manage bills of lading, invoices, and charterparty agreements digitally",
-    iconColor: "bg-secondary/10 text-secondary",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=600&q=80",
-    icon: Gavel,
-    title: "Cargo Auctions",
-    description: "Bid on container slots and charter vessels through our digital marketplace",
-    iconColor: "bg-accent/10 text-accent",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
-    icon: BarChart3,
-    title: "Analytics & Insights",
-    description: "Make data-driven decisions with comprehensive shipping analytics",
-    iconColor: "bg-primary/10 text-primary",
-  },
-]
-
 export default function HomePage() {
+  const { t } = useTranslation()
+
+  const platformModules = [
+    {
+      title: t("modules.vesselTracking.title"),
+      description: t("modules.vesselTracking.description"),
+      href: "/vessel-tracking",
+      icon: Ship,
+      color: "bg-blue-500/10 text-blue-600",
+    },
+    {
+      title: t("modules.digitalBOL.title"),
+      description: t("modules.digitalBOL.description"),
+      href: "/e-bol",
+      icon: FileText,
+      color: "bg-green-500/10 text-green-600",
+    },
+    {
+      title: t("modules.legalHub.title"),
+      description: t("modules.legalHub.description"),
+      href: "/legal-hub",
+      icon: Scale,
+      color: "bg-purple-500/10 text-purple-600",
+    },
+    {
+      title: t("modules.securityHotline.title"),
+      description: t("modules.securityHotline.description"),
+      href: "/security-hotline",
+      icon: Siren,
+      color: "bg-red-500/10 text-red-600",
+    },
+    {
+      title: t("modules.arbitration.title"),
+      description: t("modules.arbitration.description"),
+      href: "/arbitration",
+      icon: Bot,
+      color: "bg-indigo-500/10 text-indigo-600",
+    },
+    {
+      title: t("modules.marketplace.title"),
+      description: t("modules.marketplace.description"),
+      href: "/marketplace",
+      icon: Store,
+      color: "bg-orange-500/10 text-orange-600",
+    },
+    {
+      title: t("modules.store.title"),
+      description: t("modules.store.description"),
+      href: "/store",
+      icon: Store,
+      color: "bg-emerald-500/10 text-emerald-600",
+    },
+    {
+      title: t("modules.knowledge.title"),
+      description: t("modules.knowledge.description"),
+      href: "/knowledge",
+      icon: BookOpen,
+      color: "bg-teal-500/10 text-teal-600",
+    },
+  ]
+
+  const features = [
+    {
+      image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80",
+      icon: Ship,
+      title: t("features.realTimeTracking.title"),
+      description: t("features.realTimeTracking.description"),
+      iconColor: "bg-primary/10 text-primary",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1621009063622-4467e453c3c1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRhYmxldCUyRmxhcHRvcCUyMHNob3dpbmclMjBkb2N1bWVudHN8ZW58MHx8MHx8fDA%3D?w=600&q=80",
+      icon: FileText,
+      title: t("features.digitalDocuments.title"),
+      description: t("features.digitalDocuments.description"),
+      iconColor: "bg-secondary/10 text-secondary",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=600&q=80",
+      icon: Gavel,
+      title: t("features.cargoAuctions.title"),
+      description: t("features.cargoAuctions.description"),
+      iconColor: "bg-accent/10 text-accent",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
+      icon: BarChart3,
+      title: t("features.analyticsInsights.title"),
+      description: t("features.analyticsInsights.description"),
+      iconColor: "bg-primary/10 text-primary",
+    },
+  ]
+
   return (
     <div className="min-h-screen flex flex-col">
       <ShippingActivityTicker />
@@ -132,8 +135,8 @@ export default function HomePage() {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <SectionHeader
-              title="Comprehensive Maritime Solutions"
-              description="Everything you need to manage your cargo operations efficiently"
+              title={t("features.sectionTitle")}
+              description={t("features.sectionDescription")}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -148,8 +151,8 @@ export default function HomePage() {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <SectionHeader
-              title="Complete Maritime Platform"
-              description="Seven integrated modules covering every aspect of maritime operations"
+              title={t("modules.sectionTitle")}
+              description={t("modules.sectionDescription")}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -169,7 +172,7 @@ export default function HomePage() {
                         </p>
                       </div>
                       <div className="flex items-center text-sm text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                        Explore <ArrowRight className="h-4 w-4 ml-1" />
+                        {t("modules.explore")} <ArrowRight className="h-4 w-4 ml-1" />
                       </div>
                     </CardContent>
                   </Card>
@@ -183,8 +186,8 @@ export default function HomePage() {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <SectionHeader
-              title="Built for Every Maritime Need"
-              description="Tailored solutions for freight forwarders, shipping companies, and import/export businesses"
+              title={t("industrySolutions.sectionTitle")}
+              description={t("industrySolutions.sectionDescription")}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -202,24 +205,17 @@ export default function HomePage() {
                   <div className="bg-primary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <Ship className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-bold">Freight Forwarders</h3>
+                  <h3 className="text-2xl font-bold">{t("industrySolutions.freightForwarders.title")}</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Streamline operations with automated documentation, real-time tracking, and integrated payment
-                    processing.
+                    {t("industrySolutions.freightForwarders.description")}
                   </p>
                   <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span className="text-sm">Multi-shipment management</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span className="text-sm">Client portal access</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span className="text-sm">Automated invoicing</span>
-                    </li>
+                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                        <span className="text-sm">{t(`industrySolutions.freightForwarders.${f}`)}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -238,24 +234,17 @@ export default function HomePage() {
                   <div className="bg-secondary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <Globe className="h-8 w-8 text-secondary" />
                   </div>
-                  <h3 className="text-2xl font-bold">Shipping Companies</h3>
+                  <h3 className="text-2xl font-bold">{t("industrySolutions.shippingCompanies.title")}</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Optimize vessel utilization with our auction marketplace and manage charterparty agreements
-                    digitally.
+                    {t("industrySolutions.shippingCompanies.description")}
                   </p>
                   <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
-                      <span className="text-sm">Fleet management dashboard</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
-                      <span className="text-sm">Digital charterparty contracts</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
-                      <span className="text-sm">Capacity optimization</span>
-                    </li>
+                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
+                        <span className="text-sm">{t(`industrySolutions.shippingCompanies.${f}`)}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -274,24 +263,17 @@ export default function HomePage() {
                   <div className="bg-accent/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <BarChart3 className="h-8 w-8 text-accent" />
                   </div>
-                  <h3 className="text-2xl font-bold">Import/Export</h3>
+                  <h3 className="text-2xl font-bold">{t("industrySolutions.importExport.title")}</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Simplify international trade with end-to-end visibility, automated customs, and integrated
-                    insurance.
+                    {t("industrySolutions.importExport.description")}
                   </p>
                   <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
-                      <span className="text-sm">Customs clearance tracking</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
-                      <span className="text-sm">Cargo insurance quotes</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
-                      <span className="text-sm">Compliance management</span>
-                    </li>
+                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
+                        <span className="text-sm">{t(`industrySolutions.importExport.${f}`)}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -303,8 +285,8 @@ export default function HomePage() {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <SectionHeader
-              title="Powered by Industry-Leading Integrations"
-              description="Seamlessly connected to the world's top maritime and logistics platforms"
+              title={t("integrations.sectionTitle")}
+              description={t("integrations.sectionDescription")}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -313,9 +295,9 @@ export default function HomePage() {
                   <div className="bg-primary/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
                     <Globe className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-xl">MarineTraffic</h3>
+                  <h3 className="font-semibold text-xl">{t("integrations.marineTraffic.title")}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Real-time vessel tracking with global AIS data coverage
+                    {t("integrations.marineTraffic.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -325,9 +307,9 @@ export default function HomePage() {
                   <div className="bg-secondary/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
                     <Zap className="h-8 w-8 text-secondary" />
                   </div>
-                  <h3 className="font-semibold text-xl">Alibaba Trade</h3>
+                  <h3 className="font-semibold text-xl">{t("integrations.alibabaTrade.title")}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Direct integration with global B2B marketplace
+                    {t("integrations.alibabaTrade.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -337,9 +319,9 @@ export default function HomePage() {
                   <div className="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
                     <Shield className="h-8 w-8 text-accent" />
                   </div>
-                  <h3 className="font-semibold text-xl">Paystack</h3>
+                  <h3 className="font-semibold text-xl">{t("integrations.paystack.title")}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Secure payment processing for all transactions
+                    {t("integrations.paystack.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -349,7 +331,6 @@ export default function HomePage() {
 
         {/* Why Choose Us */}
         <section className="relative py-24 overflow-hidden bg-slate-950">
-          {/* Background Image with Overlay */}
           <div className="absolute inset-0">
             <img
               src="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1920&q=80"
@@ -360,27 +341,24 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-950/90 to-slate-950/95" />
           </div>
 
-          {/* Content */}
           <div className="relative container mx-auto px-4 text-white">
-            {/* Heading */}
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                Why Choose Ontime Maritime
+                {t("whyChooseUs.sectionTitle")}
               </h2>
               <p className="text-slate-300 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-                The most comprehensive and secure maritime platform in the industry
+                {t("whyChooseUs.sectionDescription")}
               </p>
             </div>
 
-            {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               <div className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/50">
                 <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-primary/20 group-hover:scale-110 transition-transform duration-300">
                   <Lock className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Bank-Level Security</h3>
+                <h3 className="text-lg font-semibold mb-2">{t("whyChooseUs.security.title")}</h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  256-bit encryption and blockchain verification for all transactions and mission-critical documents.
+                  {t("whyChooseUs.security.description")}
                 </p>
               </div>
 
@@ -388,9 +366,9 @@ export default function HomePage() {
                 <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-secondary/20 group-hover:scale-110 transition-transform duration-300">
                   <Clock className="h-6 w-6 text-secondary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">24/7 Reliability</h3>
+                <h3 className="text-lg font-semibold mb-2">{t("whyChooseUs.reliability.title")}</h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  99.9% uptime SLA backed by round-the-clock monitoring and technical support.
+                  {t("whyChooseUs.reliability.description")}
                 </p>
               </div>
 
@@ -398,105 +376,58 @@ export default function HomePage() {
                 <div className="mb-5 flex items-center justify-center h-12 w-12 rounded-xl bg-accent/20 group-hover:scale-110 transition-transform duration-300">
                   <Globe className="h-6 w-6 text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Global Reach</h3>
+                <h3 className="text-lg font-semibold mb-2">{t("whyChooseUs.globalReach.title")}</h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  Active in 150+ countries with multilingual support and region-aware compliance.
+                  {t("whyChooseUs.globalReach.description")}
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-
         {/* Testimonials */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <SectionHeader
-              title="Trusted by Industry Leaders"
-              description="See what our clients say about our platform"
+              title={t("testimonials.sectionTitle")}
+              description={t("testimonials.sectionDescription")}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src="https://images.pexels.com/photos/31538020/pexels-photo-31538020.jpeg"
-                    alt="Chukwuemeka Okafor"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-12 relative z-10">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    "Ontime Maritime has revolutionized how we manage our global shipments. The real-time tracking saves
-                    us countless hours."
-                  </p>
-                  <div>
-                    <p className="font-semibold">Chukwuemeka Okafor</p>
-                    <p className="text-sm text-muted-foreground">CEO, Global Freight Ltd</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1507152832244-10d45c7eda57?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Amina Bello"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-12 relative z-10">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    "The auction marketplace helped us optimize our vessel capacity by 40%. Outstanding platform with
-                    excellent support."
-                  </p>
-                  <div>
-                    <p className="font-semibold">Amina Bello</p>
-                    <p className="text-sm text-muted-foreground">Director, Pacific Shipping Co</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1533108165347-036ec233d7ec?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Oluwaseun Adeyemi"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-12 relative z-10">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    "Best maritime platform we've used. The analytics dashboard gives us insights we never had before.
-                    Highly recommended!"
-                  </p>
-                  <div>
-                    <p className="font-semibold">Oluwaseun Adeyemi</p>
-                    <p className="text-sm text-muted-foreground">Manager, Lagos Trade Hub</p>
-                  </div>
-                </CardContent>
-              </Card>
+              {(["testimonial1", "testimonial2", "testimonial3"] as const).map((key, idx) => {
+                const images = [
+                  "https://images.pexels.com/photos/31538020/pexels-photo-31538020.jpeg",
+                  "https://images.unsplash.com/photo-1507152832244-10d45c7eda57?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                  "https://images.unsplash.com/photo-1533108165347-036ec233d7ec?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                ]
+                return (
+                  <Card key={key} className="glass overflow-hidden hover:shadow-xl transition-all duration-500 group border-2 hover:border-primary/30">
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={images[idx]}
+                        alt={t(`testimonials.${key}.name`)}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-background to-transparent" />
+                    </div>
+                    <CardContent className="p-6 space-y-4 -mt-12 relative z-10">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        "{t(`testimonials.${key}.quote`)}"
+                      </p>
+                      <div>
+                        <p className="font-semibold">{t(`testimonials.${key}.name`)}</p>
+                        <p className="text-sm text-muted-foreground">{t(`testimonials.${key}.role`)}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -506,15 +437,15 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-linear-to-br from-primary via-primary to-secondary opacity-90" />
           <div className="container mx-auto px-4 text-center relative z-10">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance">
-              Ready to Transform Your Maritime Operations?
+              {t("cta.title")}
             </h2>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed opacity-95">
-              Join thousands of companies already using Ontime Maritime
+              {t("cta.description")}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/register">
                 <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-slate-100 shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                  Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+                  {t("cta.startFreeTrial")} <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/about">
@@ -523,7 +454,7 @@ export default function HomePage() {
                   variant="outline"
                   className="border-white text-white hover:bg-white/10 bg-transparent backdrop-blur-sm transition-all hover:scale-105"
                 >
-                  Learn More
+                  {t("cta.learnMore")}
                 </Button>
               </Link>
             </div>

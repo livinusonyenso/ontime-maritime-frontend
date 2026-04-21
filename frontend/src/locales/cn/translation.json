@@ -1,0 +1,196 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "services": "服务",
+    "marketplace": "市场",
+    "legalHub": "海事科技律师",
+    "securityHotline": "安全热线",
+    "login": "登录",
+    "register": "注册",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "tagline": "货物遇见科技",
+    "brand": "海事平台"
+  },
+  "hero": {
+    "slide1": {
+      "title": "货物遇见科技",
+      "subtitle": "革命性海事平台",
+      "description": "为全球航运提供实时追踪、自动化文档和数字市场"
+    },
+    "slide2": {
+      "title": "追踪每一批货物",
+      "subtitle": "实时可见性",
+      "description": "通过GPS追踪和自动状态更新，跨洋监控您的货物"
+    },
+    "slide3": {
+      "title": "数字市场",
+      "subtitle": "拍卖与保险",
+      "description": "通过我们的综合平台竞标集装箱舱位并获取货物保险"
+    },
+    "getStarted": "立即开始",
+    "trackShipment": "追踪货物",
+    "uptime": "99.9% 正常运行时间",
+    "countries": "150+ 个国家",
+    "support": "全天候支持",
+    "scroll": "向下滚动"
+  },
+  "features": {
+    "sectionTitle": "全面的海事解决方案",
+    "sectionDescription": "高效管理您货运业务所需的一切",
+    "realTimeTracking": {
+      "title": "实时追踪",
+      "description": "通过GPS追踪和自动状态更新实时监控您的货物"
+    },
+    "digitalDocuments": {
+      "title": "数字文档",
+      "description": "数字化管理提单、发票和租船合同"
+    },
+    "cargoAuctions": {
+      "title": "货物拍卖",
+      "description": "通过我们的数字市场竞标集装箱舱位和租用船舶"
+    },
+    "analyticsInsights": {
+      "title": "分析与洞察",
+      "description": "通过全面的航运分析做出数据驱动的决策"
+    }
+  },
+  "modules": {
+    "sectionTitle": "完整海事平台",
+    "sectionDescription": "七个集成模块涵盖海事运营的每个方面",
+    "explore": "探索",
+    "vesselTracking": {
+      "title": "船舶追踪",
+      "description": "通过MarineTraffic和VesselFinder AIS数据进行实时船舶追踪"
+    },
+    "digitalBOL": {
+      "title": "数字提单",
+      "description": "区块链验证的电子提单系统，自动验证，每份提单50美元"
+    },
+    "legalHub": {
+      "title": "法律与合规中心",
+      "description": "获取经验证的海事律师、模板和合规咨询"
+    },
+    "securityHotline": {
+      "title": "安全热线",
+      "description": "举报欺诈、海盗、货物丢失和海事犯罪"
+    },
+    "arbitration": {
+      "title": "海事仲裁",
+      "description": "航运合同、租船协议和货物索赔的纠纷解决"
+    },
+    "marketplace": {
+      "title": "设备市场",
+      "description": "买卖集装箱、起重机、仓库、备件和保险"
+    },
+    "store": {
+      "title": "OnTime 商店",
+      "description": "进口海事设备、发电机、雷达系统和液压零件"
+    },
+    "knowledge": {
+      "title": "知识中心",
+      "description": "PDF指南、培训材料、IMO标准和海关资源"
+    }
+  },
+  "industrySolutions": {
+    "sectionTitle": "满足每种海事需求",
+    "sectionDescription": "为货运代理、航运公司和进出口企业量身定制的解决方案",
+    "freightForwarders": {
+      "title": "货运代理",
+      "description": "通过自动化文档、实时追踪和集成支付处理简化运营。",
+      "feature1": "多货物管理",
+      "feature2": "客户门户访问",
+      "feature3": "自动开票"
+    },
+    "shippingCompanies": {
+      "title": "航运公司",
+      "description": "通过我们的拍卖市场优化船舶利用率并数字化管理租船协议。",
+      "feature1": "船队管理仪表板",
+      "feature2": "数字租船合同",
+      "feature3": "容量优化"
+    },
+    "importExport": {
+      "title": "进出口",
+      "description": "通过端到端可见性、自动化海关和集成保险简化国际贸易。",
+      "feature1": "清关追踪",
+      "feature2": "货物保险报价",
+      "feature3": "合规管理"
+    }
+  },
+  "integrations": {
+    "sectionTitle": "由行业领先集成驱动",
+    "sectionDescription": "与世界顶级海事和物流平台无缝连接",
+    "marineTraffic": {
+      "title": "MarineTraffic",
+      "description": "具有全球AIS数据覆盖的实时船舶追踪"
+    },
+    "alibabaTrade": {
+      "title": "阿里巴巴贸易",
+      "description": "与全球B2B市场的直接集成"
+    },
+    "paystack": {
+      "title": "Paystack",
+      "description": "所有交易的安全支付处理"
+    }
+  },
+  "whyChooseUs": {
+    "sectionTitle": "为什么选择Ontime Maritime",
+    "sectionDescription": "行业中最全面、最安全的海事平台",
+    "security": {
+      "title": "银行级安全",
+      "description": "256位加密和区块链验证，保障所有交易和关键任务文档。"
+    },
+    "reliability": {
+      "title": "全天候可靠性",
+      "description": "99.9%正常运行时间SLA，由全天候监控和技术支持保障。"
+    },
+    "globalReach": {
+      "title": "全球覆盖",
+      "description": "活跃于150多个国家，提供多语言支持和区域合规管理。"
+    }
+  },
+  "testimonials": {
+    "sectionTitle": "受行业领导者信任",
+    "sectionDescription": "听听我们的客户如何评价我们的平台",
+    "testimonial1": {
+      "quote": "Ontime Maritime彻底改变了我们管理全球货物的方式。实时追踪为我们节省了无数小时。",
+      "name": "Chukwuemeka Okafor",
+      "role": "CEO，全球货运有限公司"
+    },
+    "testimonial2": {
+      "quote": "拍卖市场帮助我们将船舶容量利用率提高了40%。杰出的平台，出色的支持。",
+      "name": "Amina Bello",
+      "role": "总监，太平洋航运公司"
+    },
+    "testimonial3": {
+      "quote": "我们用过的最好的海事平台。分析仪表板为我们提供了前所未有的洞察。强烈推荐！",
+      "name": "Oluwaseun Adeyemi",
+      "role": "经理，拉各斯贸易中心"
+    }
+  },
+  "cta": {
+    "title": "准备好转变您的海事运营了吗？",
+    "description": "加入已在使用Ontime Maritime的数千家公司",
+    "startFreeTrial": "开始免费试用",
+    "learnMore": "了解更多"
+  },
+  "footer": {
+    "brand": "海事平台",
+    "tagline": "货物遇见科技",
+    "about": "革命性海事货运平台，连接全球货主、承运人和物流服务商。",
+    "quickLinks": "快速链接",
+    "links": {
+      "aboutUs": "关于我们",
+      "services": "服务",
+      "tracking": "货物追踪",
+      "auctions": "拍卖",
+      "insurance": "保险"
+    },
+    "contactUs": "联系我们",
+    "address": "尼日利亚拉各斯海事广场123号",
+    "followUs": "关注我们",
+    "socialTagline": "获取最新的海事技术创新和货运解决方案资讯。",
+    "copyright": "© {{year}} ONTIME RESOURCES LIMITED. 版权所有。"
+  }
+}

@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function Header() {
+  const { t } = useTranslation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const toggleMenu = useCallback(() => {
@@ -53,7 +56,7 @@ export function Header() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b">
         <div className="container mx-auto px-4">
           <div className="h-16 flex items-center justify-between gap-4">
-            
+
             {/* Logo - Left side */}
             <Link to="/" className="flex items-center gap-2 shrink-0">
               <img
@@ -63,10 +66,10 @@ export function Header() {
               />
               <div className="hidden sm:flex flex-col">
                 <span className="font-bold text-base md:text-lg leading-none">
-                  MARITIME
+                  {t("nav.brand")}
                 </span>
                 <span className="text-[10px] md:text-xs text-muted-foreground">
-                  Cargo Meet Tech
+                  {t("nav.tagline")}
                 </span>
               </div>
             </Link>
@@ -74,36 +77,36 @@ export function Header() {
             {/* Desktop Navigation - Center/Right */}
             <nav className="hidden lg:flex items-center gap-1">
               <Link to="/">
-                <Button variant="ghost" size="sm">Home</Button>
+                <Button variant="ghost" size="sm">{t("nav.home")}</Button>
               </Link>
               <Link to="/about">
-                <Button variant="ghost" size="sm">About</Button>
+                <Button variant="ghost" size="sm">{t("nav.about")}</Button>
               </Link>
               <Link to="/services">
-                <Button variant="ghost" size="sm">Services</Button>
+                <Button variant="ghost" size="sm">{t("nav.services")}</Button>
               </Link>
               <Link to="/marketplace">
-                <Button variant="ghost" size="sm">Marketplace</Button>
+                <Button variant="ghost" size="sm">{t("nav.marketplace")}</Button>
               </Link>
-              {/* <Link to="/store">
-                <Button variant="ghost" size="sm">OnTime Store</Button>
-              </Link> */}
               <Link to="/legal-hub">
-                <Button variant="ghost" size="sm">MarineTech Solicitors</Button>
+                <Button variant="ghost" size="sm">{t("nav.legalHub")}</Button>
               </Link>
               <Link to="/security-hotline">
-                <Button variant="ghost" size="sm">Security Hotline</Button>
+                <Button variant="ghost" size="sm">{t("nav.securityHotline")}</Button>
               </Link>
             </nav>
 
             {/* Right side actions */}
             <div className="flex items-center gap-2 shrink-0">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Desktop auth buttons */}
               <Link to="/login" className="hidden md:block">
-                <Button variant="ghost" size="sm">Login</Button>
+                <Button variant="ghost" size="sm">{t("nav.login")}</Button>
               </Link>
               <Link to="/register" className="hidden md:block">
-                <Button size="sm">Register</Button>
+                <Button size="sm">{t("nav.register")}</Button>
               </Link>
 
               {/* Mobile Menu Toggle - ALWAYS visible on mobile/tablet */}
@@ -111,12 +114,12 @@ export function Header() {
                 type="button"
                 className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
                 onClick={toggleMenu}
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-label={mobileMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-menu"
               >
                 <span className="sr-only">
-                  {mobileMenuOpen ? "Close menu" : "Open menu"}
+                  {mobileMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
                 </span>
                 {mobileMenuOpen ? (
                   <X className="h-6 w-6" aria-hidden="true" />
@@ -132,8 +135,8 @@ export function Header() {
       {/* Mobile Menu Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
-          mobileMenuOpen 
-            ? "opacity-100 pointer-events-auto" 
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
         onClick={closeMenu}
@@ -151,7 +154,7 @@ export function Header() {
         aria-label="Mobile navigation"
       >
         <div className="flex flex-col h-full">
-          
+
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <Link
@@ -165,17 +168,17 @@ export function Header() {
                 className="h-10 w-auto object-contain"
               />
               <div className="flex flex-col">
-                <span className="font-bold text-sm leading-tight">MARITIME</span>
-                <span className="text-[10px] text-muted-foreground">Cargo Meet Tech</span>
+                <span className="font-bold text-sm leading-tight">{t("nav.brand")}</span>
+                <span className="text-[10px] text-muted-foreground">{t("nav.tagline")}</span>
               </div>
             </Link>
-            
+
             {/* Close button */}
             <button
               type="button"
               className="inline-flex items-center justify-center w-10 h-10 rounded-md text-foreground hover:bg-destructive/10 hover:text-destructive focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
               onClick={closeMenu}
-              aria-label="Close menu"
+              aria-label={t("nav.closeMenu")}
             >
               <X className="h-6 w-6" aria-hidden="true" />
             </button>
@@ -185,13 +188,12 @@ export function Header() {
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-1">
               {[
-                { to: "/", label: "Home" },
-                { to: "/about", label: "About" },
-                { to: "/services", label: "Services" },
-                { to: "/marketplace", label: "Marketplace" },
-                // { to: "/store", label: "OnTime Store" },
-                { to: "/legal-hub", label: "MarineTech Solicitors" },
-                { to: "/security-hotline", label: "Security Hotline" },
+                { to: "/", label: t("nav.home") },
+                { to: "/about", label: t("nav.about") },
+                { to: "/services", label: t("nav.services") },
+                { to: "/marketplace", label: t("nav.marketplace") },
+                { to: "/legal-hub", label: t("nav.legalHub") },
+                { to: "/security-hotline", label: t("nav.securityHotline") },
               ].map((item) => (
                 <li key={item.to}>
                   <Link
@@ -204,23 +206,29 @@ export function Header() {
                 </li>
               ))}
             </ul>
+
+            {/* Language switcher in mobile sidebar */}
+            <div className="mt-4 px-2">
+              <p className="text-xs text-muted-foreground px-2 mb-2 uppercase tracking-wider">Language</p>
+              <LanguageSwitcher />
+            </div>
           </nav>
 
           {/* Footer Actions */}
           <div className="p-4 border-t space-y-3">
             <Link to="/login" onClick={closeMenu} className="block">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full h-12 text-base font-semibold"
               >
-                Login
+                {t("nav.login")}
               </Button>
             </Link>
             <Link to="/register" onClick={closeMenu} className="block">
-              <Button 
+              <Button
                 className="w-full h-12 text-base font-semibold"
               >
-                Register
+                {t("nav.register")}
               </Button>
             </Link>
           </div>

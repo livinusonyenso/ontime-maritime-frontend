@@ -1,8 +1,11 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export function Footer() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+  const year = new Date().getFullYear()
 
   const handleLinkClick = (path: string) => {
     navigate(path)
@@ -23,25 +26,25 @@ export function Footer() {
                 className="h-16 md:h-20 w-auto object-contain"
               />
               <div className="hidden md:flex flex-col">
-                <span className="font-bold text-lg leading-none text-white">MARITIME</span>
-                <span className="text-xs text-slate-400">Cargo Meet Tech</span>
+                <span className="font-bold text-lg leading-none text-white">{t("footer.brand")}</span>
+                <span className="text-xs text-slate-400">{t("footer.tagline")}</span>
               </div>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
-              Revolutionary maritime cargo platform connecting shippers, carriers, and logistics providers worldwide.
+              {t("footer.about")}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Quick Links</h3>
+            <h3 className="font-semibold text-white mb-4">{t("footer.quickLinks")}</h3>
             <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => handleLinkClick('/about')}
                   className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
                 >
-                  About Us
+                  {t("footer.links.aboutUs")}
                 </button>
               </li>
               <li>
@@ -49,7 +52,7 @@ export function Footer() {
                   onClick={() => handleLinkClick('/services')}
                   className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
                 >
-                  Services
+                  {t("footer.links.services")}
                 </button>
               </li>
               <li>
@@ -57,7 +60,7 @@ export function Footer() {
                   onClick={() => handleLinkClick('/tracking')}
                   className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
                 >
-                  Tracking
+                  {t("footer.links.tracking")}
                 </button>
               </li>
               <li>
@@ -65,7 +68,7 @@ export function Footer() {
                   onClick={() => handleLinkClick('/auctions')}
                   className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
                 >
-                  Auctions
+                  {t("footer.links.auctions")}
                 </button>
               </li>
               <li>
@@ -73,7 +76,7 @@ export function Footer() {
                   onClick={() => handleLinkClick('/insurance')}
                   className="text-sm text-slate-400 hover:text-primary transition-colors text-left w-full"
                 >
-                  Insurance
+                  {t("footer.links.insurance")}
                 </button>
               </li>
             </ul>
@@ -81,11 +84,11 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Contact Us</h3>
+            <h3 className="font-semibold text-white mb-4">{t("footer.contactUs")}</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                <span>123 Maritime Plaza, Lagos, Nigeria</span>
+                <span>{t("footer.address")}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-slate-400">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
@@ -104,7 +107,7 @@ export function Footer() {
 
           {/* Social & Newsletter */}
         <div>
-  <h3 className="font-semibold text-white mb-4">Follow Us</h3>
+  <h3 className="font-semibold text-white mb-4">{t("footer.followUs")}</h3>
   <div className="flex gap-3 mb-6">
     <a
       href="#"
@@ -144,7 +147,7 @@ export function Footer() {
   </div>
 
   <p className="text-sm text-slate-400">
-    Stay updated with the latest maritime technology innovations and cargo solutions.
+    {t("footer.socialTagline")}
   </p>
 </div>
 
@@ -152,9 +155,9 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-400">© 2025 ONTIME RESOURCES LIMITED. All rights reserved.</p>
-          <p className="text-sm font-semibold text-primary">Cargo Meet Tech</p>
+        <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col items-center gap-2 text-center">
+          <p className="text-sm font-semibold text-primary">{t("footer.tagline")}</p>
+          <p className="text-sm text-slate-400">{t("footer.copyright", { year })}</p>
         </div>
       </div>
     </footer>
