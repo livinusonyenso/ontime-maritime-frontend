@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next"
 import LanguageDetector from "i18next-browser-languagedetector"
 
 import enTranslation from "./locales/en/translation.json"
-import cnTranslation from "./locales/cn/translation.json"
+import zhTranslation from "./locales/cn/translation.json"
 
 i18n
   .use(LanguageDetector)
@@ -11,12 +11,18 @@ i18n
   .init({
     resources: {
       en: { translation: enTranslation },
-      cn: { translation: cnTranslation },
+      // BCP 47 tag for Chinese is "zh", not "cn"
+      // "cn" is a country code — browsers never report it as a language
+      zh: { translation: zhTranslation },
     },
     fallbackLng: "en",
-    supportedLngs: ["en", "cn"],
+    // "zh" covers zh-CN, zh-TW, zh-Hans, zh-Hant, etc. via nonExplicitSupportedLngs
+    supportedLngs: ["en", "zh"],
+    // Allow "zh-CN" / "zh-TW" / "zh-Hans" to resolve to the "zh" resource
+    nonExplicitSupportedLngs: true,
     detection: {
-      order: ["localStorage", "navigator"],
+      // navigator first — reads browser language before any cached value
+      order: ["navigator", "localStorage", "htmlTag"],
       caches: ["localStorage"],
       lookupLocalStorage: "ontime_language",
     },

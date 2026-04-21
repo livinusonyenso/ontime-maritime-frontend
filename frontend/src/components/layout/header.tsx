@@ -100,7 +100,7 @@ export function Header() {
             {/* Right side actions */}
             <div className="flex items-center gap-2 shrink-0">
               {/* Language Switcher */}
-              <LanguageSwitcher />
+              {/* <LanguageSwitcher /> */}
 
               {/* Desktop auth buttons */}
               <Link to="/login" className="hidden md:block">
