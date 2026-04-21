@@ -48,27 +48,7 @@ import {
   Loader2,
   ShoppingCart,
 } from "lucide-react"
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const CATEGORIES = [
-  { value: "all",         label: "All Categories" },
-  { value: "equipment",   label: "Equipment"       },
-  { value: "vessel",      label: "Vessel"           },
-  { value: "container",   label: "Container"        },
-  { value: "crane",       label: "Crane"            },
-  { value: "spare_parts", label: "Spare Parts"      },
-  { value: "repairs",     label: "Repairs"          },
-  { value: "insurance",   label: "Insurance"        },
-  { value: "warehouse",   label: "Warehouse"        },
-]
-
-const SORT_OPTIONS = [
-  { value: "newest",     label: "Newest First"       },
-  { value: "price_asc",  label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "featured",   label: "Featured"           },
-]
+import { useTranslation } from "react-i18next"
 
 const PAGE_SIZE = 20
 
@@ -94,11 +74,13 @@ function ListingCard({
   onClick,
   onBuyNow,
   buying,
+  t,
 }: {
   listing: MarketplaceListing
   onClick: () => void
   onBuyNow: (e: React.MouseEvent) => void
   buying: boolean
+  t: (key: string) => string
 }) {
   return (
     <Card
@@ -121,12 +103,12 @@ function ListingCard({
 
         {listing.featured && (
           <Badge className="absolute top-2 left-2 bg-amber-500 hover:bg-amber-500 text-white text-[10px]">
-            Featured
+            {t("marketplacepage.card.featured")}
           </Badge>
         )}
         {listing.bolVerified && (
           <Badge className="absolute top-2 right-2 bg-green-500 hover:bg-green-500 text-white text-[10px]">
-            BOL Verified
+            {t("marketplacepage.card.bolVerified")}
           </Badge>
         )}
       </div>
@@ -167,7 +149,7 @@ function ListingCard({
           </div>
         </div>
 
-        <p className="text-[11px] text-muted-foreground truncate">by {listing.sellerName}</p>
+        <p className="text-[11px] text-muted-foreground truncate">{t("marketplacepage.card.by")} {listing.sellerName}</p>
 
         {/* Buy Now button */}
         <Button
@@ -180,7 +162,7 @@ function ListingCard({
             ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
             : <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
           }
-          {buying ? "Redirecting…" : "Buy Now"}
+          {buying ? t("marketplacepage.card.redirecting") : t("marketplacepage.card.buyNow")}
         </Button>
       </CardContent>
     </Card>
@@ -207,6 +189,26 @@ export default function MarketplacePage() {
   const navigate   = useNavigate()
   const dispatch   = useAppDispatch()
   const { isAuthenticated, user } = useAuth()
+  const { t } = useTranslation()
+
+  const CATEGORIES = [
+    { value: "all",         label: t("marketplacepage.categories.all") },
+    { value: "equipment",   label: t("marketplacepage.categories.equipment") },
+    { value: "vessel",      label: t("marketplacepage.categories.vessel") },
+    { value: "container",   label: t("marketplacepage.categories.container") },
+    { value: "crane",       label: t("marketplacepage.categories.crane") },
+    { value: "spare_parts", label: t("marketplacepage.categories.spare_parts") },
+    { value: "repairs",     label: t("marketplacepage.categories.repairs") },
+    { value: "insurance",   label: t("marketplacepage.categories.insurance") },
+    { value: "warehouse",   label: t("marketplacepage.categories.warehouse") },
+  ]
+
+  const SORT_OPTIONS = [
+    { value: "newest",     label: t("marketplacepage.sort.newest") },
+    { value: "price_asc",  label: t("marketplacepage.sort.price_asc") },
+    { value: "price_desc", label: t("marketplacepage.sort.price_desc") },
+    { value: "featured",   label: t("marketplacepage.sort.featured") },
+  ]
 
   const listings   = useAppSelector(selectAllListings)
   const hasMore    = useAppSelector(selectMarketplaceHasMore)
@@ -308,14 +310,13 @@ export default function MarketplacePage() {
           <div className="container mx-auto px-4 text-center max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
               <Store className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Maritime Marketplace</span>
+              <span className="text-sm font-medium">{t("marketplacepage.hero.badge")}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Equipment &amp; Warehouse Marketplace
+              {t("marketplacepage.hero.title")}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Browse verified maritime equipment, warehouses, containers, cranes,
-              spare parts, and more — no account needed.
+              {t("marketplacepage.hero.description")}
             </p>
           </div>
         </section>
@@ -328,7 +329,7 @@ export default function MarketplacePage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 className="pl-9"
-                placeholder="Search listings…"
+                placeholder={t("marketplacepage.filters.searchPlaceholder")}
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
@@ -366,7 +367,7 @@ export default function MarketplacePage() {
             {/* Result count */}
             {!loading && (
               <p className="text-sm text-muted-foreground mb-6">
-                {total.toLocaleString()} listing{total !== 1 ? "s" : ""} found
+                {t(total !== 1 ? "marketplacepage.results.found_other" : "marketplacepage.results.found_one", { count: total.toLocaleString() })}
               </p>
             )}
 
@@ -380,8 +381,8 @@ export default function MarketplacePage() {
             ) : listings.length === 0 ? (
               <div className="text-center py-24 text-muted-foreground">
                 <Package className="h-14 w-14 mx-auto mb-4 opacity-25" />
-                <p className="text-lg font-medium">No listings found</p>
-                <p className="text-sm mt-1">Try adjusting your search or category filter.</p>
+                <p className="text-lg font-medium">{t("marketplacepage.results.noResults")}</p>
+                <p className="text-sm mt-1">{t("marketplacepage.results.noResultsDesc")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -392,6 +393,7 @@ export default function MarketplacePage() {
                     onClick={() => navigate(`/marketplace/${listing.id}`)}
                     onBuyNow={(e) => handleBuyNow(listing, e)}
                     buying={buyingId === listing.id}
+                    t={t}
                   />
                 ))}
               </div>
@@ -409,10 +411,10 @@ export default function MarketplacePage() {
                   {loadingMore ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Loading…
+                      {t("marketplacepage.loading")}
                     </>
                   ) : (
-                    `Load More (${(total - listings.length).toLocaleString()} remaining)`
+                    t("marketplacepage.loadMore", { count: (total - listings.length).toLocaleString() })
                   )}
                 </Button>
               </div>

@@ -466,9 +466,9 @@ export default function HomePage() {
       {/* QR Code section */}
       <section className="py-14 bg-muted/40 border-t">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-3">
-          <h2 className="text-xl font-semibold text-center">Quick Access</h2>
+          <h2 className="text-xl font-semibold text-center">{t("qrcode.quickacess")}</h2>
           <p className="text-sm text-muted-foreground text-center max-w-sm">
-            Scan the QR code with your phone to visit the OnTime Maritime platform instantly.
+            {t("qrcode.description")}
           </p>
           <QrCode size={200} logoSrc="/logo.png" />
         </div>

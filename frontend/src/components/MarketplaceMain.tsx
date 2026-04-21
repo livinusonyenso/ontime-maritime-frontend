@@ -31,8 +31,10 @@ import {
 } from "@/store/slices/marketplaceSlice"
 
 import XCircle from "@/components/icons/x-circle"
+import { useTranslation } from "react-i18next"
 
 export default function MarketplaceMain() {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const {
     listings,
@@ -201,25 +203,24 @@ export default function MarketplaceMain() {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
               <Store className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Maritime Marketplace</span>
+              <span className="text-sm font-medium">{t("marketplace.hero.badge")}</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Equipment & Warehouse Marketplace
+              {t("marketplace.hero.title")}
             </h1>
 
             <p className="text-lg text-muted-foreground mb-8">
-              Buy and sell maritime equipment, warehouse space, containers, cranes, 
-              spare parts and repair services.
+              {t("marketplace.hero.description")}
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center mb-8">
               <Button size="lg" onClick={() => setShowSellerRegisterDialog(true)}>
                 <Plus className="h-5 w-5 mr-2" />
-                Become a Seller
+                {t("marketplace.hero.becomeSeller")}
               </Button>
               <Button size="lg" variant="outline" onClick={() => setShowListingDialog(true)}>
-                Post a Listing
+                {t("marketplace.hero.postListing")}
               </Button>
             </div>
 
@@ -228,7 +229,7 @@ export default function MarketplaceMain() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  placeholder="Search equipment, warehouses, containers..."
+                  placeholder={t("marketplace.hero.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                   className="pl-10 h-12"
@@ -240,17 +241,17 @@ export default function MarketplaceMain() {
                 onValueChange={(value) => dispatch(setFilterCategory(value))}
               >
                 <SelectTrigger className="w-40 h-12">
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder={t("marketplace.hero.categoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="equipment">Equipment</SelectItem>
-                  <SelectItem value="warehouse">Warehouses</SelectItem>
-                  <SelectItem value="container">Containers</SelectItem>
-                  <SelectItem value="crane">Cranes</SelectItem>
-                  <SelectItem value="spare_parts">Spare Parts</SelectItem>
-                  <SelectItem value="repairs">Repairs</SelectItem>
-                  <SelectItem value="insurance">Insurance</SelectItem>
+                  <SelectItem value="all">{t("marketplace.categories.all")}</SelectItem>
+                  <SelectItem value="equipment">{t("marketplace.categories.equipment")}</SelectItem>
+                  <SelectItem value="warehouse">{t("marketplace.categories.warehouse")}</SelectItem>
+                  <SelectItem value="container">{t("marketplace.categories.container")}</SelectItem>
+                  <SelectItem value="crane">{t("marketplace.categories.crane")}</SelectItem>
+                  <SelectItem value="spare_parts">{t("marketplace.categories.spare_parts")}</SelectItem>
+                  <SelectItem value="repairs">{t("marketplace.categories.repairs")}</SelectItem>
+                  <SelectItem value="insurance">{t("marketplace.categories.insurance")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -262,7 +263,7 @@ export default function MarketplaceMain() {
       <section className="border-b py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 overflow-x-auto pb-2">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">Popular:</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">{t("marketplace.categories.popular")}</span>
 
             {["container", "warehouse", "crane", "spare_parts", "insurance"].map((cat) => (
               <Button
@@ -285,9 +286,9 @@ export default function MarketplaceMain() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold">Browse Listings</h2>
+              <h2 className="text-2xl font-bold">{t("marketplace.listings.title")}</h2>
               <p className="text-muted-foreground">
-                {sortedListings.length} listings available
+                {t("marketplace.listings.available", { count: sortedListings.length })}
               </p>
             </div>
 
@@ -296,13 +297,13 @@ export default function MarketplaceMain() {
               onValueChange={(value: any) => dispatch(setSortBy(value))}
             >
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t("marketplace.listings.sortPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="price_low">Price: Low to High</SelectItem>
-                <SelectItem value="price_high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
+                <SelectItem value="newest">{t("marketplace.listings.newest")}</SelectItem>
+                <SelectItem value="price_low">{t("marketplace.listings.priceLow")}</SelectItem>
+                <SelectItem value="price_high">{t("marketplace.listings.priceHigh")}</SelectItem>
+                <SelectItem value="rating">{t("marketplace.listings.highestRated")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -330,11 +331,11 @@ export default function MarketplaceMain() {
                   )}
 
                   {listing.featured && (
-                    <Badge className="absolute top-2 left-2 bg-yellow-500">Featured</Badge>
+                    <Badge className="absolute top-2 left-2 bg-yellow-500">{t("marketplace.listings.featured")}</Badge>
                   )}
                   {listing.bolVerified && (
                     <Badge className="absolute top-2 right-2 bg-green-500">
-                      <CheckCircle2 className="h-3 w-3 mr-1" /> BOL Verified
+                      <CheckCircle2 className="h-3 w-3 mr-1" /> {t("marketplace.listings.bolVerified")}
                     </Badge>
                   )}
                 </div>
@@ -380,8 +381,8 @@ export default function MarketplaceMain() {
             <Card>
               <CardContent className="py-12 text-center">
                 <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-semibold mb-2">No Listings Found</h3>
-                <p className="text-muted-foreground">Try adjusting your search or filters.</p>
+                <h3 className="font-semibold mb-2">{t("marketplace.listings.noResults")}</h3>
+                <p className="text-muted-foreground">{t("marketplace.listings.noResultsDesc")}</p>
               </CardContent>
             </Card>
           )}
@@ -422,7 +423,7 @@ export default function MarketplaceMain() {
                   </Badge>
                   {selectedListing.bolVerified && (
                     <Badge className="bg-green-500">
-                      <CheckCircle2 className="h-3 w-3 mr-1" /> BOL Verified
+                      <CheckCircle2 className="h-3 w-3 mr-1" /> {t("marketplace.listings.bolVerified")}
                     </Badge>
                   )}
                 </div>
@@ -461,7 +462,7 @@ export default function MarketplaceMain() {
                     </div>
                     <Button variant="outline" size="sm">
                       <MessageSquare className="h-4 w-4 mr-1" />
-                      Contact
+                      {t("marketplace.listings.contact")}
                     </Button>
                   </div>
                 </div>
@@ -469,7 +470,7 @@ export default function MarketplaceMain() {
                 <div className="flex gap-2">
                   <Button className="flex-1" size="lg" onClick={() => setShowPurchaseDialog(true)}>
                     <ShieldCheck className="h-5 w-5 mr-2" />
-                    Verify & Pay
+                    {t("marketplace.purchase.verifyPay")}
                   </Button>
                   <Button variant="outline" size="lg">
                     <Heart className="h-5 w-5" />
@@ -488,44 +489,44 @@ export default function MarketplaceMain() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ShieldCheck className="h-5 w-5" />
-              Verify & Purchase
+              {t("marketplace.purchase.title")}
             </DialogTitle>
             <DialogDescription>
-              AI/Grok validates BOL details and shipment information.
+              {t("marketplace.purchase.description")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="py-4 space-y-4">
             {!verificationResult ? (
               <>
-                <Label>Bill of Lading Number</Label>
+                <Label>{t("marketplace.purchase.bolLabel")}</Label>
                 <Input
                   value={purchaseForm.bolNumber}
                   onChange={(e) =>
                     setPurchaseForm({ ...purchaseForm, bolNumber: e.target.value })
                   }
-                  placeholder="Enter BOL number"
+                  placeholder={t("marketplace.purchase.bolPlaceholder")}
                 />
 
-                <Label>Message</Label>
+                <Label>{t("marketplace.purchase.messageLabel")}</Label>
                 <Textarea
                   value={purchaseForm.message}
                   onChange={(e) =>
                     setPurchaseForm({ ...purchaseForm, message: e.target.value })
                   }
-                  placeholder="Any message to seller..."
+                  placeholder={t("marketplace.purchase.messagePlaceholder")}
                 />
 
                 <Button className="w-full" onClick={handleVerifyAndPay} disabled={isVerifying}>
                   {isVerifying ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Verifying with AI...
+                      {t("marketplace.purchase.verifying")}
                     </>
                   ) : (
                     <>
                       <Bot className="h-4 w-4 mr-2" />
-                      Run AI Verification
+                      {t("marketplace.purchase.runVerification")}
                     </>
                   )}
                 </Button>
@@ -536,10 +537,10 @@ export default function MarketplaceMain() {
                   <CheckCircle2 className="h-8 w-8" />
                 </div>
 
-                <h3 className="text-xl font-bold text-green-700">Payment Successful!</h3>
+                <h3 className="text-xl font-bold text-green-700">{t("marketplace.purchase.paymentSuccess")}</h3>
 
                 <div className="bg-muted p-4 rounded-lg text-left">
-                  <p className="text-sm text-muted-foreground">Transaction ID</p>
+                  <p className="text-sm text-muted-foreground">{t("marketplace.purchase.transactionId")}</p>
                   <p className="font-mono font-medium">
                     {verificationResult.transactionId}
                   </p>
@@ -553,7 +554,7 @@ export default function MarketplaceMain() {
                     dispatch(clearSelectedListing())
                   }}
                 >
-                  Done
+                  {t("marketplace.purchase.done")}
                 </Button>
               </div>
             ) : (
@@ -562,7 +563,7 @@ export default function MarketplaceMain() {
                 <div className="bg-green-50 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    Verification Complete
+                    {t("marketplace.purchase.verificationComplete")}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-2 text-sm">
@@ -572,7 +573,7 @@ export default function MarketplaceMain() {
                       ) : (
                         <XCircle className="h-4 w-4 text-red-500" />
                       )}
-                      BOL Valid
+                      {t("marketplace.purchase.bolValid")}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -581,7 +582,7 @@ export default function MarketplaceMain() {
                       ) : (
                         <XCircle className="h-4 w-4 text-red-500" />
                       )}
-                      Ownership Verified
+                      {t("marketplace.purchase.ownershipVerified")}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -590,7 +591,7 @@ export default function MarketplaceMain() {
                       ) : (
                         <XCircle className="h-4 w-4 text-red-500" />
                       )}
-                      Origin Verified
+                      {t("marketplace.purchase.originVerified")}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -599,14 +600,14 @@ export default function MarketplaceMain() {
                       ) : (
                         <XCircle className="h-4 w-4 text-red-500" />
                       )}
-                      Destination Verified
+                      {t("marketplace.purchase.destinationVerified")}
                     </div>
                   </div>
                 </div>
 
                 <Button className="w-full" size="lg" onClick={handleConfirmPurchase}>
                   <DollarSign className="h-5 w-5 mr-2" />
-                  Proceed to Payment
+                  {t("marketplace.purchase.proceedPayment")}
                 </Button>
               </>
             )}
@@ -618,32 +619,32 @@ export default function MarketplaceMain() {
       <Dialog open={showSellerRegisterDialog} onOpenChange={setShowSellerRegisterDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Become a Seller</DialogTitle>
+            <DialogTitle>{t("marketplace.seller.title")}</DialogTitle>
             <DialogDescription>
-              Simple onboarding. Start posting goods instantly.
+              {t("marketplace.seller.description")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <Label>Business Name</Label>
+            <Label>{t("marketplace.seller.businessName")}</Label>
             <Input
               value={sellerForm.businessName}
               onChange={(e) => setSellerForm({ ...sellerForm, businessName: e.target.value })}
             />
 
-            <Label>Email</Label>
+            <Label>{t("marketplace.seller.email")}</Label>
             <Input
               value={sellerForm.email}
               onChange={(e) => setSellerForm({ ...sellerForm, email: e.target.value })}
             />
 
-            <Label>Phone</Label>
+            <Label>{t("marketplace.seller.phone")}</Label>
             <Input
               value={sellerForm.phone}
               onChange={(e) => setSellerForm({ ...sellerForm, phone: e.target.value })}
             />
 
-            <Label>Country</Label>
+            <Label>{t("marketplace.seller.country")}</Label>
             <Input
               value={sellerForm.country}
               onChange={(e) => setSellerForm({ ...sellerForm, country: e.target.value })}
@@ -652,13 +653,13 @@ export default function MarketplaceMain() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSellerRegisterDialog(false)}>
-              Cancel
+              {t("marketplace.seller.cancel")}
             </Button>
             <Button
               onClick={handleSellerRegister}
               disabled={!sellerForm.businessName || !sellerForm.email || !sellerForm.phone}
             >
-              Register
+              {t("marketplace.seller.register")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -668,50 +669,50 @@ export default function MarketplaceMain() {
       <Dialog open={showListingDialog} onOpenChange={setShowListingDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create New Listing</DialogTitle>
+            <DialogTitle>{t("marketplace.createListing.title")}</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
             {/* CATEGORY */}
-            <Label>Category</Label>
+            <Label>{t("marketplace.createListing.categoryLabel")}</Label>
             <Select
               value={newListing.category}
               onValueChange={(value: any) => setNewListing({ ...newListing, category: value })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Category" />
+                <SelectValue placeholder={t("marketplace.createListing.categoryPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="equipment">Equipment</SelectItem>
-                <SelectItem value="warehouse">Warehouse</SelectItem>
-                <SelectItem value="container">Container</SelectItem>
-                <SelectItem value="crane">Crane</SelectItem>
-                <SelectItem value="spare_parts">Spare Parts</SelectItem>
-                <SelectItem value="repairs">Repairs</SelectItem>
-                <SelectItem value="insurance">Insurance</SelectItem>
+                <SelectItem value="equipment">{t("marketplace.categories.equipment")}</SelectItem>
+                <SelectItem value="warehouse">{t("marketplace.categories.warehouse")}</SelectItem>
+                <SelectItem value="container">{t("marketplace.categories.container")}</SelectItem>
+                <SelectItem value="crane">{t("marketplace.categories.crane")}</SelectItem>
+                <SelectItem value="spare_parts">{t("marketplace.categories.spare_parts")}</SelectItem>
+                <SelectItem value="repairs">{t("marketplace.categories.repairs")}</SelectItem>
+                <SelectItem value="insurance">{t("marketplace.categories.insurance")}</SelectItem>
               </SelectContent>
             </Select>
 
-            <Label>Title</Label>
+            <Label>{t("marketplace.createListing.titleLabel")}</Label>
             <Input
               value={newListing.title}
               onChange={(e) => setNewListing({ ...newListing, title: e.target.value })}
             />
 
-            <Label>Description</Label>
+            <Label>{t("marketplace.createListing.descriptionLabel")}</Label>
             <Textarea
               value={newListing.description}
               onChange={(e) => setNewListing({ ...newListing, description: e.target.value })}
             />
 
-            <Label>Price</Label>
+            <Label>{t("marketplace.createListing.priceLabel")}</Label>
             <Input
               type="number"
               value={newListing.price}
               onChange={(e) => setNewListing({ ...newListing, price: Number(e.target.value) })}
             />
 
-            <Label>Location Country</Label>
+            <Label>{t("marketplace.createListing.locationLabel")}</Label>
             <Input
               value={newListing.location.country}
               onChange={(e) =>
@@ -725,13 +726,13 @@ export default function MarketplaceMain() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowListingDialog(false)}>
-              Cancel
+              {t("marketplace.createListing.cancel")}
             </Button>
             <Button
               onClick={handleCreateListing}
               disabled={!newListing.category || !newListing.title || !newListing.price}
             >
-              Create Listing
+              {t("marketplace.createListing.create")}
             </Button>
           </DialogFooter>
         </DialogContent>

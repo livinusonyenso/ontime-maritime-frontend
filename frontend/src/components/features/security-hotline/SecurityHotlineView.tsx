@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import { fetchSecurityData, addReport, selectReport, clearSelectedReport, resetSubmissionSuccess } from "@/store/slices/securitySlice"
+import { useTranslation } from "react-i18next"
 import {
   Shield,
   Phone,
@@ -46,6 +47,7 @@ import {
 } from "lucide-react"
 
 export function SecurityHotlineView() {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { reports, contacts, selectedReport, submissionSuccess } = useAppSelector((state) => state.security)
 
@@ -154,37 +156,36 @@ export function SecurityHotlineView() {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-full mb-6">
               <Siren className="h-5 w-5 text-red-500" />
-              <span className="text-sm font-medium text-red-600">Security & Enforcement Hotline</span>
+              <span className="text-sm font-medium text-red-600">{t("securityhotline.hero.badge")}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Report Maritime Crimes
+              {t("securityhotline.hero.title")}
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Quick-response hotline for reporting maritime-related crimes including fraud, piracy, 
-              missing shipments, fake documents, and maritime scams.
+              {t("securityhotline.hero.description")}
             </p>
 
             {/* Emergency Contacts Banner */}
             <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
               <h3 className="font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center justify-center gap-2">
                 <PhoneCall className="h-5 w-5" />
-                Emergency Contacts
+                {t("securityhotline.hero.emergencyTitle")}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold">Maritime Police</div>
+                  <div className="text-lg font-bold">{t("securityhotline.hero.maritimePolice")}</div>
                   <a href="tel:+2341790123" className="text-red-600 hover:underline">
                     +234-1-790-1234
                   </a>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold">EFCC</div>
+                  <div className="text-lg font-bold">{t("securityhotline.hero.efcc")}</div>
                   <a href="tel:+2341844555" className="text-red-600 hover:underline">
                     +234-1-844-5555
                   </a>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold">Coast Guard</div>
+                  <div className="text-lg font-bold">{t("securityhotline.hero.coastGuard")}</div>
                   <a href="tel:+2341263000" className="text-red-600 hover:underline">
                     +234-1-263-0001
                   </a>
@@ -201,13 +202,13 @@ export function SecurityHotlineView() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-8">
               <TabsTrigger value="report" className="gap-2">
-                <AlertTriangle className="h-4 w-4" /> Report Incident
+                <AlertTriangle className="h-4 w-4" /> {t("securityhotline.tabs.report")}
               </TabsTrigger>
               <TabsTrigger value="my-reports" className="gap-2">
-                <Eye className="h-4 w-4" /> My Reports
+                <Eye className="h-4 w-4" /> {t("securityhotline.tabs.myReports")}
               </TabsTrigger>
               <TabsTrigger value="contacts" className="gap-2">
-                <Phone className="h-4 w-4" /> Agency Contacts
+                <Phone className="h-4 w-4" /> {t("securityhotline.tabs.contacts")}
               </TabsTrigger>
             </TabsList>
 
@@ -218,9 +219,9 @@ export function SecurityHotlineView() {
                   <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6 flex items-center gap-3">
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                     <div>
-                      <div className="font-semibold text-green-600">Report Submitted Successfully</div>
+                      <div className="font-semibold text-green-600">{t("securityhotline.form.successTitle")}</div>
                       <div className="text-sm text-green-600/80">
-                        Your report has been submitted. You will receive a case number via email.
+                        {t("securityhotline.form.successDesc")}
                       </div>
                     </div>
                     <Button
@@ -229,24 +230,23 @@ export function SecurityHotlineView() {
                       onClick={() => dispatch(resetSubmissionSuccess())}
                       className="ml-auto"
                     >
-                      Dismiss
+                      {t("securityhotline.form.dismiss")}
                     </Button>
                   </div>
                 )}
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>File a Report</CardTitle>
+                    <CardTitle>{t("securityhotline.form.cardTitle")}</CardTitle>
                     <CardDescription>
-                      Provide details about the maritime incident you want to report.
-                      All reports are handled confidentially.
+                      {t("securityhotline.form.cardDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Incident Type & Urgency */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Incident Type *</Label>
+                        <Label>{t("securityhotline.form.incidentType")}</Label>
                         <Select
                           value={reportForm.type}
                           onValueChange={(value: any) =>
@@ -254,44 +254,44 @@ export function SecurityHotlineView() {
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
+                            <SelectValue placeholder={t("securityhotline.form.selectType")} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="fraud">
                               <div className="flex items-center gap-2">
-                                <FileWarning className="h-4 w-4" /> Fraud
+                                <FileWarning className="h-4 w-4" /> {t("securityhotline.form.fraud")}
                               </div>
                             </SelectItem>
                             <SelectItem value="piracy">
                               <div className="flex items-center gap-2">
-                                <Anchor className="h-4 w-4" /> Piracy
+                                <Anchor className="h-4 w-4" /> {t("securityhotline.form.piracy")}
                               </div>
                             </SelectItem>
                             <SelectItem value="missing_shipment">
                               <div className="flex items-center gap-2">
-                                <FileSearch className="h-4 w-4" /> Missing Shipment
+                                <FileSearch className="h-4 w-4" /> {t("securityhotline.form.missingShipment")}
                               </div>
                             </SelectItem>
                             <SelectItem value="fake_documents">
                               <div className="flex items-center gap-2">
-                                <AlertCircle className="h-4 w-4" /> Fake Documents
+                                <AlertCircle className="h-4 w-4" /> {t("securityhotline.form.fakeDocuments")}
                               </div>
                             </SelectItem>
                             <SelectItem value="scam">
                               <div className="flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4" /> Maritime Scam
+                                <AlertTriangle className="h-4 w-4" /> {t("securityhotline.form.maritimeScam")}
                               </div>
                             </SelectItem>
                             <SelectItem value="other">
                               <div className="flex items-center gap-2">
-                                <Shield className="h-4 w-4" /> Other
+                                <Shield className="h-4 w-4" /> {t("securityhotline.form.other")}
                               </div>
                             </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label>Urgency Level</Label>
+                        <Label>{t("securityhotline.form.urgencyLevel")}</Label>
                         <Select
                           value={reportForm.urgency}
                           onValueChange={(value: any) =>
@@ -302,10 +302,10 @@ export function SecurityHotlineView() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="critical">Critical - Immediate Action Required</SelectItem>
+                            <SelectItem value="low">{t("securityhotline.form.low")}</SelectItem>
+                            <SelectItem value="medium">{t("securityhotline.form.medium")}</SelectItem>
+                            <SelectItem value="high">{t("securityhotline.form.high")}</SelectItem>
+                            <SelectItem value="critical">{t("securityhotline.form.critical")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -313,7 +313,7 @@ export function SecurityHotlineView() {
 
                     {/* Reporting Agency */}
                     <div>
-                      <Label>Report To *</Label>
+                      <Label>{t("securityhotline.form.reportTo")}</Label>
                       <Select
                         value={reportForm.agency}
                         onValueChange={(value: any) =>
@@ -326,17 +326,17 @@ export function SecurityHotlineView() {
                         <SelectContent>
                           <SelectItem value="maritime_police">
                             <div className="flex items-center gap-2">
-                              <Building2 className="h-4 w-4" /> Nigerian Maritime Police
+                              <Building2 className="h-4 w-4" /> {t("securityhotline.form.nigerianPolice")}
                             </div>
                           </SelectItem>
                           <SelectItem value="efcc">
                             <div className="flex items-center gap-2">
-                              <Shield className="h-4 w-4" /> EFCC Maritime Fraud Unit
+                              <Shield className="h-4 w-4" /> {t("securityhotline.form.efccUnit")}
                             </div>
                           </SelectItem>
                           <SelectItem value="coast_guard">
                             <div className="flex items-center gap-2">
-                              <Anchor className="h-4 w-4" /> Nigerian Navy Coast Guard
+                              <Anchor className="h-4 w-4" /> {t("securityhotline.form.navyCoastGuard")}
                             </div>
                           </SelectItem>
                         </SelectContent>
@@ -345,44 +345,44 @@ export function SecurityHotlineView() {
 
                     {/* Title & Description */}
                     <div>
-                      <Label>Incident Title *</Label>
+                      <Label>{t("securityhotline.form.incidentTitle")}</Label>
                       <Input
                         value={reportForm.title}
                         onChange={(e) =>
                           setReportForm({ ...reportForm, title: e.target.value })
                         }
-                        placeholder="Brief title describing the incident"
+                        placeholder={t("securityhotline.form.titlePlaceholder")}
                       />
                     </div>
 
                     <div>
-                      <Label>Description *</Label>
+                      <Label>{t("securityhotline.form.description")}</Label>
                       <Textarea
                         value={reportForm.description}
                         onChange={(e) =>
                           setReportForm({ ...reportForm, description: e.target.value })
                         }
-                        placeholder="Provide detailed information about the incident..."
+                        placeholder={t("securityhotline.form.descPlaceholder")}
                         rows={5}
                       />
                     </div>
 
                     {/* Location */}
                     <div>
-                      <Label>Location</Label>
+                      <Label>{t("securityhotline.form.location")}</Label>
                       <Input
                         value={reportForm.location}
                         onChange={(e) =>
                           setReportForm({ ...reportForm, location: e.target.value })
                         }
-                        placeholder="Where did this incident occur?"
+                        placeholder={t("securityhotline.form.locationPlaceholder")}
                       />
                     </div>
 
                     {/* Contact Information */}
                     <div className="border-t pt-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold">Your Contact Information</h4>
+                        <h4 className="font-semibold">{t("securityhotline.form.contactInfo")}</h4>
                         <div className="flex items-center gap-2">
                           <Checkbox
                             id="anonymous"
@@ -398,7 +398,7 @@ export function SecurityHotlineView() {
                             }
                           />
                           <Label htmlFor="anonymous" className="text-sm">
-                            Submit anonymously
+                            {t("securityhotline.form.anonymous")}
                           </Label>
                         </div>
                       </div>
@@ -406,7 +406,7 @@ export function SecurityHotlineView() {
                       {!reportForm.reporterContact.anonymous && (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <Label>Name</Label>
+                            <Label>{t("securityhotline.form.name")}</Label>
                             <Input
                               value={reportForm.reporterContact.name}
                               onChange={(e) =>
@@ -418,11 +418,11 @@ export function SecurityHotlineView() {
                                   },
                                 })
                               }
-                              placeholder="Your name"
+                              placeholder={t("securityhotline.form.namePlaceholder")}
                             />
                           </div>
                           <div>
-                            <Label>Email</Label>
+                            <Label>{t("securityhotline.form.email")}</Label>
                             <Input
                               type="email"
                               value={reportForm.reporterContact.email}
@@ -439,7 +439,7 @@ export function SecurityHotlineView() {
                             />
                           </div>
                           <div>
-                            <Label>Phone</Label>
+                            <Label>{t("securityhotline.form.phone")}</Label>
                             <Input
                               value={reportForm.reporterContact.phone}
                               onChange={(e) =>
@@ -466,7 +466,7 @@ export function SecurityHotlineView() {
                       disabled={!reportForm.type || !reportForm.title || !reportForm.description}
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      Submit Report
+                      {t("securityhotline.form.submit")}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -495,7 +495,7 @@ export function SecurityHotlineView() {
                               </Badge>
                             </div>
                             <div className="text-sm text-muted-foreground mb-2">
-                              Case #: {report.caseNumber}
+                              {t("securityhotline.reports.caseNo")} {report.caseNumber}
                             </div>
                             <p className="text-sm text-muted-foreground line-clamp-2">
                               {report.description}
@@ -518,7 +518,7 @@ export function SecurityHotlineView() {
                           onClick={() => dispatch(selectReport(report.id))}
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          View
+                          {t("securityhotline.reports.view")}
                         </Button>
                       </div>
                     </CardContent>
@@ -529,12 +529,12 @@ export function SecurityHotlineView() {
                   <Card>
                     <CardContent className="py-12 text-center">
                       <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      <h3 className="font-semibold mb-2">No Reports Yet</h3>
+                      <h3 className="font-semibold mb-2">{t("securityhotline.reports.noReports")}</h3>
                       <p className="text-muted-foreground mb-4">
-                        You haven't submitted any reports yet.
+                        {t("securityhotline.reports.noReportsDesc")}
                       </p>
                       <Button onClick={() => setActiveTab("report")}>
-                        File a Report
+                        {t("securityhotline.reports.fileReport")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -584,7 +584,7 @@ export function SecurityHotlineView() {
                       <Button variant="outline" className="w-full" asChild>
                         <a href={`tel:${contact.phone}`}>
                           <PhoneCall className="h-4 w-4 mr-2" />
-                          Call Now
+                          {t("securityhotline.contacts.callNow")}
                         </a>
                       </Button>
                     </CardFooter>
@@ -606,7 +606,7 @@ export function SecurityHotlineView() {
                 {selectedReport.title}
               </DialogTitle>
               <DialogDescription>
-                Case #: {selectedReport.caseNumber}
+                {t("securityhotline.reports.caseNo")} {selectedReport.caseNumber}
               </DialogDescription>
             </DialogHeader>
 
@@ -616,7 +616,7 @@ export function SecurityHotlineView() {
                   {selectedReport.status}
                 </Badge>
                 <Badge className={`${getUrgencyColor(selectedReport.urgency)} text-white capitalize`}>
-                  {selectedReport.urgency} Urgency
+                  {selectedReport.urgency} {t("securityhotline.dialog.urgency")}
                 </Badge>
                 <Badge variant="outline" className="capitalize">
                   {selectedReport.type.replace("_", " ")}
@@ -624,17 +624,17 @@ export function SecurityHotlineView() {
               </div>
 
               <div>
-                <h4 className="font-semibold mb-2">Description</h4>
+                <h4 className="font-semibold mb-2">{t("securityhotline.dialog.description")}</h4>
                 <p className="text-muted-foreground">{selectedReport.description}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold mb-1">Location</h4>
+                  <h4 className="font-semibold mb-1">{t("securityhotline.dialog.location")}</h4>
                   <p className="text-muted-foreground">{selectedReport.location}</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-1">Reported To</h4>
+                  <h4 className="font-semibold mb-1">{t("securityhotline.dialog.reportedTo")}</h4>
                   <p className="text-muted-foreground capitalize">
                     {selectedReport.agency.replace("_", " ")}
                   </p>
@@ -643,11 +643,11 @@ export function SecurityHotlineView() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Submitted:</span>{" "}
+                  <span className="text-muted-foreground">{t("securityhotline.dialog.submitted")}</span>{" "}
                   {new Date(selectedReport.createdAt).toLocaleString()}
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Last Updated:</span>{" "}
+                  <span className="text-muted-foreground">{t("securityhotline.dialog.lastUpdated")}</span>{" "}
                   {new Date(selectedReport.updatedAt).toLocaleString()}
                 </div>
               </div>

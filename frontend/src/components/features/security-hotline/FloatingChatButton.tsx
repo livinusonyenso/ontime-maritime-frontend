@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import { MessageCircle } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export function FloatingChatButton() {
+  const { t } = useTranslation()
   // WhatsApp contact number
   const whatsappNumber = "2348008984499" // 0808984499 with Nigeria country code
 
@@ -25,7 +27,7 @@ export function FloatingChatButton() {
 
       {/* Tooltip */}
       <div className="absolute bottom-0 right-20 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap shadow-lg animate-bounce pointer-events-none">
-        Need help? Chat with us!
+        {t("securityhotline.chatbuttontooltip")}
         <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-8 border-l-slate-900" />
       </div>
     </div>

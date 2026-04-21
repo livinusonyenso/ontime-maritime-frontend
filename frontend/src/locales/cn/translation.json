@@ -175,6 +175,437 @@
     "startFreeTrial": "开始免费试用",
     "learnMore": "了解更多"
   },
+  "securityhotline": {
+    "chatbuttontooltip": "需要帮助？与我们聊天！",
+    "hero": {
+      "badge": "安全与执法热线",
+      "title": "举报海事犯罪",
+      "description": "快速响应热线，用于举报与海事相关的犯罪，包括欺诈、海盗、货物丢失、假文件和海事诈骗。",
+      "emergencyTitle": "紧急联系方式",
+      "maritimePolice": "海事警察",
+      "efcc": "经济和金融犯罪委员会",
+      "coastGuard": "海岸警卫队"
+    },
+    "tabs": {
+      "report": "举报事件",
+      "myReports": "我的举报",
+      "contacts": "机构联系方式"
+    },
+    "form": {
+      "successTitle": "举报提交成功",
+      "successDesc": "您的举报已提交。您将通过电子邮件收到案件编号。",
+      "dismiss": "关闭",
+      "cardTitle": "提交举报",
+      "cardDesc": "请提供您要举报的海事事件详情。所有举报均保密处理。",
+      "incidentType": "事件类型 *",
+      "selectType": "选择类型",
+      "fraud": "欺诈",
+      "piracy": "海盗",
+      "missingShipment": "货物丢失",
+      "fakeDocuments": "假文件",
+      "maritimeScam": "海事诈骗",
+      "other": "其他",
+      "urgencyLevel": "紧急程度",
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "critical": "紧急 - 需立即处理",
+      "reportTo": "举报至 *",
+      "nigerianPolice": "尼日利亚海事警察",
+      "efccUnit": "经济犯罪委员会海事欺诈部门",
+      "navyCoastGuard": "尼日利亚海军海岸警卫队",
+      "incidentTitle": "事件标题 *",
+      "titlePlaceholder": "简要描述事件的标题",
+      "description": "描述 *",
+      "descPlaceholder": "请提供事件的详细信息...",
+      "location": "地点",
+      "locationPlaceholder": "事件发生在哪里？",
+      "contactInfo": "您的联系方式",
+      "anonymous": "匿名提交",
+      "name": "姓名",
+      "namePlaceholder": "您的姓名",
+      "email": "电子邮件",
+      "phone": "电话",
+      "submit": "提交举报"
+    },
+    "reports": {
+      "caseNo": "案件编号：",
+      "view": "查看",
+      "noReports": "暂无举报",
+      "noReportsDesc": "您尚未提交任何举报。",
+      "fileReport": "提交举报"
+    },
+    "dialog": {
+      "urgency": "紧急程度",
+      "description": "描述",
+      "location": "地点",
+      "reportedTo": "举报至",
+      "submitted": "提交时间：",
+      "lastUpdated": "最后更新："
+    },
+    "contacts": {
+      "callNow": "立即拨打"
+    }
+  },
+  "legalhub": {
+    "hero": {
+      "badge": "海事法律中心",
+      "est": "• 成立于2015年",
+      "title": "海事法律专业知识",
+      "titleHighlight": "值得信赖",
+      "description": "专业提供航运、海上作业、货物索赔及国际海事纠纷的法律咨询。",
+      "cta": "咨询海事律师",
+      "searchTitle": "立即获取法律帮助",
+      "searchPlaceholder": "搜索航运法、货物索赔、P&I保险…",
+      "searchBtn": "搜索律师"
+    },
+    "stats": {
+      "lawyers": "认证海事律师",
+      "templates": "法律模板",
+      "jurisdictions": "全球司法管辖区",
+      "support": "紧急支持"
+    },
+    "practiceAreas": {
+      "badge": "我们的专业领域",
+      "title": "海事法律实践领域",
+      "description": "涵盖海事和航运法律各方面的全面法律支持",
+      "learnMore": "了解更多",
+      "shipping": { "title": "航运与租船合同", "desc": "航次租船、定期租船和光船租赁协议" },
+      "cargo": { "title": "货物与贸易", "desc": "提单、货物索赔和贸易融资" },
+      "insurance": { "title": "海上保险", "desc": "P&I保险、船体险和理赔处理" },
+      "disputes": { "title": "海事纠纷", "desc": "仲裁、诉讼和纠纷解决" }
+    },
+    "tabs": {
+      "sectionTitle": "法律资源与服务",
+      "sectionDesc": "满足海事法律合规所需的一切",
+      "lawyers": "律师",
+      "templates": "模板",
+      "services": "服务",
+      "resources": "资源"
+    },
+    "consultants": {
+      "title": "专业海事律师",
+      "description": "专注海事法律的认证法律专业人士",
+      "searchPlaceholder": "按姓名或专业搜索律师...",
+      "available": "可预约",
+      "busy": "忙碌中",
+      "specializations": "专业领域",
+      "jurisdictions": "司法管辖区",
+      "experience": "经验",
+      "years": "年",
+      "hourlyRate": "小时费率",
+      "viewProfile": "查看完整简介",
+      "noFound": "未找到律师",
+      "noFoundDesc": "未找到与「{{query}}」匹配的海事律师。请尝试其他搜索词或联系我们的代表获取个性化帮助。",
+      "clearSearch": "清除搜索",
+      "callUs": "致电我们：",
+      "reviews": "条评价"
+    },
+    "templates": {
+      "all": "所有模板",
+      "charterparty": "租船合同",
+      "bol": "提单",
+      "nvocc": "无船承运人",
+      "compliance": "合规",
+      "premium": "高级版",
+      "downloads": "次下载",
+      "download": "下载"
+    },
+    "services": {
+      "duration": "时长：",
+      "request": "申请服务"
+    },
+    "resources": {
+      "access": "访问",
+      "premium": "高级版"
+    },
+    "testimonials": {
+      "badge": "客户评价",
+      "title": "受行业领袖信赖",
+      "description": "听听我们的客户对与海事法律中心合作经历的评价",
+      "t1quote": "他们在租船合同纠纷方面的专业知识为我们公司节省了数百万。卓越的法律咨询。",
+      "t1author": "詹姆斯·莫里森",
+      "t1role": "CEO，大西洋航运有限公司",
+      "t2quote": "团队以专业精神处理了我们复杂的P&I索赔，并达成了出色的和解。",
+      "t2author": "陈莎拉",
+      "t2role": "总监，太平洋海事",
+      "t3quote": "我们合作过的最好的海事律师事务所。他们对国际法规的了解无与伦比。",
+      "t3author": "迈克尔·奥孔奎",
+      "t3role": "船队经理，全球承运公司"
+    },
+    "cta": {
+      "title": "准备好应对您的法律挑战了吗？",
+      "description": "立即与我们的海事法律专家预约咨询。获取保护您权益所需的法律指导。",
+      "findLawyer": "寻找律师",
+      "call": "致电：+234 808984499"
+    },
+    "dialog": {
+      "title": "顾问简介",
+      "desc": "海事法律专家简介",
+      "availableNow": "现在可约",
+      "currentlyBusy": "当前忙碌",
+      "yearsExp": "年经验",
+      "about": "关于",
+      "specializations": "专业领域",
+      "jurisdictions": "司法管辖区",
+      "consultationRate": "咨询费率",
+      "perHour": "/小时",
+      "bookConsultation": "预约咨询"
+    }
+  },
+  "marketplacepage": {
+    "hero": {
+      "badge": "海事市场",
+      "title": "设备与仓库市场",
+      "description": "浏览经过验证的海事设备、仓库、集装箱、起重机、备件等——无需注册账号。"
+    },
+    "categories": {
+      "all": "所有类别",
+      "equipment": "设备",
+      "vessel": "船舶",
+      "container": "集装箱",
+      "crane": "起重机",
+      "spare_parts": "备件",
+      "repairs": "维修",
+      "insurance": "保险",
+      "warehouse": "仓库"
+    },
+    "sort": {
+      "newest": "最新优先",
+      "price_asc": "价格：从低到高",
+      "price_desc": "价格：从高到低",
+      "featured": "精选"
+    },
+    "filters": {
+      "searchPlaceholder": "搜索列表…"
+    },
+    "results": {
+      "found_one": "找到 {{count}} 条列表",
+      "found_other": "找到 {{count}} 条列表",
+      "noResults": "未找到列表",
+      "noResultsDesc": "请尝试调整搜索或类别筛选条件。"
+    },
+    "card": {
+      "featured": "精选",
+      "bolVerified": "提单已验证",
+      "by": "卖家：",
+      "buyNow": "立即购买",
+      "redirecting": "正在跳转…"
+    },
+    "loadMore": "加载更多（剩余 {{count}} 条）",
+    "loading": "加载中…"
+  },
+  "marketplace": {
+    "hero": {
+      "badge": "海事市场",
+      "title": "设备与仓库市场",
+      "description": "买卖海事设备、仓库空间、集装箱、起重机、备件和维修服务。",
+      "becomeSeller": "成为卖家",
+      "postListing": "发布列表",
+      "searchPlaceholder": "搜索设备、仓库、集装箱...",
+      "categoryPlaceholder": "类别"
+    },
+    "categories": {
+      "popular": "热门：",
+      "all": "所有类别",
+      "equipment": "设备",
+      "warehouse": "仓库",
+      "container": "集装箱",
+      "crane": "起重机",
+      "spare_parts": "备件",
+      "repairs": "维修",
+      "insurance": "保险"
+    },
+    "listings": {
+      "title": "浏览列表",
+      "available": "{{count}} 个列表",
+      "sortPlaceholder": "排序方式",
+      "newest": "最新优先",
+      "priceLow": "价格：从低到高",
+      "priceHigh": "价格：从高到低",
+      "highestRated": "评分最高",
+      "featured": "精选",
+      "bolVerified": "提单已验证",
+      "noResults": "未找到列表",
+      "noResultsDesc": "请尝试调整搜索或筛选条件。",
+      "contact": "联系"
+    },
+    "purchase": {
+      "title": "验证并购买",
+      "description": "AI/Grok验证提单详情和货物信息。",
+      "bolLabel": "提单号",
+      "bolPlaceholder": "输入提单号",
+      "messageLabel": "留言",
+      "messagePlaceholder": "给卖家的任何留言...",
+      "verifying": "正在AI验证...",
+      "runVerification": "运行AI验证",
+      "verifyPay": "验证并支付",
+      "verificationComplete": "验证完成",
+      "bolValid": "提单有效",
+      "ownershipVerified": "所有权已验证",
+      "originVerified": "产地已验证",
+      "destinationVerified": "目的地已验证",
+      "proceedPayment": "进行支付",
+      "paymentSuccess": "支付成功！",
+      "transactionId": "交易ID",
+      "done": "完成"
+    },
+    "seller": {
+      "title": "成为卖家",
+      "description": "简单入驻，立即开始发布商品。",
+      "businessName": "企业名称",
+      "email": "电子邮件",
+      "phone": "电话",
+      "country": "国家",
+      "register": "注册",
+      "cancel": "取消"
+    },
+    "createListing": {
+      "title": "创建新列表",
+      "categoryLabel": "类别",
+      "categoryPlaceholder": "选择类别",
+      "titleLabel": "标题",
+      "descriptionLabel": "描述",
+      "priceLabel": "价格",
+      "locationLabel": "所在国家",
+      "create": "创建列表",
+      "cancel": "取消"
+    }
+  },
+  "services": {
+    "hero": {
+      "badge": "我们的服务",
+      "title": "完整的海事解决方案",
+      "description": "从港口到港口，管理货运操作所需的一切"
+    },
+    "tracking": {
+      "title": "实时货物追踪",
+      "description": "通过实时GPS追踪和自动状态更新，随时随地监控您的货物",
+      "f1": "通过MarineTraffic集成实时追踪船舶位置",
+      "f2": "自动里程碑通知（出发、转运、到达）",
+      "f3": "结合天气和港口拥堵分析的预计到达时间预测",
+      "f4": "支持自定义视图的多货物仪表板",
+      "cta": "追踪您的货物"
+    },
+    "documents": {
+      "title": "数字文档管理",
+      "description": "通过安全的数字提单、发票和租船合同消除纸质文档",
+      "f1": "区块链验证的提单和证书",
+      "f2": "自动生成海关文件",
+      "f3": "数字签名和审批工作流",
+      "f4": "带版本控制的安全云存储",
+      "cta": "管理文档"
+    },
+    "auctions": {
+      "title": "货物拍卖市场",
+      "description": "在我们透明的数字市场中竞标集装箱舱位和租用船舶",
+      "f1": "实时竞标可用货舱空间",
+      "f2": "散货整船租船拍卖",
+      "f3": "中标后自动生成合同",
+      "f4": "通过Paystack安全支付托管",
+      "cta": "浏览拍卖"
+    },
+    "insurance": {
+      "title": "货物保险市场",
+      "description": "即时报价，比较并购买顶级供应商的货物保险",
+      "f1": "来自20多家保险公司的即时报价",
+      "f2": "覆盖所有货物类型和航线",
+      "f3": "数字文档简化理赔流程",
+      "f4": "自动保单绑定和证书生成",
+      "cta": "获取保险报价"
+    },
+    "analytics": {
+      "title": "分析与商业智能",
+      "description": "通过全面的航运分析和洞察做出数据驱动的决策",
+      "f1": "带KPI追踪的实时仪表板",
+      "f2": "航线优化和成本分析",
+      "f3": "承运商绩效基准对比",
+      "f4": "自定义报告和数据导出"
+    },
+    "charterparty": {
+      "title": "租船合同管理",
+      "description": "通过数字合同和自动化工作流简化船舶租赁",
+      "f1": "标准租船合同模板（Gencon、NYPE等）",
+      "f2": "数字谈判和修订追踪",
+      "f3": "自动计算装卸时间和滞期费",
+      "f4": "多方签署，具有法律效力"
+    },
+    "comingSoon": "即将推出",
+    "why": {
+      "sectionTitle": "为什么选择我们的服务",
+      "sectionDescription": "引领行业的特色功能，让我们与众不同",
+      "support": "全天候支持",
+      "supportDesc": "全天候技术协助",
+      "pricing": "透明定价",
+      "pricingDesc": "无隐藏费用或意外收费",
+      "security": "银行级安全",
+      "securityDesc": "所有数据256位加密",
+      "coverage": "全球覆盖",
+      "coverageDesc": "覆盖150多个国家"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "关于我们",
+      "title": "革命性全球海事贸易",
+      "description": "准时资源有限公司处于海事技术前沿，通过创新货运解决方案连接世界。"
+    },
+    "story": {
+      "sectionTitle": "我们是谁",
+      "sectionDescription": "Ontime Maritime的故事及我们推动全球航运现代化的使命",
+      "label": "我们的故事",
+      "title": "构建现代海事物流的数字骨干",
+      "p1": "Ontime Maritime成立于2020年，源于一个简单的观察：海事行业在数字化转型方面落后了数十年。当其他行业拥抱技术时，货运仍然困于繁文缛节和低效率中。",
+      "p2": "我们的创始人——全球航运和硅谷的资深人士——看到了弥合这一差距的机会。他们汇聚了海事专家、软件工程师和物流专业人士，共同完成一个使命：现代化全球货物运输方式。",
+      "p3": "如今，Ontime Maritime在150多个国家支持超过5,000家公司，每年处理数百万个集装箱，为全球关键供应链提供动力。"
+    },
+    "impact": {
+      "sectionTitle": "Ontime Maritime的数字成就",
+      "sectionDescription": "对全球海事运营的可量化影响",
+      "stat1Title": "覆盖国家",
+      "stat1Desc": "在全球主要港口积极布局",
+      "stat2Title": "活跃企业",
+      "stat2Desc": "物流公司、货主和运营商",
+      "stat3Title": "追踪货物",
+      "stat3Desc": "数字化监控全程",
+      "stat4Title": "平台正常运行时间",
+      "stat4Desc": "企业级可靠性和可用性"
+    },
+    "purpose": {
+      "sectionTitle": "我们的目标",
+      "sectionDescription": "指导Ontime Maritime对全球贸易影响的使命与愿景",
+      "missionTitle": "我们的使命",
+      "missionDesc": "通过提供尖端技术，使航运更快、更透明、更高效，让各规模企业都能平等获取全球海事贸易机会。我们相信每家公司都应享有企业级物流能力。",
+      "mission1": "简化复杂的海事运营",
+      "mission2": "无缝连接全球贸易伙伴",
+      "mission3": "推动可持续航运实践",
+      "visionTitle": "我们的愿景",
+      "visionDesc": "成为全球最受信赖的海事技术平台，每批货物都被追踪，每份文件都数字化，每笔交易都无缝完成。我们憧憬一个全球贸易对所有人开放的未来。",
+      "vision1": "2030年实现海事行业无纸化",
+      "vision2": "平台覆盖全球每个主要港口",
+      "vision3": "海事技术的行业标准"
+    },
+    "values": {
+      "sectionTitle": "我们的核心价值观",
+      "sectionDescription": "指导我们一切工作的原则",
+      "excellence": "卓越",
+      "excellenceDesc": "我们在每个功能、每次互动和每个客户体验中追求卓越。",
+      "collaboration": "协作",
+      "collaborationDesc": "我们相信伙伴关系的力量，在海事生态系统中建立连接。",
+      "innovation": "创新",
+      "innovationDesc": "我们不断突破边界，为现代海事挑战提供尖端解决方案。",
+      "integrity": "诚信",
+      "integrityDesc": "我们以透明、诚实和负责任的态度处理所有业务往来。"
+    },
+    "team": {
+      "sectionTitle": "领导团队",
+      "sectionDescription": "认识推动海事创新的专家们",
+      "ceoRole": "首席执行官兼创始人",
+      "ctoRole": "首席技术官兼联合创始人",
+      "opsRole": "运营总监",
+      "csRole": "客户成功总监"
+    }
+  },
   "footer": {
     "brand": "海事平台",
     "tagline": "货物遇见科技",
@@ -191,6 +622,14 @@
     "address": "尼日利亚拉各斯海事广场123号",
     "followUs": "关注我们",
     "socialTagline": "获取最新的海事技术创新和货运解决方案资讯。",
-    "copyright": "© {{year}} ONTIME RESOURCES LIMITED. 版权所有。"
+    "copyright": "© {{year}} 准时资源有限公司. 版权所有。"
+  },
+  "qrcode": {
+    "quickacess": "快速访问",
+    "Preparing" : "正在准备您的二维码...",
+    "Downloadpng": "下载PNG",
+    "title": "扫描访问我们的网站",
+    "description": "使用手机扫描二维码，立即访问OnTime Maritime平台。"
   }
+
 }

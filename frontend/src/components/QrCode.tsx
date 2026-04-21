@@ -16,6 +16,7 @@ import QRCode from "react-qr-code"
 import { toPng } from "html-to-image"
 import { Download, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 const WEBSITE_URL =
   (import.meta as any).env?.VITE_WEBSITE_URL ?? "https://ontimemaritime.com"
@@ -32,6 +33,7 @@ interface QrCodeProps {
 export function QrCode({ size = 200, logoSrc, logoRatio = 0.22 }: QrCodeProps) {
   const qrRef  = useRef<HTMLDivElement>(null)
   const [busy, setBusy] = useState(false)
+  const { t } = useTranslation()
 
   const logoSize = Math.round(size * logoRatio)
 
@@ -53,7 +55,7 @@ export function QrCode({ size = 200, logoSrc, logoRatio = 0.22 }: QrCodeProps) {
     <div className="flex flex-col items-center gap-5 p-6 w-full max-w-xs mx-auto">
       {/* Title */}
       <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase text-center">
-        Scan to Visit Our Website
+        {t("qrcode.title")}
       </p>
 
       {/* QR + optional logo overlay */}
@@ -99,7 +101,7 @@ export function QrCode({ size = 200, logoSrc, logoRatio = 0.22 }: QrCodeProps) {
         {busy
           ? <Loader2 className="h-4 w-4 animate-spin" />
           : <Download className="h-4 w-4" />}
-        {busy ? "Preparing…" : "Download PNG"}
+        {busy ? t("qrcode.Preparing") : t("qrcode.Downloadpng")}
       </Button>
     </div>
   )
