@@ -6,6 +6,7 @@
  */
 
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Mail, MessageCircle, X, Anchor, MapPin, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -28,165 +29,34 @@ const EMAIL        = "ontimemaritime@gmail.com"
 type PortType = "seaport" | "dry-port" | "inland"
 
 interface Port {
-  id:              string
-  name:            string
-  shortName:       string
-  state:           string
-  type:            PortType
-  cargoSpeciality: string
-  capability:      string
-  mapX:            number   // position in SVG viewBox 0 0 600 520
-  mapY:            number
+  id:    string
+  type:  PortType
+  mapX:  number   // position in SVG viewBox 0 0 600 520
+  mapY:  number
 }
 
-// ─── Port data ─────────────────────────────────────────────────────────────────
+// ─── Port data (coords only — text comes from i18n) ────────────────────────────
 const SEAPORTS: Port[] = [
-  {
-    id: "apapa",
-    name: "Lagos Port Complex, Apapa",
-    shortName: "Lagos Port",
-    state: "Lagos State",
-    type: "seaport",
-    cargoSpeciality: "Container & General Cargo",
-    capability: "Primary operational hub. Full customs clearing, FCL and LCL container handling, demurrage dispute management, Form M processing, destination inspection coordination, PAAR, SON and NAFDAC waivers. Fastest turnaround at Nigeria's busiest port.",
-    mapX: 36, mapY: 388,
-  },
-  {
-    id: "tin-can",
-    name: "Tin Can Island Port",
-    shortName: "Tin Can",
-    state: "Lagos State",
-    type: "seaport",
-    cargoSpeciality: "Container Terminal",
-    capability: "Dedicated container terminal. Import clearing for consumer goods, vehicles, machinery, and bulk cargo. Vehicle importation specialist. Consolidated LCL shipment management with direct road access to Lagos industrial corridor.",
-    mapX: 28, mapY: 400,
-  },
-  {
-    id: "lekki",
-    name: "Lekki Deep Sea Port",
-    shortName: "Lekki Deep Sea",
-    state: "Lagos State",
-    type: "seaport",
-    cargoSpeciality: "Deep Sea Terminal",
-    capability: "Nigeria's largest and newest deep-sea port. Ultra-large vessel capability. Project cargo, high-volume FCL operations, heavy industrial equipment importation. Positioned for the next decade of Nigerian trade growth.",
-    mapX: 58, mapY: 388,
-  },
-  {
-    id: "onne",
-    name: "Onne Port Complex",
-    shortName: "Onne Port",
-    state: "Rivers State",
-    type: "seaport",
-    cargoSpeciality: "Oil & Gas Specialist",
-    capability: "Specialist oil and gas cargo clearing. Hazardous materials documentation, OPAL/OGSL processing, industrial equipment importation, project logistics coordination. Primary gateway for the Niger Delta energy sector.",
-    mapX: 220, mapY: 468,
-  },
-  {
-    id: "port-harcourt",
-    name: "Port Harcourt Port",
-    shortName: "Port Harcourt",
-    state: "Rivers State",
-    type: "seaport",
-    cargoSpeciality: "General Cargo",
-    capability: "General cargo, agro-commodity exports, petroleum product documentation, multipurpose cargo handling. Serves Rivers State, Bayelsa, and the broader Niger Delta trade corridor.",
-    mapX: 207, mapY: 472,
-  },
-  {
-    id: "warri",
-    name: "Warri Port",
-    shortName: "Warri Port",
-    state: "Delta State",
-    type: "seaport",
-    cargoSpeciality: "Bulk & Petroleum",
-    capability: "Bulk cargo, petroleum products, agro-exports. Gateway for Delta and Edo State consignees. Timber, cocoa, and palm produce export documentation and coordination.",
-    mapX: 148, mapY: 436,
-  },
-  {
-    id: "calabar",
-    name: "Calabar Port",
-    shortName: "Calabar Port",
-    state: "Cross River State",
-    type: "seaport",
-    cargoSpeciality: "Agro-Export Gateway",
-    capability: "Nigeria's premier agro-export port. Cocoa, sesame, timber, and commodity export documentation. Phytosanitary certificates, NEPC registration, certificate of origin. Gateway to Southeast and South-South Nigeria.",
-    mapX: 271, mapY: 462,
-  },
+  { id: "apapa",        type: "seaport", mapX: 36,  mapY: 388 },
+  { id: "tin-can",      type: "seaport", mapX: 28,  mapY: 400 },
+  { id: "lekki",        type: "seaport", mapX: 58,  mapY: 388 },
+  { id: "onne",         type: "seaport", mapX: 220, mapY: 468 },
+  { id: "port-harcourt",type: "seaport", mapX: 207, mapY: 472 },
+  { id: "warri",        type: "seaport", mapX: 148, mapY: 436 },
+  { id: "calabar",      type: "seaport", mapX: 271, mapY: 462 },
 ]
 
 const INLAND_PORTS: Port[] = [
-  {
-    id: "onitsha",
-    name: "Onitsha Inland Port",
-    shortName: "Onitsha Inland",
-    state: "Anambra State",
-    type: "inland",
-    cargoSpeciality: "River Niger — Inland Waterway",
-    capability: "River Niger cargo route connecting Lagos to Southeast Nigeria. Cost-effective bulk movement alternative to road haulage. Serves Anambra, Enugu, Imo, and Abia States. Unique capability not offered by most Lagos-based clearing agents.",
-    mapX: 198, mapY: 406,
-  },
+  { id: "onitsha", type: "inland", mapX: 198, mapY: 406 },
 ]
 
 const DRY_PORTS: Port[] = [
-  {
-    id: "kano-dry-port",
-    name: "Kano Dry Port (Inland Container Depot)",
-    shortName: "Kano Dry Port",
-    state: "Kano State",
-    type: "dry-port",
-    cargoSpeciality: "Inland Container Depot — Northwest Corridor",
-    capability: "Customs clearing for cargo transferred by rail or road from Lagos and Apapa. Container examination, duty assessment, and final release coordination. Covers manufactured goods, machinery, raw materials, and agro-inputs for Northern Nigeria.",
-    mapX: 279, mapY: 122,
-  },
-  {
-    id: "kaduna-dry-port",
-    name: "Kaduna Dry Port",
-    shortName: "Kaduna Dry Port",
-    state: "Kaduna State",
-    type: "dry-port",
-    cargoSpeciality: "Rail-Connected Terminal — North-Central",
-    capability: "Clearing of rail-transferred containers from Lagos Port. Industrial equipment, machinery, and manufactured goods destined for North-Central Nigeria. Full coordination with NRC (Nigerian Railway Corporation) logistics.",
-    mapX: 228, mapY: 194,
-  },
-  {
-    id: "maiduguri-dry-port",
-    name: "Maiduguri Dry Port",
-    shortName: "Maiduguri Dry Port",
-    state: "Borno State",
-    type: "dry-port",
-    cargoSpeciality: "Northeast Trade Gateway",
-    capability: "Clearing and forwarding for humanitarian cargo, agricultural inputs, manufactured goods, and trade with Cameroon, Chad, and Niger Republic. Northeast Nigeria's primary inland clearance facility.",
-    mapX: 490, mapY: 130,
-  },
-  {
-    id: "funtua-dry-port",
-    name: "Funtua Dry Port",
-    shortName: "Funtua Dry Port",
-    state: "Katsina State",
-    type: "dry-port",
-    cargoSpeciality: "Cotton & Agricultural Hub — Northwest",
-    capability: "Agro-export documentation, cotton and commodity clearing, agro-input imports. Specialist in North-West agricultural trade corridor documentation. Serves Katsina, Kebbi, Sokoto, and Zamfara States.",
-    mapX: 222, mapY: 145,
-  },
-  {
-    id: "heipang-dry-port",
-    name: "Heipang Dry Port",
-    shortName: "Heipang Dry Port",
-    state: "Plateau State",
-    type: "dry-port",
-    cargoSpeciality: "North-Central Gateway — Solid Minerals",
-    capability: "Solid mineral exports, agricultural commodities, general cargo. Documentation for tin, columbite, and Jos Plateau mineral trade exports. Serves Plateau, Nasarawa, Benue, and Taraba States.",
-    mapX: 297, mapY: 267,
-  },
-  {
-    id: "ibadan-dry-port",
-    name: "Ibadan Dry Port (Inland Container Terminal)",
-    shortName: "Ibadan Dry Port",
-    state: "Oyo State",
-    type: "dry-port",
-    cargoSpeciality: "Southwest Inland Terminal",
-    capability: "Cargo overflow from Lagos ports. Textile and manufacturing imports, agro-exports, consumer goods. Direct connection to Lagos Port Complex via expressway and planned rail corridor. Serves Oyo, Osun, Ekiti, and Kwara States.",
-    mapX: 65, mapY: 346,
-  },
+  { id: "kano-dry-port",      type: "dry-port", mapX: 279, mapY: 122 },
+  { id: "kaduna-dry-port",    type: "dry-port", mapX: 228, mapY: 194 },
+  { id: "maiduguri-dry-port", type: "dry-port", mapX: 490, mapY: 130 },
+  { id: "funtua-dry-port",    type: "dry-port", mapX: 222, mapY: 145 },
+  { id: "heipang-dry-port",   type: "dry-port", mapX: 297, mapY: 267 },
+  { id: "ibadan-dry-port",    type: "dry-port", mapX: 65,  mapY: 346 },
 ]
 
 const ALL_PORTS = [...SEAPORTS, ...INLAND_PORTS, ...DRY_PORTS]
@@ -200,12 +70,6 @@ function typeBadgeClass(type: PortType) {
   if (type === "seaport")  return "bg-emerald-100 text-emerald-800"
   if (type === "dry-port") return "bg-amber-100 text-amber-800"
   return "bg-blue-100 text-blue-800"
-}
-
-function typeLabel(type: PortType) {
-  if (type === "seaport")  return "Seaport"
-  if (type === "dry-port") return "Dry Port"
-  return "Inland Waterway"
 }
 
 function enquireLink(portName: string) {
@@ -223,6 +87,7 @@ const NIGERIA_PATH =
   "L 37,394 L 14,340 L 9,267 L 23,146 Z"
 
 function NigeriaMap({ activeId, onSelect }: { activeId: string | null; onSelect: (id: string | null) => void }) {
+  const { t } = useTranslation()
   const active = activeId ? ALL_PORTS.find((p) => p.id === activeId) ?? null : null
 
   return (
@@ -259,7 +124,7 @@ function NigeriaMap({ activeId, onSelect }: { activeId: string | null; onSelect:
               onClick={() => onSelect(isActive ? null : port.id)}
               style={{ cursor: "pointer" }}
               role="button"
-              aria-label={`${port.name}, ${port.state}`}
+              aria-label={`${t(`ports.data.${port.id}.name`)}, ${t(`ports.data.${port.id}.state`)}`}
             >
               {/* Pulse ring */}
               {isActive && (
@@ -282,9 +147,9 @@ function NigeriaMap({ activeId, onSelect }: { activeId: string | null; onSelect:
         <g transform="translate(14, 460)">
           <rect width="155" height="54" rx="6" fill="rgba(0,0,0,0.55)" />
           {[
-            { color: C.mint,  label: "Seaport",         y: 14 },
-            { color: C.amber, label: "Dry Port",         y: 30 },
-            { color: C.blue,  label: "Inland Waterway",  y: 46 },
+            { color: C.mint,  label: t("ports.map.seaport"),  y: 14 },
+            { color: C.amber, label: t("ports.map.dryPort"),   y: 30 },
+            { color: C.blue,  label: t("ports.map.inland"),    y: 46 },
           ].map(({ color, label, y }) => (
             <g key={label} transform={`translate(10, ${y})`}>
               <circle cx="0" cy="0" r="4" fill={color} />
@@ -304,27 +169,27 @@ function NigeriaMap({ activeId, onSelect }: { activeId: string | null; onSelect:
             style={{ background: C.forest }}>
             <span className="flex items-center gap-1.5">
               <MapPin className="h-3 w-3" style={{ color: pinColor(active.type) }} />
-              {active.shortName}
+              {t(`ports.data.${active.id}.shortName`)}
             </span>
-            <button onClick={() => onSelect(null)} className="opacity-60 hover:opacity-100" aria-label="Close">
+            <button onClick={() => onSelect(null)} className="opacity-60 hover:opacity-100" aria-label={t("ports.map.close")}>
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
           <div className="bg-white p-3 space-y-2">
-            <p className="text-xs text-gray-500">{active.state}</p>
+            <p className="text-xs text-gray-500">{t(`ports.data.${active.id}.state`)}</p>
             <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${typeBadgeClass(active.type)}`}>
-              {typeLabel(active.type)}
+              {t(`ports.typeLabel.${active.type}`)}
             </span>
-            <p className="text-[11px] font-semibold" style={{ color: C.forest }}>{active.cargoSpeciality}</p>
-            <p className="text-[10px] text-gray-600 leading-relaxed line-clamp-3">{active.capability}</p>
+            <p className="text-[11px] font-semibold" style={{ color: C.forest }}>{t(`ports.data.${active.id}.cargoSpeciality`)}</p>
+            <p className="text-[10px] text-gray-600 leading-relaxed line-clamp-3">{t(`ports.data.${active.id}.capability`)}</p>
             <a
-              href={enquireLink(active.name)}
+              href={enquireLink(t(`ports.data.${active.id}.name`))}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-1 w-full text-[10px] font-semibold text-white rounded-lg py-1.5 mt-1 transition-opacity hover:opacity-90"
               style={{ background: C.forest }}
             >
-              <MessageCircle className="h-3 w-3" /> Enquire on WhatsApp
+              <MessageCircle className="h-3 w-3" /> {t("ports.map.enquire")}
             </a>
           </div>
         </div>
@@ -335,12 +200,15 @@ function NigeriaMap({ activeId, onSelect }: { activeId: string | null; onSelect:
 
 // ─── Port Card ─────────────────────────────────────────────────────────────────
 function PortCard({ port }: { port: Port }) {
+  const { t } = useTranslation()
+  const name = t(`ports.data.${port.id}.name`)
+
   return (
     <article
       id={`ports-section/${port.id}`}
       className="flex flex-col bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group"
       style={{ border: "0.5px solid #e5e7eb" }}
-      aria-label={`${port.name} — ${port.state}`}
+      aria-label={`${name} — ${t(`ports.data.${port.id}.state`)}`}
     >
       {/* Coloured top bar */}
       <div className="h-1.5" style={{ background: pinColor(port.type) }} />
@@ -348,37 +216,37 @@ function PortCard({ port }: { port: Port }) {
       <div className="flex flex-col flex-1 p-5 gap-3">
         {/* Badge */}
         <span className={`self-start text-[11px] font-bold px-2.5 py-0.5 rounded-full ${typeBadgeClass(port.type)}`}>
-          {typeLabel(port.type)}
+          {t(`ports.typeLabel.${port.type}`)}
         </span>
 
         {/* Name & state */}
         <div>
-          <h3 className="text-base font-bold leading-tight" style={{ color: C.forest }}>{port.name}</h3>
+          <h3 className="text-base font-bold leading-tight" style={{ color: C.forest }}>{name}</h3>
           <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-            <MapPin className="h-3 w-3" /> {port.state}
+            <MapPin className="h-3 w-3" /> {t(`ports.data.${port.id}.state`)}
           </p>
         </div>
 
         {/* Cargo speciality */}
-        <p className="text-xs font-semibold" style={{ color: C.navy }}>{port.cargoSpeciality}</p>
+        <p className="text-xs font-semibold" style={{ color: C.navy }}>{t(`ports.data.${port.id}.cargoSpeciality`)}</p>
 
         {/* Divider */}
         <div className="h-px bg-gray-100" />
 
         {/* Capability */}
-        <p className="text-xs leading-relaxed flex-1" style={{ color: C.text }}>{port.capability}</p>
+        <p className="text-xs leading-relaxed flex-1" style={{ color: C.text }}>{t(`ports.data.${port.id}.capability`)}</p>
 
         {/* CTA */}
         <a
-          href={enquireLink(port.name)}
+          href={enquireLink(name)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-auto flex items-center justify-center gap-2 w-full min-h-[44px] text-sm font-semibold rounded-lg text-white transition-all duration-200 hover:opacity-90 active:scale-95"
           style={{ background: C.forest }}
-          aria-label={`Enquire about ${port.name} services via WhatsApp`}
+          aria-label={`Enquire about ${name} services via WhatsApp`}
         >
           <MessageCircle className="h-4 w-4 shrink-0" />
-          Enquire Now
+          {t("ports.card.enquireNow")}
         </a>
       </div>
     </article>
@@ -398,6 +266,7 @@ function StatItem({ value, label }: { value: string; label: string }) {
 // ─── Main section ──────────────────────────────────────────────────────────────
 export function PortsCoverage() {
   const [activePin, setActivePin] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   return (
     <section aria-labelledby="ports-heading" style={{ fontFamily: "Inter, Montserrat, system-ui, sans-serif" }}>
@@ -419,20 +288,19 @@ export function PortsCoverage() {
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
             style={{ background: "rgba(110,231,183,0.15)", color: C.mint, border: `1px solid ${C.mint}33` }}>
             <Anchor className="h-3.5 w-3.5" />
-            NIMASA Licensed · SA261009
+            {t("ports.nimasa")}
           </div>
 
           <h2
             id="ports-heading"
             className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight"
           >
-            Complete Nigerian<br />
-            <span style={{ color: C.mint }}>Port Coverage</span>
+            {t("ports.title").split(" ").slice(0, -2).join(" ")}<br />
+            <span style={{ color: C.mint }}>{t("ports.title").split(" ").slice(-2).join(" ")}</span>
           </h2>
 
           <p className="mt-4 text-sm md:text-base max-w-2xl mx-auto leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
-            From deep-sea terminals to inland waterways and dry ports — Ontime Resources Limited
-            operates across every major cargo gateway in Nigeria.
+            {t("ports.subtitle")}
           </p>
         </div>
 
@@ -442,10 +310,10 @@ export function PortsCoverage() {
             className="flex flex-wrap justify-center divide-y md:divide-y-0 md:divide-x rounded-2xl overflow-hidden"
             style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(110,231,183,0.2)" }}
           >
-            <StatItem value="7"  label="Seaports" />
-            <StatItem value="6"  label="Dry Ports" />
-            <StatItem value="1"  label="Inland Waterway" />
-            <StatItem value="36" label="States Served" />
+            <StatItem value="7"  label={t("ports.stats.seaports")} />
+            <StatItem value="6"  label={t("ports.stats.dryPorts")} />
+            <StatItem value="1"  label={t("ports.stats.inland")} />
+            <StatItem value="36" label={t("ports.stats.states")} />
           </div>
         </div>
       </div>
@@ -455,14 +323,14 @@ export function PortsCoverage() {
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-lg font-bold text-white">Port Network Map</h3>
-              <p className="text-sm text-gray-400 mt-0.5">Click any pin to view port details</p>
+              <h3 className="text-lg font-bold text-white">{t("ports.map.title")}</h3>
+              <p className="text-sm text-gray-400 mt-0.5">{t("ports.map.subtitle")}</p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs">
               {[
-                { color: C.mint,  label: "Seaport" },
-                { color: C.amber, label: "Dry Port" },
-                { color: C.blue,  label: "Inland Waterway" },
+                { color: C.mint,  label: t("ports.map.seaport") },
+                { color: C.amber, label: t("ports.map.dryPort") },
+                { color: C.blue,  label: t("ports.map.inland") },
               ].map(({ color, label }) => (
                 <span key={label} className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full text-white font-medium">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: color }} />
@@ -490,7 +358,7 @@ export function PortsCoverage() {
                 }}
               >
                 <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: pinColor(port.type) }} />
-                <span className="text-xs font-medium leading-tight">{port.shortName}</span>
+                <span className="text-xs font-medium leading-tight">{t(`ports.data.${port.id}.shortName`)}</span>
               </button>
             ))}
           </div>
@@ -503,18 +371,18 @@ export function PortsCoverage() {
                 return (
                   <>
                     <div className="px-4 py-3 text-white flex items-center justify-between" style={{ background: C.forest }}>
-                      <span className="font-bold text-sm">{p.name}</span>
-                      <button onClick={() => setActivePin(null)} aria-label="Close"><X className="h-4 w-4 opacity-60" /></button>
+                      <span className="font-bold text-sm">{t(`ports.data.${p.id}.name`)}</span>
+                      <button onClick={() => setActivePin(null)} aria-label={t("ports.map.close")}><X className="h-4 w-4 opacity-60" /></button>
                     </div>
                     <div className="bg-white p-4 space-y-2">
-                      <p className="text-xs text-gray-500">{p.state}</p>
-                      <span className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ${typeBadgeClass(p.type)}`}>{typeLabel(p.type)}</span>
-                      <p className="text-xs font-semibold" style={{ color: C.forest }}>{p.cargoSpeciality}</p>
-                      <p className="text-xs text-gray-600 leading-relaxed">{p.capability}</p>
-                      <a href={enquireLink(p.name)} target="_blank" rel="noopener noreferrer"
+                      <p className="text-xs text-gray-500">{t(`ports.data.${p.id}.state`)}</p>
+                      <span className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ${typeBadgeClass(p.type)}`}>{t(`ports.typeLabel.${p.type}`)}</span>
+                      <p className="text-xs font-semibold" style={{ color: C.forest }}>{t(`ports.data.${p.id}.cargoSpeciality`)}</p>
+                      <p className="text-xs text-gray-600 leading-relaxed">{t(`ports.data.${p.id}.capability`)}</p>
+                      <a href={enquireLink(t(`ports.data.${p.id}.name`))} target="_blank" rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 w-full min-h-[44px] text-sm font-semibold text-white rounded-lg mt-2 hover:opacity-90"
                         style={{ background: C.forest }}>
-                        <MessageCircle className="h-4 w-4" /> Enquire Now
+                        <MessageCircle className="h-4 w-4" /> {t("ports.card.enquireNow")}
                       </a>
                     </div>
                   </>
@@ -531,10 +399,8 @@ export function PortsCoverage() {
           <div className="mb-8 flex items-start gap-3">
             <span className="mt-1 h-2.5 w-2.5 rounded-full shrink-0" style={{ background: C.mint }} />
             <div>
-              <h3 className="text-2xl font-black" style={{ color: C.forest }}>7 Major Seaports</h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Ontime Resources Limited maintains active clearing operations at every licensed seaport in Nigeria.
-              </p>
+              <h3 className="text-2xl font-black" style={{ color: C.forest }}>{t("ports.seaportsSection.title")}</h3>
+              <p className="text-sm text-gray-500 mt-1">{t("ports.seaportsSection.subtitle")}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -549,10 +415,8 @@ export function PortsCoverage() {
           <div className="mb-8 flex items-start gap-3">
             <span className="mt-1 h-2.5 w-2.5 rounded-full shrink-0" style={{ background: C.blue }} />
             <div>
-              <h3 className="text-2xl font-black" style={{ color: C.navy }}>Inland Waterway</h3>
-              <p className="text-sm text-gray-500 mt-1">
-                River-based cargo movement connecting coastal ports to Nigeria's southeast hinterland.
-              </p>
+              <h3 className="text-2xl font-black" style={{ color: C.navy }}>{t("ports.inlandSection.title")}</h3>
+              <p className="text-sm text-gray-500 mt-1">{t("ports.inlandSection.subtitle")}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -561,13 +425,9 @@ export function PortsCoverage() {
               className="rounded-xl p-6 text-white hidden lg:flex flex-col justify-center gap-4"
               style={{ background: `linear-gradient(135deg, ${C.navy}, #0f2a5a)`, minHeight: 200 }}
             >
-              <p className="text-sm font-semibold uppercase tracking-widest opacity-60">Why it matters</p>
-              <p className="text-lg font-bold leading-snug">
-                The River Niger route cuts haulage costs by up to 40% for Southeast-bound cargo compared to road-only transport.
-              </p>
-              <p className="text-sm opacity-75">
-                Ontime Resources Limited is one of the few Lagos-based freight agents offering active inland waterway coordination — a critical advantage for clients in Anambra, Enugu, Imo, and Abia States.
-              </p>
+              <p className="text-sm font-semibold uppercase tracking-widest opacity-60">{t("ports.inlandSection.whyTitle")}</p>
+              <p className="text-lg font-bold leading-snug">{t("ports.inlandSection.whyText")}</p>
+              <p className="text-sm opacity-75">{t("ports.inlandSection.whyDetail")}</p>
             </div>
           </div>
         </div>
@@ -579,16 +439,14 @@ export function PortsCoverage() {
           <div className="mb-4 flex items-start gap-3">
             <span className="mt-1 h-2.5 w-2.5 rounded-full shrink-0" style={{ background: C.amber }} />
             <div>
-              <h3 className="text-2xl font-black" style={{ color: C.forest }}>Our Inland Port Network</h3>
+              <h3 className="text-2xl font-black" style={{ color: C.forest }}>{t("ports.dryPortsSection.title")}</h3>
             </div>
           </div>
           <div
             className="mb-8 rounded-xl p-4 text-sm leading-relaxed"
             style={{ background: "#FFFBEB", border: "1px solid #FDE68A", color: "#92400E" }}
           >
-            <strong>What is a Dry Port?</strong> Dry ports extend Nigeria's port capacity deep into the country's interior.
-            Ontime Resources Limited provides clearing and forwarding services at all major Nigerian dry ports, enabling
-            importers and exporters in landlocked states to clear cargo without travelling to the seaport.
+            <strong>{t("ports.dryPortsSection.whatIs")}</strong> {t("ports.dryPortsSection.explanation")}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {DRY_PORTS.map((port) => <PortCard key={port.id} port={port} />)}
@@ -600,17 +458,17 @@ export function PortsCoverage() {
       <div className="py-10 px-4" style={{ background: C.forest }}>
         <div className="max-w-5xl mx-auto">
           <p className="text-center text-xs uppercase tracking-widest font-bold mb-6" style={{ color: C.mint }}>
-            Total Network Capacity
+            {t("ports.capacity.heading")}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px overflow-hidden rounded-xl"
             style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(110,231,183,0.2)" }}>
             {[
-              { value: "13",        label: "Port Locations" },
-              { value: "7",         label: "Seaports" },
-              { value: "6",         label: "Dry Ports" },
-              { value: "1",         label: "Inland Waterway" },
-              { value: "36",        label: "States Covered" },
-              { value: "SA261009",  label: "NIMASA Licence" },
+              { value: "13",        label: t("ports.capacity.locations") },
+              { value: "7",         label: t("ports.capacity.seaports") },
+              { value: "6",         label: t("ports.capacity.dryPorts") },
+              { value: "1",         label: t("ports.capacity.inland") },
+              { value: "36",        label: t("ports.capacity.states") },
+              { value: "SA261009",  label: t("ports.capacity.licence") },
             ].map(({ value, label }) => (
               <div key={label} className="flex flex-col items-center gap-1 py-5 px-3 text-center"
                 style={{ background: C.forest }}>
@@ -631,12 +489,11 @@ export function PortsCoverage() {
           </div>
 
           <h3 className="text-xl md:text-2xl font-black" style={{ color: C.forest }}>
-            Operating at a port not listed here?
+            {t("ports.cta.title")}
           </h3>
 
           <p className="text-sm md:text-base text-gray-500 max-w-xl mx-auto leading-relaxed">
-            Our network is expanding and our team can coordinate customs clearing at any Nigerian facility
-            upon client request. Contact us and we will make it work.
+            {t("ports.cta.description")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
@@ -648,7 +505,7 @@ export function PortsCoverage() {
               style={{ background: "#25D366" }}
             >
               <MessageCircle className="h-4 w-4 shrink-0" />
-              Chat on WhatsApp
+              {t("ports.cta.whatsapp")}
             </a>
 
             <a
@@ -666,7 +523,7 @@ export function PortsCoverage() {
           </div>
 
           <p className="text-xs text-gray-400 pt-2">
-            "Where Cargo Meets Technology" · NIMASA Licence SA261009 · Active & Compliant
+            {t("ports.cta.slogan")}
           </p>
         </div>
       </div>

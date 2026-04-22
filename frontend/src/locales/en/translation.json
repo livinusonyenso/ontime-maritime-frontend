@@ -630,5 +630,237 @@
     "Downloadpng": "Download PNG",
     "title": " Scan to Visit Our Website",
     "description": "Scan the QR code with your phone to visit the OnTime Maritime platform instantly."
+  },
+  "ports": {
+    "nimasa": "NIMASA Licensed · SA261009",
+    "title": "Complete Nigerian Port Coverage",
+    "subtitle": "From deep-sea terminals to inland waterways and dry ports — Ontime Resources Limited operates across every major cargo gateway in Nigeria.",
+    "stats": { "seaports": "Seaports", "dryPorts": "Dry Ports", "inland": "Inland Waterway", "states": "States Served" },
+    "map": {
+      "title": "Port Network Map",
+      "subtitle": "Click any pin to view port details",
+      "seaport": "Seaport", "dryPort": "Dry Port", "inland": "Inland Waterway",
+      "enquire": "Enquire on WhatsApp", "close": "Close"
+    },
+    "typeLabel": { "seaport": "Seaport", "dry-port": "Dry Port", "inland": "Inland Waterway" },
+    "seaportsSection": {
+      "title": "7 Major Seaports",
+      "subtitle": "Ontime Resources Limited maintains active clearing operations at every licensed seaport in Nigeria."
+    },
+    "inlandSection": {
+      "title": "Inland Waterway",
+      "subtitle": "River-based cargo movement connecting coastal ports to Nigeria's southeast hinterland.",
+      "whyTitle": "Why it matters",
+      "whyText": "The River Niger route cuts haulage costs by up to 40% for Southeast-bound cargo compared to road-only transport.",
+      "whyDetail": "Ontime Resources Limited is one of the few Lagos-based freight agents offering active inland waterway coordination — a critical advantage for clients in Anambra, Enugu, Imo, and Abia States."
+    },
+    "dryPortsSection": {
+      "title": "Our Inland Port Network",
+      "whatIs": "What is a Dry Port?",
+      "explanation": "Dry ports extend Nigeria's port capacity deep into the country's interior. Ontime Resources Limited provides clearing and forwarding services at all major Nigerian dry ports, enabling importers and exporters in landlocked states to clear cargo without travelling to the seaport."
+    },
+    "capacity": {
+      "heading": "Total Network Capacity",
+      "locations": "Port Locations",
+      "seaports": "Seaports",
+      "dryPorts": "Dry Ports",
+      "inland": "Inland Waterway",
+      "states": "States Covered",
+      "licence": "NIMASA Licence"
+    },
+    "cta": {
+      "title": "Operating at a port not listed here?",
+      "description": "Our network is expanding and our team can coordinate customs clearing at any Nigerian facility upon client request. Contact us and we will make it work.",
+      "whatsapp": "Chat on WhatsApp",
+      "slogan": "\"Where Cargo Meets Technology\" · NIMASA Licence SA261009 · Active & Compliant"
+    },
+    "card": { "enquireNow": "Enquire Now" },
+    "data": {
+      "apapa": {
+        "name": "Lagos Port Complex, Apapa", "shortName": "Lagos Port", "state": "Lagos State",
+        "cargoSpeciality": "Container & General Cargo",
+        "capability": "Primary operational hub. Full customs clearing, FCL and LCL container handling, demurrage dispute management, Form M processing, destination inspection coordination, PAAR, SON and NAFDAC waivers. Fastest turnaround at Nigeria's busiest port."
+      },
+      "tin-can": {
+        "name": "Tin Can Island Port", "shortName": "Tin Can", "state": "Lagos State",
+        "cargoSpeciality": "Container Terminal",
+        "capability": "Dedicated container terminal. Import clearing for consumer goods, vehicles, machinery, and bulk cargo. Vehicle importation specialist. Consolidated LCL shipment management with direct road access to Lagos industrial corridor."
+      },
+      "lekki": {
+        "name": "Lekki Deep Sea Port", "shortName": "Lekki Deep Sea", "state": "Lagos State",
+        "cargoSpeciality": "Deep Sea Terminal",
+        "capability": "Nigeria's largest and newest deep-sea port. Ultra-large vessel capability. Project cargo, high-volume FCL operations, heavy industrial equipment importation. Positioned for the next decade of Nigerian trade growth."
+      },
+      "onne": {
+        "name": "Onne Port Complex", "shortName": "Onne Port", "state": "Rivers State",
+        "cargoSpeciality": "Oil & Gas Specialist",
+        "capability": "Specialist oil and gas cargo clearing. Hazardous materials documentation, OPAL/OGSL processing, industrial equipment importation, project logistics coordination. Primary gateway for the Niger Delta energy sector."
+      },
+      "port-harcourt": {
+        "name": "Port Harcourt Port", "shortName": "Port Harcourt", "state": "Rivers State",
+        "cargoSpeciality": "General Cargo",
+        "capability": "General cargo, agro-commodity exports, petroleum product documentation, multipurpose cargo handling. Serves Rivers State, Bayelsa, and the broader Niger Delta trade corridor."
+      },
+      "warri": {
+        "name": "Warri Port", "shortName": "Warri Port", "state": "Delta State",
+        "cargoSpeciality": "Bulk & Petroleum",
+        "capability": "Bulk cargo, petroleum products, agro-exports. Gateway for Delta and Edo State consignees. Timber, cocoa, and palm produce export documentation and coordination."
+      },
+      "calabar": {
+        "name": "Calabar Port", "shortName": "Calabar Port", "state": "Cross River State",
+        "cargoSpeciality": "Agro-Export Gateway",
+        "capability": "Nigeria's premier agro-export port. Cocoa, sesame, timber, and commodity export documentation. Phytosanitary certificates, NEPC registration, certificate of origin. Gateway to Southeast and South-South Nigeria."
+      },
+      "onitsha": {
+        "name": "Onitsha Inland Port", "shortName": "Onitsha Inland", "state": "Anambra State",
+        "cargoSpeciality": "River Niger — Inland Waterway",
+        "capability": "River Niger cargo route connecting Lagos to Southeast Nigeria. Cost-effective bulk movement alternative to road haulage. Serves Anambra, Enugu, Imo, and Abia States. Unique capability not offered by most Lagos-based clearing agents."
+      },
+      "kano-dry-port": {
+        "name": "Kano Dry Port (Inland Container Depot)", "shortName": "Kano Dry Port", "state": "Kano State",
+        "cargoSpeciality": "Inland Container Depot — Northwest Corridor",
+        "capability": "Customs clearing for cargo transferred by rail or road from Lagos and Apapa. Container examination, duty assessment, and final release coordination. Covers manufactured goods, machinery, raw materials, and agro-inputs for Northern Nigeria."
+      },
+      "kaduna-dry-port": {
+        "name": "Kaduna Dry Port", "shortName": "Kaduna Dry Port", "state": "Kaduna State",
+        "cargoSpeciality": "Rail-Connected Terminal — North-Central",
+        "capability": "Clearing of rail-transferred containers from Lagos Port. Industrial equipment, machinery, and manufactured goods destined for North-Central Nigeria. Full coordination with NRC (Nigerian Railway Corporation) logistics."
+      },
+      "maiduguri-dry-port": {
+        "name": "Maiduguri Dry Port", "shortName": "Maiduguri Dry Port", "state": "Borno State",
+        "cargoSpeciality": "Northeast Trade Gateway",
+        "capability": "Clearing and forwarding for humanitarian cargo, agricultural inputs, manufactured goods, and trade with Cameroon, Chad, and Niger Republic. Northeast Nigeria's primary inland clearance facility."
+      },
+      "funtua-dry-port": {
+        "name": "Funtua Dry Port", "shortName": "Funtua Dry Port", "state": "Katsina State",
+        "cargoSpeciality": "Cotton & Agricultural Hub — Northwest",
+        "capability": "Agro-export documentation, cotton and commodity clearing, agro-input imports. Specialist in North-West agricultural trade corridor documentation. Serves Katsina, Kebbi, Sokoto, and Zamfara States."
+      },
+      "heipang-dry-port": {
+        "name": "Heipang Dry Port", "shortName": "Heipang Dry Port", "state": "Plateau State",
+        "cargoSpeciality": "North-Central Gateway — Solid Minerals",
+        "capability": "Solid mineral exports, agricultural commodities, general cargo. Documentation for tin, columbite, and Jos Plateau mineral trade exports. Serves Plateau, Nasarawa, Benue, and Taraba States."
+      },
+      "ibadan-dry-port": {
+        "name": "Ibadan Dry Port (Inland Container Terminal)", "shortName": "Ibadan Dry Port", "state": "Oyo State",
+        "cargoSpeciality": "Southwest Inland Terminal",
+        "capability": "Cargo overflow from Lagos ports. Textile and manufacturing imports, agro-exports, consumer goods. Direct connection to Lagos Port Complex via expressway and planned rail corridor. Serves Oyo, Osun, Ekiti, and Kwara States."
+      }
+    }
+  },
+  "credentials": {
+    "badge": "Government-Verified · Internationally Qualified",
+    "title": "Verified Credentials & Professional Certifications",
+    "subtitle": "Ontime Resources Limited operates under government-verified licensing, internationally recognised academic qualifications, and full regulatory compliance — credentials that most Nigerian clearing agents simply do not hold.",
+    "trustStatement": "All credentials listed below are current, active, and verifiable.",
+    "trustLink": "NIMASA Licence SA261009 can be checked directly at www.nimasa.gov.ng",
+    "hero": {
+      "primaryLabel": "Primary Credential",
+      "title": "NIMASA Registration Licence",
+      "issuer": "Nigerian Maritime Administration and Safety Agency",
+      "verifiedBadge": "Verified Active",
+      "licenceNumber": "Licence Number",
+      "category": "Category",
+      "categoryValue": "Registered Shipping Agent",
+      "status": "Status",
+      "statusValue": "ACTIVE",
+      "issued": "Issued",
+      "validUntil": "Valid Until",
+      "issuingBody": "Issuing Body",
+      "authority": "Issued under the Nigerian Maritime Administration and Safety Agency Act 2007 and Merchant Shipping Act 2007.",
+      "verifyBtn": "Verify Online",
+      "downloadBtn": "Download Certificate Copy"
+    },
+    "widget": {
+      "active": "ACTIVE",
+      "licenceNo": "Licence No.",
+      "validUntil": "Valid Until",
+      "daysRemaining": "Days Remaining",
+      "lastVerified": "Last Verified",
+      "days": "days",
+      "verify": "Verify",
+      "expires": "Expires",
+      "remaining": "remaining",
+      "verified": "Verified"
+    },
+    "qualifications": {
+      "sectionTitle": "Academic & Professional Qualifications",
+      "sectionSubtitle": "Our leadership combines legal expertise in international maritime law with hands-on port operations experience — a combination that directly protects every client instruction we manage.",
+      "whyMatters": "Why This Matters For Your Cargo",
+      "llm-maritime-law": {
+        "tag": "Postgraduate Degree · UK",
+        "title": "LLM International Commercial and Maritime Law",
+        "institution": "Swansea University, United Kingdom",
+        "meta": "Awarded 2010 · School of Law",
+        "subjects": ["International Shipping Law","Charterparty Agreements","Cargo Claims","Maritime Contracts","Trade Finance Law","Bills of Lading","INCOTERMS","Maritime Arbitration"],
+        "relevance": "Every cargo instruction handled by Ontime Resources is managed by a team led by a qualified maritime lawyer. This means your contracts are reviewed correctly, your claims are handled professionally, and your rights are protected at every stage — under Nigerian and international maritime law."
+      },
+      "cma-conference": {
+        "tag": "International Conference · USA",
+        "title": "CMA Shipping Conference Attendance Certificate",
+        "institution": "CMA Shipping Conference, Stamford, Connecticut",
+        "meta": "2009 · One of the world's most prestigious annual shipping events",
+        "relevance": "The CMA Shipping Conference gathers global shipping executives, shipowners, financiers, and logistics leaders annually. Attendance demonstrates active participation in the international shipping industry at its highest level — not just local market knowledge."
+      }
+    },
+    "registration": {
+      "sectionTitle": "Corporate Registration & Legal Standing",
+      "cac": {
+        "tag": "Corporate Registration", "title": "Certificate of Incorporation",
+        "issuer": "Corporate Affairs Commission, Federal Republic of Nigeria",
+        "companyName": "Company Name", "regNumber": "Registration Number",
+        "registeredUnder": "Registered Under", "registeredUnderValue": "CAMA — Companies and Allied Matters Act",
+        "status": "Status", "statusValue": "Active",
+        "jurisdiction": "Jurisdiction", "jurisdictionValue": "Federal Republic of Nigeria"
+      },
+      "ncs": {
+        "tag": "Regulatory Compliance", "title": "Nigeria Customs Service Compliance",
+        "issuer": "Nigeria Customs Service",
+        "status": "Status", "statusValue": "Recognised Clearing Agent",
+        "statement": "Ontime Resources Limited is a recognised customs clearing agent operating in full compliance with Nigeria Customs Service regulations, tariff classifications, and destination inspection procedures at all Nigerian ports of entry."
+      }
+    },
+    "badges": {
+      "sectionTitle": "Industry Licences & Professional Affiliations",
+      "statusActive": "Active", "statusInProgress": "Registration in Progress", "statusPending": "Pending",
+      "nimasa":          { "name": "NIMASA Shipping Agent Licence SA261009",      "authority": "NIMASA" },
+      "nimasaAct":       { "name": "NIMASA Act 2007 Compliance",                  "authority": "Federal Govt of Nigeria" },
+      "merchantShipping":{ "name": "Merchant Shipping Act 2007 Registration",     "authority": "Nigerian Maritime Law" },
+      "ncs":             { "name": "Nigeria Customs Service Recognised Agent",    "authority": "Nigeria Customs Service" },
+      "nepc":            { "name": "NEPC Registered Export Facilitator",          "authority": "NEPC Nigeria" },
+      "llm":             { "name": "LLM Maritime Law Qualified Leadership",        "authority": "Swansea University UK" },
+      "cma":             { "name": "CMA Shipping Conference Alumni",               "authority": "CMA Shipping, USA 2009" },
+      "canton":          { "name": "Canton Fair 2026 Registered Buyer & Rep",     "authority": "China Import & Export Fair" }
+    },
+    "benefits": {
+      "sectionTitle": "What Our Credentials Mean For You",
+      "legalProtection": {
+        "title": "Your Cargo is Legally Protected",
+        "text": "Our NIMASA licence and LLM in maritime law means every cargo instruction is managed under full legal compliance. If disputes arise with terminal operators, shipping lines, or customs officials, our qualified leadership knows exactly how to protect your interests under Nigerian and international maritime law."
+      },
+      "verifiedAgent": {
+        "title": "You Are Working With a Verified Agent",
+        "text": "NIMASA Licence SA261009 is publicly verifiable at www.nimasa.gov.ng. You are not taking our word for it — you can check our licence status right now, in real time, before you instruct us with a single container. Most Nigerian clearing agents cannot offer this."
+      },
+      "international": {
+        "title": "International Standard Operations",
+        "text": "Our MD's LLM from a UK university and participation in the CMA Shipping Conference in the USA means our operations are benchmarked against international standards, not just local practices. You receive the same professional standard you would expect from a clearing agent in London, Singapore, or Shanghai."
+      }
+    },
+    "transparency": {
+      "title": "Verification & Transparency Statement",
+      "text": "We believe transparency is the foundation of every lasting business relationship. That is why every credential shown on this page is real, current, and independently verifiable. We do not display expired licences. We do not inflate our qualifications. We do not make claims we cannot substantiate.",
+      "facts": "NIMASA Licence SA261009 was issued on 25th March 2026 and is valid until 24th March 2027. Our LLM was awarded by Swansea University, United Kingdom in 2010. Our company is registered with the Corporate Affairs Commission of Nigeria under RC 7543149. These are facts. Check them.",
+      "verifyBtn": "Verify NIMASA Licence Now"
+    },
+    "downloads": {
+      "sectionTitle": "Download Our Credentials",
+      "sectionSubtitle": "Official company documents available for download.",
+      "downloadBtn": "Download",
+      "profile":    { "name": "Company Profile",                       "filename": "Ontime_Resources_Limited_Profile_2026.pdf" },
+      "nimasa":     { "name": "NIMASA Licence Copy (Redacted)",         "filename": "NIMASA_Licence_SA261009_Redacted.pdf" },
+      "capability": { "name": "Capability Statement",                   "filename": "Ontime_Capability_Statement_2026.pdf" },
+      "rateCard":   { "name": "Rate Card — Port Charges & Clearing Fees","filename": "Ontime_Rate_Card_2026.pdf" }
+    }
   }
 }
