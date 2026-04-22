@@ -299,7 +299,10 @@
       "noFoundDesc": "未找到与「{{query}}」匹配的海事律师。请尝试其他搜索词或联系我们的代表获取个性化帮助。",
       "clearSearch": "清除搜索",
       "callUs": "致电我们：",
-      "reviews": "条评价"
+      "reviews": "条评价",
+      "featured": "特色律师",
+      "featuredLawyer": "首席海事律师",
+      "topRated": "最高评分"
     },
     "templates": {
       "all": "所有模板",

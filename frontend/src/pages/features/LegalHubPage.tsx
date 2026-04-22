@@ -411,42 +411,149 @@ export default function LegalHubPage() {
                   </div>
                 </div>
 
-                {filteredConsultants.length === 0 ? (
-                  <div className="col-span-full flex flex-col items-center justify-center py-16 px-4">
-                    <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-                      <Search className="h-12 w-12 text-slate-400" />
+                {/* Featured Lawyer */}
+                <div className="mb-12">
+                  {/* <div className="flex items-center gap-3 mb-6">
+                    <Badge className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 px-4 py-1.5 text-sm">
+                      <Crown className="h-3.5 w-3.5 mr-1.5" />
+                      {t("legalhub.consultants.featured")}
+                    </Badge>
+                    <div className="flex-1 h-px bg-gradient-to-r from-cyan-200 to-transparent" />
+                  </div> */}
+
+                  <div className="grid lg:grid-cols-3 gap-8 items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-8 shadow-2xl overflow-hidden relative">
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-10 pointer-events-none">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400 rounded-full blur-3xl" />
+                      <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-400 rounded-full blur-3xl" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">
-                      {t("legalhub.consultants.noFound")}
-                    </h3>
-                    <p className="text-slate-600 text-center max-w-md mb-6">
-                      {t("legalhub.consultants.noFoundDesc", { query: searchQuery })}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 items-center">
-                      <Button
-                        variant="outline"
-                        onClick={() => dispatch(setSearchQuery(""))}
-                        className="rounded-xl px-6"
-                      >
-                        {t("legalhub.consultants.clearSearch")}
-                      </Button>
-                      <div className="flex items-center gap-2 text-slate-700">
-                        <Phone className="h-5 w-5 text-cyan-600" />
-                        <span className="font-semibold">{t("legalhub.consultants.callUs")}</span>
-                        <a 
-                          href="tel:+2348000000000" 
-                          className="text-cyan-600 hover:text-cyan-700 font-bold"
+
+                    {/* Photo Card */}
+                    <div className="relative z-10">
+                      <Card className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+                        <div className="relative aspect-[4/5] overflow-hidden">
+                          <img
+                            src="https://res.cloudinary.com/dikhomv7m/image/upload/v1773847345/ceo_img_zk1cvt.jpg"
+                            alt="Barr. Enemuo Chinedu Christopher"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent" />
+                          {/* <div className="absolute top-4 left-4">
+                            <Badge className="bg-emerald-500 text-white shadow-lg text-xs">
+                              <span className="w-1.5 h-1.5 bg-white rounded-full mr-1.5 animate-pulse" />
+                              {t("legalhub.consultants.available")}
+                            </Badge>
+                          </div> */}
+                          <div className="absolute inset-x-0 bottom-0 p-4">
+                            <div className="rounded-xl border border-white/10 bg-slate-950/40 backdrop-blur-md px-4 py-3 text-center">
+                              <h3 className="text-sm font-bold leading-snug text-white">Barr. Enemuo Chinedu Christopher</h3>
+                              <p className="mt-0.5 text-xs text-cyan-300">{t("about.team.ceoRole")}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+
+                    {/* Details */}
+                    <div className="lg:col-span-2 relative z-10 text-white space-y-6">
+                      <div>
+                        <p className="text-cyan-400 text-sm font-semibold uppercase tracking-widest mb-2">
+                          {t("legalhub.consultants.featuredLawyer")}
+                        </p>
+                        <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-1">
+                          Barr. Enemuo Chinedu Christopher
+                        </h2>
+                        <p className="text-slate-300 text-lg">{t("about.team.ceoRole")}</p>
+                      </div>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                          ))}
+                        </div>
+                        <span className="text-white font-semibold">5.0</span>
+                        <span className="text-slate-400 text-sm">{t("legalhub.consultants.topRated")}</span>
+                      </div>
+
+                      {/* Specializations */}
+                      <div>
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                          {t("legalhub.consultants.specializations")}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            t("legalhub.practiceAreas.shipping.title"),
+                            t("legalhub.practiceAreas.cargo.title"),
+                            t("legalhub.practiceAreas.disputes.title"),
+                            t("legalhub.practiceAreas.insurance.title"),
+                          ].map((spec) => (
+                            <Badge key={spec} className="bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                              {spec}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Stats Row */}
+                      <div className="flex flex-wrap gap-6">
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <Briefcase className="h-5 w-5 text-cyan-400" />
+                          <span className="text-sm">15+ {t("legalhub.consultants.years")}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <MapPin className="h-5 w-5 text-cyan-400" />
+                          <span className="text-sm">Nigeria · International</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <Shield className="h-5 w-5 text-cyan-400" />
+                          <span className="text-sm">{t("legalhub.practiceAreas.badge")}</span>
+                        </div>
+                      </div>
+
+                      {/* CTA */}
+                      <div className="flex flex-wrap gap-4 pt-2">
+                        <Button
+                          size="lg"
+                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl px-8 shadow-lg shadow-cyan-500/30"
+                          onClick={() => {
+                            openPayment({
+                              amount: 150,
+                              serviceName: "Legal Consultation - 1 Hour",
+                              consultantName: "Barr. Enemuo Chinedu Christopher",
+                            })
+                          }}
                         >
-                          +234 800 000 0000
-                        </a>
+                          {t("legalhub.dialog.bookConsultation")}
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="border-white/20 text-slate-700 hover:bg-white/10 hover:text-white rounded-xl px-8 transition-colors"
+                        >
+                          <Mail className="mr-2 h-5 w-5" />
+                          {t("legalhub.cta.call")}
+                        </Button>
                       </div>
                     </div>
                   </div>
-                ) : (
+                </div>
+
+                {/* Other Consultants */}
+                {filteredConsultants.length > 0 && (
+                  <div className="flex items-center gap-3 mb-6">
+                    <p className="text-slate-500 text-sm font-medium">{t("legalhub.consultants.title")}</p>
+                    <div className="flex-1 h-px bg-slate-200" />
+                  </div>
+                )}
+
+                {filteredConsultants.length > 0 && (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredConsultants.map((consultant, index) => (
-                      <Card 
-                        key={consultant.id} 
+                      <Card
+                        key={consultant.id}
                         className="group bg-white border-0 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
