@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { QrCode } from "@/components/QrCode"
+import { PortsCoverage } from "@/components/PortsCoverage"
 import { Header } from "@/components/layout/header"
 import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 import { Footer } from "@/components/layout/footer"
@@ -462,6 +463,9 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
+      {/* Ports Coverage */}
+      <PortsCoverage />
 
       {/* QR Code section */}
       <section className="py-14 bg-muted/40 border-t">
