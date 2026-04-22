@@ -176,7 +176,7 @@
     "learnMore": "Learn More"
   },
   "securityhotline": {
-    "chatbuttontoolpic": "Need help? Chat with us!",
+    "chatbuttontooltip": "Need help? Chat with us!",
     "hero": {
       "badge": "Security & Enforcement Hotline",
       "title": "Report Maritime Crimes",
@@ -299,7 +299,10 @@
       "noFoundDesc": "We couldn't find any maritime lawyers matching \"{{query}}\". Please try a different search term or contact our representative for personalized assistance.",
       "clearSearch": "Clear Search",
       "callUs": "Call us:",
-      "reviews": "reviews"
+      "reviews": "reviews",
+      "featured": "Featured Lawyer",
+      "featuredLawyer": "Lead Maritime Counsel",
+      "topRated": "Top Rated"
     },
     "templates": {
       "all": "All Templates",
