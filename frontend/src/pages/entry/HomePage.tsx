@@ -76,13 +76,13 @@ export default function HomePage() {
       icon: Store,
       color: "bg-orange-500/10 text-orange-600",
     },
-    {
-      title: t("modules.store.title"),
-      description: t("modules.store.description"),
-      href: "/store",
-      icon: Store,
-      color: "bg-emerald-500/10 text-emerald-600",
-    },
+    // {
+    //   title: t("modules.store.title"),
+    //   description: t("modules.store.description"),
+    //   href: "/store",
+    //   icon: Store,
+    //   color: "bg-emerald-500/10 text-emerald-600",
+    // },
     {
       title: t("modules.knowledge.title"),
       description: t("modules.knowledge.description"),
