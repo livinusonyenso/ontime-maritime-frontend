@@ -310,17 +310,39 @@
       "bol": "Bill of Lading",
       "nvocc": "NVOCC",
       "compliance": "Compliance",
+      "contract": "Ship Contracts",
       "premium": "Premium",
       "downloads": "downloads",
-      "download": "Download"
+      "download": "Download",
+      "searchPlaceholder": "Search templates by name or category...",
+      "noResults": "No templates match your search.",
+      "clearSearch": "Clear Search"
     },
     "services": {
       "duration": "Duration:",
-      "request": "Request Service"
+      "request": "Request Service",
+      "comingSoonBadge": "Legal Services",
+      "comingSoonTitle": "Professional Legal Services — Coming Soon",
+      "comingSoonDesc": "We are finalising partnerships with accredited maritime law firms to offer contract review, dispute resolution, and compliance advisory services. Be the first to access these when they launch.",
+      "comingSoonNotify": "Notify Me When Available",
+      "comingSoonContact": "Contact Our Legal Team",
+      "preview1": "Contract Review & Drafting",
+      "preview2": "Maritime Dispute Resolution",
+      "preview3": "Compliance & Regulatory Advisory",
+      "preview4": "Ship Finance & Mortgage"
     },
     "resources": {
       "access": "Access",
-      "premium": "Premium"
+      "premium": "Premium",
+      "comingSoonBadge": "Knowledge Hub",
+      "comingSoonTitle": "Maritime Legal Resources — Coming Soon",
+      "comingSoonDesc": "Our legal editorial team is curating expert articles, compliance checklists, and jurisdiction guides from practising maritime lawyers. Check back soon.",
+      "comingSoonNotify": "Notify Me When Available",
+      "comingSoonContact": "Suggest a Resource",
+      "preview1": "Port State Control Guides",
+      "preview2": "Jurisdiction Comparison Charts",
+      "preview3": "Cargo Claim Checklists",
+      "preview4": "Arbitration Procedure Frameworks"
     },
     "testimonials": {
       "badge": "Client Testimonials",
