@@ -649,6 +649,15 @@
     "socialTagline": "获取最新的海事技术创新和货运解决方案资讯。",
     "copyright": "© {{year}} 准时资源有限公司. 版权所有。"
   },
+  "comingSoonModal": {
+    "srTitle": "即将推出",
+    "srDescription": "此功能暂不可用。",
+    "badge": "开发中",
+    "titleWithFeature": "「{{name}}」即将推出",
+    "titleGeneric": "此功能即将推出",
+    "description": "我们正在积极开发中，请稍后再来查看。",
+    "cta": "知道了"
+  },
   "qrcode": {
     "quickacess": "快速访问",
     "Preparing" : "正在准备您的二维码...",

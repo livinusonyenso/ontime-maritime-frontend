@@ -649,6 +649,15 @@
     "socialTagline": "Stay updated with the latest maritime technology innovations and cargo solutions.",
     "copyright": "© {{year}} ONTIME RESOURCES LIMITED. All rights reserved."
   },
+  "comingSoonModal": {
+    "srTitle": "Coming Soon",
+    "srDescription": "This feature is not yet available.",
+    "badge": "Under Development",
+    "titleWithFeature": "\"{{name}}\" is Coming Soon",
+    "titleGeneric": "This Feature is Coming Soon",
+    "description": "We're actively working on this. Check back soon — it won't be long.",
+    "cta": "Got it"
+  },
   "qrcode": {
     "quickacess": "Quick Access",
     "Preparing" : "Preparing your QR code...",
