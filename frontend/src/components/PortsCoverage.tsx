@@ -22,7 +22,7 @@ const C = {
   card:    "#ffffff",
 }
 
-const WHATSAPP_URL = "https://wa.me/2348000000000" // ← replace with actual number
+const WHATSAPP_URL = "https://wa.me/2349034018849" // ← replace with actual number
 const EMAIL        = "ontimemaritime@gmail.com"
 
 // ─── Types ─────────────────────────────────────────────────────────────────────

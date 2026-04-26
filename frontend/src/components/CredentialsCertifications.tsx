@@ -33,24 +33,10 @@ const C = {
   white:    "#FFFFFF",
 }
 
-// ─── Live licence data ──────────────────────────────────────────────────────────
+// ─── Licence data (no sensitive dates exposed) ─────────────────────────────────
 const LICENCE = {
   number:   "SA261009",
-  issued:   new Date("2026-03-25"),
-  expiry:   new Date("2027-03-24"),
   verifyAt: "https://www.nimasa.gov.ng",
-}
-
-function daysRemaining(): number {
-  return Math.max(0, Math.ceil((LICENCE.expiry.getTime() - Date.now()) / 86_400_000))
-}
-
-function fmtDate(d: Date): string {
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
-}
-
-function todayStr(): string {
-  return new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
 }
 
 // ─── Pulsing dot ───────────────────────────────────────────────────────────────
@@ -66,10 +52,9 @@ function PulseDot({ color = C.active }: { color?: string }) {
   )
 }
 
-// ─── Live status widget (inline, used inside hero card) ────────────────────────
+// ─── Status widget ─────────────────────────────────────────────────────────────
 function StatusWidget({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation()
-  const days = daysRemaining()
 
   if (compact) {
     return (
@@ -100,16 +85,24 @@ function StatusWidget({ compact = false }: { compact?: boolean }) {
           <p className="font-black mt-0.5" style={{ color: C.forest }}>{LICENCE.number}</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.validUntil")}</p>
-          <p className="font-bold mt-0.5">{fmtDate(LICENCE.expiry)}</p>
+          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.issuingBody")}</p>
+          <p className="font-bold mt-0.5">NIMASA</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.daysRemaining")}</p>
-          <p className="font-black mt-0.5" style={{ color: days < 60 ? "#dc2626" : C.active }}>{days} {t("credentials.widget.days")}</p>
+          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.category")}</p>
+          <p className="font-bold mt-0.5">{t("credentials.widget.categoryValue")}</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.lastVerified")}</p>
-          <p className="font-bold mt-0.5">{todayStr()}</p>
+          <p className="font-semibold text-gray-400 uppercase tracking-wide text-[10px]">{t("credentials.widget.verifyAt")}</p>
+          <a
+            href={LICENCE.verifyAt}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold mt-0.5 underline underline-offset-2 hover:opacity-70"
+            style={{ color: C.forest }}
+          >
+            nimasa.gov.ng
+          </a>
         </div>
       </div>
     </div>
@@ -121,12 +114,10 @@ function HeroCard() {
   const { t } = useTranslation()
 
   const licenceFields = [
-    { labelKey: "credentials.hero.licenceNumber", value: LICENCE.number,                        bold: true },
-    { labelKey: "credentials.hero.category",      value: t("credentials.hero.categoryValue"),   bold: false },
-    { labelKey: "credentials.hero.status",        value: t("credentials.hero.statusValue"),     bold: true, green: true },
-    { labelKey: "credentials.hero.issued",        value: fmtDate(LICENCE.issued),               bold: false },
-    { labelKey: "credentials.hero.validUntil",    value: fmtDate(LICENCE.expiry),               bold: false },
-    { labelKey: "credentials.hero.issuingBody",   value: "NIMASA",                              bold: false },
+    { labelKey: "credentials.hero.licenceNumber", value: LICENCE.number,                      bold: true },
+    { labelKey: "credentials.hero.category",      value: t("credentials.hero.categoryValue"), bold: false },
+    { labelKey: "credentials.hero.status",        value: t("credentials.hero.statusValue"),   bold: true, green: true },
+    { labelKey: "credentials.hero.issuingBody",   value: "NIMASA",                            bold: false },
   ]
 
   return (
@@ -172,17 +163,17 @@ function HeroCard() {
             </p>
           </div>
 
-          {/* Licence details grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {/* Licence details grid — dates removed */}
+          <div className="grid grid-cols-2 gap-4">
             {licenceFields.map(({ labelKey, value, bold, green }) => (
               <div key={labelKey}>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{t(labelKey)}</p>
                 <p
-                  className={`text-sm mt-0.5 ${bold ? "font-black" : "font-medium"}`}
+                  className={`text-sm mt-0.5 flex items-center gap-1.5 ${bold ? "font-black" : "font-medium"}`}
                   style={{ color: green ? C.active : C.text }}
                 >
-                  {value}
                   {green && <PulseDot color={C.active} />}
+                  {value}
                 </p>
               </div>
             ))}
@@ -230,12 +221,12 @@ function HeroCard() {
 
 // ─── Qualification card ────────────────────────────────────────────────────────
 interface QualProps {
-  id:         string
-  icon:       React.ReactNode
-  tagColor:   string
-  tagBg:      string
+  id:          string
+  icon:        React.ReactNode
+  tagColor:    string
+  tagBg:       string
   borderColor: string
-  bgAccent:   string
+  bgAccent:    string
 }
 
 function QualCard({ id, icon, tagColor, tagBg, borderColor, bgAccent }: QualProps) {
@@ -317,10 +308,10 @@ function QualCard({ id, icon, tagColor, tagBg, borderColor, bgAccent }: QualProp
 type BadgeStatus = "active" | "in-progress" | "pending"
 
 interface BadgeProps {
-  icon:      React.ReactNode
-  nameKey:   string
+  icon:         React.ReactNode
+  nameKey:      string
   authorityKey: string
-  status:    BadgeStatus
+  status:       BadgeStatus
 }
 
 function BadgeCard({ icon, nameKey, authorityKey, status }: BadgeProps) {
@@ -408,7 +399,6 @@ function DownloadItem({ icon, nameKey, filenameKey, type }: { icon: React.ReactN
 // ─── Sticky floating widget ────────────────────────────────────────────────────
 function StickyWidget({ visible }: { visible: boolean }) {
   const { t } = useTranslation()
-  const days = daysRemaining()
   return (
     <div
       className={`fixed right-4 top-1/2 -translate-y-1/2 z-50 transition-all duration-500 ${
@@ -429,11 +419,7 @@ function StickyWidget({ visible }: { visible: boolean }) {
         </div>
         <p className="text-xs font-black" style={{ color: C.forest }}>NIMASA {LICENCE.number}</p>
         <div className="h-px bg-gray-100" />
-        <div className="text-[10px] text-gray-500 space-y-1">
-          <p>{t("credentials.widget.expires")} <strong className="text-gray-700">{fmtDate(LICENCE.expiry)}</strong></p>
-          <p><strong style={{ color: days < 60 ? "#dc2626" : C.active }}>{days} {t("credentials.widget.days")}</strong> {t("credentials.widget.remaining")}</p>
-          <p>{t("credentials.widget.verified")} {todayStr()}</p>
-        </div>
+        <p className="text-[10px] text-gray-500">{t("credentials.hero.categoryValue")}</p>
         <a
           href={LICENCE.verifyAt}
           target="_blank"
@@ -468,7 +454,6 @@ export function CredentialsCertifications() {
   const [stickyVisible, setStickyVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
-  // Show sticky widget when the credentials section is in view
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -500,23 +485,23 @@ export function CredentialsCertifications() {
   ]
 
   const badges: BadgeProps[] = [
-    { icon: <Anchor      className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.nimasa.name",          authorityKey: "credentials.badges.nimasa.authority",          status: "active" },
-    { icon: <Shield      className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.nimasaAct.name",       authorityKey: "credentials.badges.nimasaAct.authority",       status: "active" },
+    { icon: <Anchor       className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.nimasa.name",           authorityKey: "credentials.badges.nimasa.authority",           status: "active" },
+    { icon: <Shield       className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.nimasaAct.name",        authorityKey: "credentials.badges.nimasaAct.authority",        status: "active" },
     { icon: <CheckCircle2 className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.merchantShipping.name", authorityKey: "credentials.badges.merchantShipping.authority", status: "active" },
-    { icon: <BadgeCheck  className="h-6 w-6" style={{ color: C.navy }} />,   nameKey: "credentials.badges.ncs.name",             authorityKey: "credentials.badges.ncs.authority",             status: "active" },
-    { icon: <Globe       className="h-6 w-6" style={{ color: C.amber }} />,  nameKey: "credentials.badges.nepc.name",            authorityKey: "credentials.badges.nepc.authority",            status: "in-progress" },
-    { icon: <GraduationCap className="h-6 w-6" style={{ color: C.navy }} />, nameKey: "credentials.badges.llm.name",             authorityKey: "credentials.badges.llm.authority",             status: "active" },
-    { icon: <Award       className="h-6 w-6" style={{ color: C.gold }} />,   nameKey: "credentials.badges.cma.name",             authorityKey: "credentials.badges.cma.authority",             status: "active" },
-    { icon: <Globe       className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.canton.name",          authorityKey: "credentials.badges.canton.authority",          status: "active" },
+    { icon: <BadgeCheck   className="h-6 w-6" style={{ color: C.navy }} />,   nameKey: "credentials.badges.ncs.name",              authorityKey: "credentials.badges.ncs.authority",              status: "active" },
+    { icon: <Globe        className="h-6 w-6" style={{ color: C.amber }} />,  nameKey: "credentials.badges.nepc.name",             authorityKey: "credentials.badges.nepc.authority",             status: "in-progress" },
+    { icon: <GraduationCap className="h-6 w-6" style={{ color: C.navy }} />, nameKey: "credentials.badges.llm.name",              authorityKey: "credentials.badges.llm.authority",              status: "active" },
+    { icon: <Award        className="h-6 w-6" style={{ color: C.gold }} />,   nameKey: "credentials.badges.cma.name",              authorityKey: "credentials.badges.cma.authority",              status: "active" },
+    { icon: <Globe        className="h-6 w-6" style={{ color: C.forest }} />, nameKey: "credentials.badges.canton.name",           authorityKey: "credentials.badges.canton.authority",           status: "active" },
   ]
 
   const registrations = [
     {
-      id:    "cac",
-      icon:  <Building2 className="h-7 w-7" style={{ color: C.forest }} />,
-      tagKey: "credentials.registration.cac.tag",
+      id:       "cac",
+      icon:     <Building2 className="h-7 w-7" style={{ color: C.forest }} />,
+      tagKey:   "credentials.registration.cac.tag",
       titleKey: "credentials.registration.cac.title",
-      issuerKey: "credentials.registration.cac.issuer",
+      issuerKey:"credentials.registration.cac.issuer",
       lines: [
         { labelKey: "credentials.registration.cac.companyName",      value: "Ontime Resources Limited" },
         { labelKey: "credentials.registration.cac.regNumber",        value: "RC 7543149",               bold: true },
@@ -526,11 +511,11 @@ export function CredentialsCertifications() {
       ],
     },
     {
-      id:    "ncs",
-      icon:  <Shield className="h-7 w-7" style={{ color: C.navy }} />,
-      tagKey: "credentials.registration.ncs.tag",
+      id:       "ncs",
+      icon:     <Shield className="h-7 w-7" style={{ color: C.navy }} />,
+      tagKey:   "credentials.registration.ncs.tag",
       titleKey: "credentials.registration.ncs.title",
-      issuerKey: "credentials.registration.ncs.issuer",
+      issuerKey:"credentials.registration.ncs.issuer",
       lines: [
         { labelKey: "credentials.registration.ncs.status", value: t("credentials.registration.ncs.statusValue"), green: true },
       ],
@@ -551,7 +536,6 @@ export function CredentialsCertifications() {
 
         {/* ── Section header ──────────────────────────────────────────────────── */}
         <div className="relative overflow-hidden py-16 px-4" style={{ background: C.forest }}>
-          {/* Subtle dot watermark */}
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.035]"
             style={{
@@ -559,8 +543,6 @@ export function CredentialsCertifications() {
               backgroundSize: "28px 28px",
             }}
           />
-
-          {/* Mint accent line at the bottom */}
           <div className="absolute bottom-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent, ${C.mint}, transparent)` }} />
 
           <div className="relative max-w-4xl mx-auto text-center space-y-5">
@@ -584,7 +566,6 @@ export function CredentialsCertifications() {
               {t("credentials.subtitle")}
             </p>
 
-            {/* Trust statement */}
             <div
               className="inline-block text-sm font-semibold px-5 py-3 rounded-xl text-center"
               style={{ background: "rgba(110,231,183,0.12)", border: `1px solid ${C.mint}44`, color: C.mint }}

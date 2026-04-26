@@ -28,9 +28,11 @@ interface QrCodeProps {
   logoSrc?: string
   /** Logo size as fraction of QR size (default 0.22) */
   logoRatio?: number
+    value?: string
 }
 
-export function QrCode({ size = 200, logoSrc, logoRatio = 0.22 }: QrCodeProps) {
+export function QrCode({ size = 200, logoSrc, logoRatio = 0.22,value }: QrCodeProps) {
+  const qrValue = value ?? WEBSITE_URL 
   const qrRef  = useRef<HTMLDivElement>(null)
   const [busy, setBusy] = useState(false)
   const { t } = useTranslation()
@@ -65,7 +67,7 @@ export function QrCode({ size = 200, logoSrc, logoRatio = 0.22 }: QrCodeProps) {
         style={{ width: size + 32, height: size + 32 }}
       >
         <QRCode
-          value={WEBSITE_URL}
+           value={qrValue}
           size={size}
           level="H"
           bgColor="#ffffff"

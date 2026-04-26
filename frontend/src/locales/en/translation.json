@@ -116,7 +116,14 @@
       "feature1": "Customs clearance tracking",
       "feature2": "Cargo insurance quotes",
       "feature3": "Compliance management"
-    }
+    },
+    "highSeasSale": {
+  "title": "High Seas Sale",
+  "description": "Facilitate cargo transfers mid-voyage with legally binding digital documentation and seamless ownership handover.",
+  "feature1": "Mid-voyage ownership transfer",
+  "feature2": "Digital bill of lading endorsement",
+  "feature3": "Real-time cargo status updates"
+}
   },
   "integrations": {
     "sectionTitle": "Powered by Industry-Leading Integrations",
