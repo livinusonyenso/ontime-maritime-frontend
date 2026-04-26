@@ -23,9 +23,9 @@ import {
   clearSelectedConsultant,
   setSearchQuery,
   setFilterCategory,
-  incrementTemplateDownloads,
 } from "@/store/slices/legalHubSlice"
 import { PaystackPayment, usePaystackPayment } from  "@/components/payments/PaystackPayment"
+import { ComingSoonModal } from "@/components/features/ComingSoonModal"
 import { useTranslation } from "react-i18next"
 import {
   Scale,
@@ -49,12 +49,14 @@ import {
   Shield,
   Award,
   Quote,
-  Play,
   ChevronRight,
+  ChevronLeft,
   MapPin,
   Calendar,
   Waves,
   Compass,
+  Bell,
+  Lock,
 } from "lucide-react"
 
 import { QrCode } from "@/components/QrCode"
@@ -64,6 +66,7 @@ export default function LegalHubPage() {
   const { consultants, templates, services, resources, selectedConsultant, searchQuery, filterCategory } =
     useAppSelector((state) => state.legalHub)
   const [activeTab, setActiveTab] = useState("consultants")
+  const [comingSoon, setComingSoon] = useState<{ open: boolean; feature?: string }>({ open: false })
 
   useEffect(() => {
     if (consultants.length === 0) dispatch(fetchLegalData())
@@ -87,16 +90,23 @@ export default function LegalHubPage() {
       c.specialization.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
-  const filteredTemplates = templates.filter(
-    (t) =>
-      filterCategory === "all" || t.category === filterCategory
+  const [templateSearch, setTemplateSearch] = useState("")
+  const [templatePage, setTemplatePage] = useState(1)
+  const TEMPLATES_PER_PAGE = 6
+
+  const filteredTemplates = templates.filter((tmpl) => {
+    const matchesCategory = filterCategory === "all" || tmpl.category === filterCategory
+    const q = templateSearch.toLowerCase()
+    const matchesSearch = !q || tmpl.name.toLowerCase().includes(q) || tmpl.description.toLowerCase().includes(q)
+    return matchesCategory && matchesSearch
+  })
+
+  const totalTemplatePages = Math.max(1, Math.ceil(filteredTemplates.length / TEMPLATES_PER_PAGE))
+  const pagedTemplates = filteredTemplates.slice(
+    (templatePage - 1) * TEMPLATES_PER_PAGE,
+    templatePage * TEMPLATES_PER_PAGE
   )
 
-  const filteredResources = resources.filter(
-    (r) =>
-      filterCategory === "all" ||
-      r.category.toLowerCase().includes(filterCategory.toLowerCase())
-  )
 
   // Handle consultation booking with payment
   const handleBookConsultation = (consultant: typeof selectedConsultant) => {
@@ -669,167 +679,355 @@ export default function LegalHubPage() {
 
               {/* Templates Tab */}
               <TabsContent value="templates">
-                <div className="mb-8">
-                  <div className="flex flex-wrap gap-3">
+                {/* Filters + Search */}
+                <div className="mb-8 space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Search */}
+                    <div className="relative flex-1">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        placeholder={t("legalhub.templates.searchPlaceholder")}
+                        value={templateSearch}
+                        onChange={(e) => { setTemplateSearch(e.target.value); setTemplatePage(1) }}
+                        className="pl-11 h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    {/* Count */}
+                    <div className="flex items-center gap-2 text-sm text-slate-500 self-center shrink-0">
+                      <FileText className="h-4 w-4" />
+                      <span>
+                        {filteredTemplates.length} / {templates.length} {t("legalhub.stats.templates").toLowerCase()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Category Pills */}
+                  <div className="flex flex-wrap gap-2">
                     {[
-                      { key: "all", label: t("legalhub.templates.all") },
-                      { key: "charterparty", label: t("legalhub.templates.charterparty") },
-                      { key: "bol", label: t("legalhub.templates.bol") },
-                      { key: "nvocc", label: t("legalhub.templates.nvocc") },
-                      { key: "compliance", label: t("legalhub.templates.compliance") },
-                    ].map((filter) => (
-                      <Button
-                        key={filter.key}
-                        variant={filterCategory === filter.key ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => dispatch(setFilterCategory(filter.key))}
-                        className={filterCategory === filter.key 
-                          ? "bg-cyan-500 hover:bg-cyan-600 rounded-full px-6" 
-                          : "rounded-full px-6"
-                        }
+                      { key: "all",         label: t("legalhub.templates.all"),         icon: Scale },
+                      { key: "charterparty",label: t("legalhub.templates.charterparty"),icon: Ship },
+                      { key: "bol",         label: t("legalhub.templates.bol"),          icon: FileText },
+                      { key: "nvocc",       label: t("legalhub.templates.nvocc"),        icon: Anchor },
+                      { key: "compliance",  label: t("legalhub.templates.compliance"),   icon: Shield },
+                      { key: "contract",    label: t("legalhub.templates.contract"),     icon: Briefcase },
+                    ].map(({ key, label, icon: Icon }) => (
+                      <button
+                        key={key}
+                        onClick={() => { dispatch(setFilterCategory(key)); setTemplatePage(1) }}
+                        className={[
+                          "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all border",
+                          filterCategory === key
+                            ? "bg-cyan-500 text-white border-cyan-500 shadow-md shadow-cyan-500/20"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-cyan-300 hover:text-cyan-600",
+                        ].join(" ")}
                       >
-                        {filter.label}
-                      </Button>
+                        <Icon className="h-3.5 w-3.5" />
+                        {label}
+                        <span className={[
+                          "ml-1 text-xs px-1.5 py-0.5 rounded-full font-semibold",
+                          filterCategory === key ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500",
+                        ].join(" ")}>
+                          {key === "all"
+                            ? templates.length
+                            : templates.filter(tmpl => tmpl.category === key).length}
+                        </span>
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="grid gap-4">
-                  {filteredTemplates.map((template, index) => (
-                    <Card key={template.id} className="bg-white border-0 shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between gap-6">
-                          <div className="flex items-start gap-5">
-                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">
-                              <FileText className="h-7 w-7 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-1">
-                                <h3 className="font-bold text-lg text-slate-900">{template.name}</h3>
-                                {template.premium && (
-                                  <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0">
-                                    <Crown className="h-3 w-3 mr-1" /> {t("legalhub.templates.premium")}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-slate-600 mb-3">{template.description}</p>
-                              <div className="flex items-center gap-4 text-sm">
-                                <Badge variant="outline" className="capitalize rounded-full">
-                                  {template.category}
-                                </Badge>
-                                <span className="flex items-center gap-1 text-slate-500">
-                                  <Download className="h-4 w-4" />
-                                  {template.downloads.toLocaleString()} {t("legalhub.templates.downloads")}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <Button
-                            onClick={() => dispatch(incrementTemplateDownloads(template.id))}
-                            className="bg-slate-900 hover:bg-slate-800 rounded-xl px-6"
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            {t("legalhub.templates.download")}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-
-              {/* Services Tab */}
-              <TabsContent value="services">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {services.map((service, index) => (
-                    <Card 
-                      key={service.id} 
-                      className="bg-white border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden group"
+                {/* Results */}
+                {filteredTemplates.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                      <Search className="h-8 w-8 text-slate-400" />
+                    </div>
+                    <p className="text-slate-700 font-semibold mb-1">{t("legalhub.templates.noResults")}</p>
+                    <button
+                      onClick={() => { setTemplateSearch(""); dispatch(setFilterCategory("all")); setTemplatePage(1) }}
+                      className="text-sm text-cyan-600 hover:underline mt-1"
                     >
-                      <div className="h-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500" />
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <Badge variant="outline" className="capitalize rounded-full">
-                            {service.type.replace("_", " ")}
-                          </Badge>
-                          <div className="text-right">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                              ${service.price.toLocaleString()}
-                            </div>
-                          </div>
-                        </div>
-                        <CardTitle className="text-xl">{service.title}</CardTitle>
-                        <CardDescription className="text-base">{service.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pb-4">
-                        <div className="flex items-center gap-3 text-slate-600 bg-slate-50 px-4 py-3 rounded-xl">
-                          <Clock className="h-5 w-5 text-cyan-500" />
-                          <span>{t("legalhub.services.duration")} <strong>{service.duration}</strong></span>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-0">
-                        <Button 
-                          className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl h-12 shadow-md"
-                          onClick={() => handleServicePurchase(service)}
+                      {t("legalhub.templates.clearSearch")}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                  <div className="grid gap-4">
+                    {pagedTemplates.map((template) => {
+                      const categoryColors: Record<string, string> = {
+                        charterparty: "from-cyan-500 to-blue-600",
+                        bol:          "from-blue-500 to-indigo-600",
+                        nvocc:        "from-teal-500 to-cyan-600",
+                        compliance:   "from-emerald-500 to-green-600",
+                        contract:     "from-slate-600 to-slate-800",
+                      }
+                      const gradient = categoryColors[template.category] ?? "from-slate-500 to-slate-700"
+
+                      return (
+                        <Card
+                          key={template.id}
+                          className="group bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300"
                         >
-                          {t("legalhub.services.request")}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
+                          <CardContent className="p-0">
+                            <div className="flex items-stretch gap-0">
+                              {/* Colour accent strip */}
+                              <div className={`w-1.5 rounded-l-xl bg-gradient-to-b ${gradient} shrink-0`} />
+
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 flex-1">
+                                <div className="flex items-start gap-5 flex-1 min-w-0">
+                                  {/* Icon */}
+                                  <div className={`w-14 h-14 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-lg shrink-0`}>
+                                    <FileText className="h-7 w-7 text-white" />
+                                  </div>
+
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                      <h3 className="font-bold text-base text-slate-900 leading-snug">{template.name}</h3>
+                                      {template.premium && (
+                                        <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 text-xs shrink-0">
+                                          <Crown className="h-3 w-3 mr-1" /> {t("legalhub.templates.premium")}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <p className="text-slate-500 text-sm leading-relaxed mb-3 line-clamp-2">{template.description}</p>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs">
+                                      <Badge variant="outline" className="capitalize rounded-full border-slate-200 text-slate-600 font-medium">
+                                        {t(`legalhub.templates.${template.category}` as any) || template.category}
+                                      </Badge>
+                                      <span className="flex items-center gap-1 text-slate-400">
+                                        <Download className="h-3.5 w-3.5" />
+                                        {template.downloads.toLocaleString()} {t("legalhub.templates.downloads")}
+                                      </span>
+                                      {template.premium && (
+                                        <span className="flex items-center gap-1 text-amber-600 font-medium">
+                                          <Lock className="h-3.5 w-3.5" />
+                                          Premium access required
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Action */}
+                                <Button
+                                  onClick={() => setComingSoon({ open: true, feature: template.name })}
+                                  className={[
+                                    "shrink-0 rounded-xl px-6 h-11 shadow-sm transition-all",
+                                    template.premium
+                                      ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                                      : "bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white",
+                                  ].join(" ")}
+                                >
+                                  {template.premium ? (
+                                    <>
+                                      <Crown className="h-4 w-4 mr-2" />
+                                      Unlock
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Download className="h-4 w-4 mr-2" />
+                                      {t("legalhub.templates.download")}
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalTemplatePages > 1 && (
+                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+                      <p className="text-sm text-slate-500">
+                        Showing{" "}
+                        <span className="font-semibold text-slate-700">
+                          {(templatePage - 1) * TEMPLATES_PER_PAGE + 1}–{Math.min(templatePage * TEMPLATES_PER_PAGE, filteredTemplates.length)}
+                        </span>{" "}
+                        of <span className="font-semibold text-slate-700">{filteredTemplates.length}</span> templates
+                      </p>
+
+                      <div className="flex items-center gap-1">
+                        {/* Prev */}
+                        <button
+                          onClick={() => setTemplatePage((p) => Math.max(1, p - 1))}
+                          disabled={templatePage === 1}
+                          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-cyan-400 hover:text-cyan-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: totalTemplatePages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setTemplatePage(page)}
+                            className={[
+                              "w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all border",
+                              page === templatePage
+                                ? "bg-cyan-500 text-white border-cyan-500 shadow-sm shadow-cyan-500/30"
+                                : "border-slate-200 text-slate-600 hover:border-cyan-400 hover:text-cyan-600",
+                            ].join(" ")}
+                          >
+                            {page}
+                          </button>
+                        ))}
+
+                        {/* Next */}
+                        <button
+                          onClick={() => setTemplatePage((p) => Math.min(totalTemplatePages, p + 1))}
+                          disabled={templatePage === totalTemplatePages}
+                          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-cyan-400 hover:text-cyan-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  </>
+                )}
+              </TabsContent>
+
+              {/* Services Tab — Coming Soon */}
+              <TabsContent value="services">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 md:p-16 text-white">
+                  {/* Background blobs */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
+                    <div className="absolute bottom-0 left-0 w-56 h-56 bg-blue-500/10 rounded-full blur-3xl" />
+                  </div>
+                  <Compass className="absolute top-8 right-8 h-28 w-28 text-white/5" />
+
+                  <div className="relative z-10 max-w-2xl mx-auto text-center">
+                    <Badge className="mb-6 bg-white/10 text-cyan-400 border-0 px-4 py-1.5">
+                      <Briefcase className="h-3.5 w-3.5 mr-2" />
+                      {t("legalhub.services.comingSoonBadge")}
+                    </Badge>
+
+                    <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-cyan-500/30">
+                      <Clock className="h-10 w-10 text-white" />
+                    </div>
+
+                    <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                      {t("legalhub.services.comingSoonTitle")}
+                    </h2>
+                    <p className="text-slate-300 text-lg leading-relaxed mb-10">
+                      {t("legalhub.services.comingSoonDesc")}
+                    </p>
+
+                    {/* Preview cards */}
+                    <div className="grid sm:grid-cols-2 gap-4 mb-10 text-left">
+                      {[
+                        { label: t("legalhub.services.preview1"), icon: FileText },
+                        { label: t("legalhub.services.preview2"), icon: Scale },
+                        { label: t("legalhub.services.preview3"), icon: Shield },
+                        { label: t("legalhub.services.preview4"), icon: Anchor },
+                      ].map(({ label, icon: Icon }) => (
+                        <div
+                          key={label}
+                          className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
+                        >
+                          <div className="w-9 h-9 bg-cyan-500/20 rounded-lg flex items-center justify-center shrink-0">
+                            <Icon className="h-4.5 w-4.5 text-cyan-400" />
+                          </div>
+                          <span className="text-sm font-medium text-slate-200">{label}</span>
+                          <Badge className="ml-auto bg-slate-700 text-slate-400 border-0 text-xs">Soon</Badge>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 justify-center">
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl px-8 shadow-lg shadow-cyan-500/30"
+                        onClick={() => setComingSoon({ open: true, feature: t("legalhub.tabs.services") })}
+                      >
+                        <Bell className="mr-2 h-5 w-5" />
+                        {t("legalhub.services.comingSoonNotify")}
+                      </Button>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="border-white/20 text-slate-200 hover:bg-white/10 rounded-xl px-8"
+                        onClick={scrollToConsultants}
+                      >
+                        <Users className="mr-2 h-5 w-5" />
+                        {t("legalhub.services.comingSoonContact")}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
 
-              {/* Resources Tab */}
+              {/* Resources Tab — Coming Soon */}
               <TabsContent value="resources">
-                <div className="grid gap-4">
-                  {filteredResources.map((resource) => {
-                    const iconConfig = {
-                      article: { icon: BookOpen, bg: "from-blue-500 to-blue-600", shadow: "shadow-blue-500/30" },
-                      checklist: { icon: CheckCircle2, bg: "from-emerald-500 to-green-600", shadow: "shadow-emerald-500/30" },
-                      guide: { icon: GraduationCap, bg: "from-purple-500 to-violet-600", shadow: "shadow-purple-500/30" },
-                      framework: { icon: Scale, bg: "from-amber-500 to-orange-600", shadow: "shadow-amber-500/30" },
-                    }
-                    const config = iconConfig[resource.type as keyof typeof iconConfig] || iconConfig.article
-                    const IconComponent = config.icon
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-12 md:p-16">
+                  {/* Background blobs */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-100 rounded-full blur-3xl opacity-60" />
+                    <div className="absolute bottom-0 left-0 w-56 h-56 bg-blue-100 rounded-full blur-3xl opacity-60" />
+                  </div>
+                  <Waves className="absolute top-8 right-8 h-28 w-28 text-slate-200" />
 
-                    return (
-                      <Card key={resource.id} className="bg-white border-0 shadow-md hover:shadow-lg transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between gap-6">
-                            <div className="flex items-start gap-5">
-                              <div className={`w-14 h-14 bg-gradient-to-br ${config.bg} rounded-2xl flex items-center justify-center shadow-lg ${config.shadow} flex-shrink-0`}>
-                                <IconComponent className="h-7 w-7 text-white" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-1">
-                                  <h3 className="font-bold text-lg text-slate-900">{resource.title}</h3>
-                                  {resource.premium && (
-                                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0">
-                                      <Crown className="h-3 w-3 mr-1" /> {t("legalhub.resources.premium")}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-slate-600 mb-3">{resource.summary}</p>
-                                <div className="flex items-center gap-4 text-sm">
-                                  <Badge variant="outline" className="rounded-full">{resource.category}</Badge>
-                                  <span className="flex items-center gap-1 text-slate-500">
-                                    <Calendar className="h-4 w-4" />
-                                    {new Date(resource.publishDate).toLocaleDateString()}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <Button variant="outline" className="rounded-xl px-6">
-                              <Download className="h-4 w-4 mr-2" />
-                              {t("legalhub.resources.access")}
-                            </Button>
+                  <div className="relative z-10 max-w-2xl mx-auto text-center">
+                    <Badge variant="outline" className="mb-6 px-4 py-1.5 text-cyan-600 border-cyan-200 bg-cyan-50">
+                      <BookOpen className="h-3.5 w-3.5 mr-2" />
+                      {t("legalhub.resources.comingSoonBadge")}
+                    </Badge>
+
+                    <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-teal-500/20">
+                      <GraduationCap className="h-10 w-10 text-white" />
+                    </div>
+
+                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+                      {t("legalhub.resources.comingSoonTitle")}
+                    </h2>
+                    <p className="text-slate-500 text-lg leading-relaxed mb-10">
+                      {t("legalhub.resources.comingSoonDesc")}
+                    </p>
+
+                    {/* Preview cards */}
+                    <div className="grid sm:grid-cols-2 gap-4 mb-10 text-left">
+                      {[
+                        { label: t("legalhub.resources.preview1"), icon: Globe,        color: "bg-cyan-50 text-cyan-600" },
+                        { label: t("legalhub.resources.preview2"), icon: Scale,        color: "bg-blue-50 text-blue-600" },
+                        { label: t("legalhub.resources.preview3"), icon: CheckCircle2, color: "bg-emerald-50 text-emerald-600" },
+                        { label: t("legalhub.resources.preview4"), icon: BookOpen,     color: "bg-purple-50 text-purple-600" },
+                      ].map(({ label, icon: Icon, color }) => (
+                        <div
+                          key={label}
+                          className="flex items-center gap-3 bg-white border border-slate-100 rounded-xl px-4 py-3 shadow-sm"
+                        >
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+                            <Icon className="h-4 w-4" />
                           </div>
-                        </CardContent>
-                      </Card>
-                    )
-                  })}
+                          <span className="text-sm font-medium text-slate-700">{label}</span>
+                          <Badge variant="outline" className="ml-auto text-xs text-slate-400 border-slate-200">Soon</Badge>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 justify-center">
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 rounded-xl px-8 shadow-lg shadow-teal-500/20 text-white"
+                        onClick={() => setComingSoon({ open: true, feature: t("legalhub.tabs.resources") })}
+                      >
+                        <Bell className="mr-2 h-5 w-5" />
+                        {t("legalhub.resources.comingSoonNotify")}
+                      </Button>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="rounded-xl px-8 border-slate-300 text-slate-600 hover:border-cyan-300 hover:text-cyan-600"
+                      >
+                        <Mail className="mr-2 h-5 w-5" />
+                        {t("legalhub.resources.comingSoonContact")}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
@@ -1100,6 +1298,13 @@ export default function LegalHubPage() {
             </DialogContent>
           </Dialog>
         )}
+
+        {/* Coming Soon Modal */}
+        <ComingSoonModal
+          open={comingSoon.open}
+          featureName={comingSoon.feature}
+          onClose={() => setComingSoon({ open: false })}
+        />
 
         {/* Paystack Payment Component */}
         <PaystackPayment

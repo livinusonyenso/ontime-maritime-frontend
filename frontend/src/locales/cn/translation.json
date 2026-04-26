@@ -317,17 +317,39 @@
       "bol": "提单",
       "nvocc": "无船承运人",
       "compliance": "合规",
+      "contract": "船舶合同",
       "premium": "高级版",
       "downloads": "次下载",
-      "download": "下载"
+      "download": "下载",
+      "searchPlaceholder": "按名称或类别搜索模板...",
+      "noResults": "没有匹配的模板。",
+      "clearSearch": "清除搜索"
     },
     "services": {
       "duration": "时长：",
-      "request": "申请服务"
+      "request": "申请服务",
+      "comingSoonBadge": "法律服务",
+      "comingSoonTitle": "专业法律服务 — 即将推出",
+      "comingSoonDesc": "我们正在与认可的海事律师事务所建立合作，提供合同审查、争议解决和合规咨询服务。",
+      "comingSoonNotify": "上线时通知我",
+      "comingSoonContact": "联系我们的法律团队",
+      "preview1": "合同审查与起草",
+      "preview2": "海事争议解决",
+      "preview3": "合规与监管咨询",
+      "preview4": "船舶融资与抵押"
     },
     "resources": {
       "access": "访问",
-      "premium": "高级版"
+      "premium": "高级版",
+      "comingSoonBadge": "知识库",
+      "comingSoonTitle": "海事法律资源 — 即将推出",
+      "comingSoonDesc": "我们的法律编辑团队正在整理来自执业海事律师的专家文章、合规清单和司法管辖区指南。",
+      "comingSoonNotify": "上线时通知我",
+      "comingSoonContact": "建议资源",
+      "preview1": "港口国监督指南",
+      "preview2": "司法管辖区对比图",
+      "preview3": "货物索赔清单",
+      "preview4": "仲裁程序框架"
     },
     "testimonials": {
       "badge": "客户评价",
@@ -633,6 +655,15 @@
     "followUs": "关注我们",
     "socialTagline": "获取最新的海事技术创新和货运解决方案资讯。",
     "copyright": "© {{year}} 准时资源有限公司. 版权所有。"
+  },
+  "comingSoonModal": {
+    "srTitle": "即将推出",
+    "srDescription": "此功能暂不可用。",
+    "badge": "开发中",
+    "titleWithFeature": "「{{name}}」即将推出",
+    "titleGeneric": "此功能即将推出",
+    "description": "我们正在积极开发中，请稍后再来查看。",
+    "cta": "知道了"
   },
   "qrcode": {
     "quickacess": "快速访问",
