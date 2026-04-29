@@ -118,12 +118,12 @@ export default function VerifyOtpPage() {
       startResendTimer()
       toast({ title: "New code sent!", description: result.message })
 
-      if (result.pendingId && result.pendingId !== pendingId) {
-        navigate("/verify-otp", {
-          replace: true,
-          state: { pendingId: result.pendingId, email },
-        })
-      }
+      // Always update pendingId from resend response — backend may have created
+      // a new record with a new ID; failing to update here causes "Invalid OTP".
+      navigate("/verify-otp", {
+        replace: true,
+        state: { pendingId: result.pendingId ?? pendingId, email },
+      })
     } catch (err: any) {
       toast({
         title: "Failed to resend",

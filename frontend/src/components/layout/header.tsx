@@ -1,14 +1,25 @@
 import { useState, useEffect, useCallback } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { useAuth } from "@/contexts/auth-context"
 
 import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function Header() {
   const { t } = useTranslation()
+  const { user, logout } = useAuth()
+  const isAuthenticated = Boolean(user)
+  const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const dashboardPath =
+    user?.role === "seller" ? "/dashboard/seller"
+    : user?.role === "organization" ? "/dashboard/organization"
+    : user?.role === "executive" ? "/dashboard/executive"
+    : user?.role === "admin" ? "/admin"
+    : "/dashboard/buyer"
 
   const toggleMenu = useCallback(() => {
     setMobileMenuOpen(prev => !prev)
@@ -17,6 +28,12 @@ export function Header() {
   const closeMenu = useCallback(() => {
     setMobileMenuOpen(false)
   }, [])
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
+    closeMenu()
+  }
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -103,12 +120,25 @@ export function Header() {
               {/* <LanguageSwitcher /> */}
 
               {/* Desktop auth buttons */}
-              <Link to="/login" className="hidden md:block">
-                <Button variant="ghost" size="sm">{t("nav.login")}</Button>
-              </Link>
-              <Link to="/register" className="hidden md:block">
-                <Button size="sm">{t("nav.register")}</Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to={dashboardPath} className="hidden md:block">
+                    <Button variant="ghost" size="sm">{t("nav.dashboard") || "Dashboard"}</Button>
+                  </Link>
+                  <button type="button" onClick={handleLogout} className="hidden md:block">
+                    <Button variant="outline" size="sm">{t("nav.logout") || "Logout"}</Button>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="hidden md:block">
+                    <Button variant="ghost" size="sm">{t("nav.login")}</Button>
+                  </Link>
+                  <Link to="/register" className="hidden md:block">
+                    <Button size="sm">{t("nav.register")}</Button>
+                  </Link>
+                </>
+              )}
 
               {/* Mobile Menu Toggle - ALWAYS visible on mobile/tablet */}
               <button
@@ -217,21 +247,33 @@ export function Header() {
 
           {/* Footer Actions */}
           <div className="p-4 border-t space-y-3">
-            <Link to="/login" onClick={closeMenu} className="block">
-              <Button
-                variant="outline"
-                className="w-full h-12 text-base font-semibold"
-              >
-                {t("nav.login")}
-              </Button>
-            </Link>
-            <Link to="/register" onClick={closeMenu} className="block">
-              <Button
-                className="w-full h-12 text-base font-semibold"
-              >
-                {t("nav.register")}
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to={dashboardPath} onClick={closeMenu} className="block">
+                  <Button className="w-full h-12 text-base font-semibold">
+                    {t("nav.dashboard") || "Dashboard"}
+                  </Button>
+                </Link>
+                <button type="button" onClick={handleLogout} className="block w-full">
+                  <Button variant="outline" className="w-full h-12 text-base font-semibold">
+                    {t("nav.logout") || "Logout"}
+                  </Button>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={closeMenu} className="block">
+                  <Button variant="outline" className="w-full h-12 text-base font-semibold">
+                    {t("nav.login")}
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={closeMenu} className="block">
+                  <Button className="w-full h-12 text-base font-semibold">
+                    {t("nav.register")}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

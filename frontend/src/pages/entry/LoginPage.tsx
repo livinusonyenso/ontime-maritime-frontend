@@ -28,9 +28,21 @@ export default function LoginPage() {
   const [lockUntil, setLockUntil] = useState<Date | null>(null)
   const [countdown, setCountdown] = useState("")
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const { login, resendOtp } = useAuth()
+  const { login, resendOtp, user, isAuthenticated } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
+
+  // Redirect already-authenticated users to their dashboard
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "buyer") navigate("/dashboard/buyer", { replace: true })
+      else if (user.role === "seller") navigate("/dashboard/seller", { replace: true })
+      else if (user.role === "organization") navigate("/dashboard/organization", { replace: true })
+      else if (user.role === "executive") navigate("/dashboard/executive", { replace: true })
+      else if (user.role === "admin") navigate("/admin", { replace: true })
+      else navigate("/dashboard/buyer", { replace: true })
+    }
+  }, [isAuthenticated, user, navigate])
 
   useEffect(() => {
     if (!lockUntil) { setCountdown(""); return }

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import { fetchVessels, setSearchQuery, selectVessel, clearSelectedVessel } from "@/store/slices/vesselTrackingSlice"
+import { useAuth } from "@/contexts/auth-context"
 import {
   Ship,
   Search,
@@ -27,12 +28,13 @@ import {
 
 export default function VesselTrackingPage() {
   const dispatch = useAppDispatch()
+  const { isAuthenticated } = useAuth()
   const { vessels, selectedVessel, searchQuery } = useAppSelector((state) => state.vesselTracking)
   const [searchInput, setSearchInput] = useState("")
 
   useEffect(() => {
-    if (vessels.length === 0) dispatch(fetchVessels())
-  }, [dispatch])
+    if (isAuthenticated && vessels.length === 0) dispatch(fetchVessels())
+  }, [isAuthenticated, dispatch])
 
   const filteredVessels = vessels.filter(
     (vessel) =>

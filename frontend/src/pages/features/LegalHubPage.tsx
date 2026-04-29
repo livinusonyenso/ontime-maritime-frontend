@@ -24,6 +24,7 @@ import {
   setSearchQuery,
   setFilterCategory,
 } from "@/store/slices/legalHubSlice"
+import { useAuth } from "@/contexts/auth-context"
 import { PaystackPayment, usePaystackPayment } from  "@/components/payments/PaystackPayment"
 import { ComingSoonModal } from "@/components/features/ComingSoonModal"
 import { useTranslation } from "react-i18next"
@@ -62,14 +63,17 @@ import {
 export default function LegalHubPage() {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { isAuthenticated } = useAuth()
   const { consultants, templates, services, resources, selectedConsultant, searchQuery, filterCategory } =
     useAppSelector((state) => state.legalHub)
   const [activeTab, setActiveTab] = useState("consultants")
   const [comingSoon, setComingSoon] = useState<{ open: boolean; feature?: string }>({ open: false })
 
+  // Only fetch live data when logged in — these endpoints require auth.
+  // Static fallback data is already in the Redux initial state.
   useEffect(() => {
-    if (consultants.length === 0) dispatch(fetchLegalData())
-  }, [dispatch])
+    if (isAuthenticated && consultants.length === 0) dispatch(fetchLegalData())
+  }, [isAuthenticated, dispatch])
   
   // Paystack payment hook
   const { isPaymentOpen, setIsPaymentOpen, paymentConfig, openPayment, closePayment } = usePaystackPayment()
