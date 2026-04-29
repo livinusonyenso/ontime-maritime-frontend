@@ -245,7 +245,8 @@ export default function LegalHubPage() {
                   <Users className="h-6 w-6 text-cyan-400" />
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-white">{consultants.length}+</div>
+                  <div className="text-3xl font-bold text-white">4+</div>
+                  {/* <div className="text-3xl font-bold text-white">{consultants.length}+</div> */}
                   <div className="text-sm text-slate-400">{t("legalhub.stats.lawyers")}</div>
                 </div>
               </div>
