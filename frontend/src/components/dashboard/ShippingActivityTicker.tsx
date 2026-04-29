@@ -86,6 +86,14 @@ export function ShippingActivityTicker({
   useEffect(() => {
     if (externalItems) { setItems(externalItems); return }
 
+    // Skip the fetch for guests — no token means the endpoint will 401.
+    // Show the static fallback ticker instead.
+    if (!localStorage.getItem('ontime_token')) {
+      setItems(FALLBACK_ITEMS)
+      setLoading(false)
+      return
+    }
+
     api
       .get("/transactions/my-purchases?take=200")
       .then((res) => {

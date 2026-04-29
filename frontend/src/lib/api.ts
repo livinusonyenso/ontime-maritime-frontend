@@ -2,8 +2,8 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontime-maritime.onrender.com'
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ontimemaritime.com/api/'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 // 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -108,6 +108,15 @@ api.interceptors.response.use(
         currentPath === '/login' ||
         currentPath === '/register' ||
         currentPath.startsWith('/admin/login')
+
+      // No token means the user is simply not logged in — there is nothing
+      // to refresh and no session to invalidate. Reject quietly so that
+      // components on public pages can handle the error themselves (e.g.
+      // show fallback UI) without being kicked to /login.
+      const hasToken = !!localStorage.getItem('ontime_token')
+      if (!hasToken) {
+        return Promise.reject({ status, message, data: rawData })
+      }
 
       if (isSafePath || originalRequest.url?.includes('/auth/refresh')) {
         if (!isSafePath) forceLogout(currentPath.startsWith('/admin'))
