@@ -1,0 +1,730 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.1.x"]
+  engineType    = "binary"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  buyer
+  seller
+  admin
+  executive
+  expert
+  organization
+}
+
+enum ListingCategory {
+  cargo
+  ship
+  spare_part
+  service
+}
+
+enum ListingStatus {
+  draft
+  pending
+  executive_review
+  active
+  sold
+  archived
+  rejected
+}
+
+enum TransactionType {
+  buy_now
+  auction
+}
+
+enum PayoutStatus {
+  pending
+  completed
+  failed
+}
+
+enum DocumentType {
+  invoice
+  bill_of_lading
+  packing_list
+  delivery_order
+  charterparty
+  survey_report
+  insurance_certificate
+}
+
+enum KycStatus {
+  pending
+  approved
+  rejected
+}
+
+enum AuctionStatus {
+  active
+  ended
+  cancelled
+}
+
+enum ExecutiveCornerStatus {
+  pending
+  approved
+  rejected
+  auto_released
+}
+
+enum NotificationType {
+  sms
+  email
+  push
+}
+
+enum NotificationStatus {
+  sent
+  failed
+  pending
+}
+
+model User {
+  id                  String    @id @default(uuid()) @db.VarChar(36)
+  role                UserRole  @default(buyer)
+  email               String    @unique @db.VarChar(255)
+  phone               String    @unique @db.VarChar(20)
+  password_hash       String    @db.VarChar(255)
+  is_phone_verified   Boolean   @default(false)
+  is_email_verified   Boolean   @default(false)
+  subscription_status String    @default("free") @db.VarChar(50)
+  subscription_expiry DateTime?
+  first_name          String?   @db.VarChar(100)
+  last_name           String?   @db.VarChar(100)
+  // Organization-specific fields (null for buyer/seller accounts)
+  company_name          String?   @db.VarChar(255)
+  business_address      String?   @db.Text
+  website               String?   @db.VarChar(255)
+  failed_login_attempts Int       @default(0)
+  lock_until            DateTime?
+  refresh_token         String?   @db.VarChar(255)
+  refresh_token_expiry  DateTime?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  listings        Listing[]
+  purchases       Transaction[]     @relation("BuyerTransactions")
+  sales           Transaction[]     @relation("SellerTransactions")
+  kyc             Kyc[]
+  won_auctions    Auction[]         @relation("AuctionWinner")
+  auction_bids    AuctionBid[]
+  decisions       ExecutiveCorner[] @relation("ExecutiveDecisions")
+  staff_accounts  StaffAccount[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([subscription_status])
+  @@map("users")
+}
+
+model Listing {
+  id                   String          @id @default(uuid()) @db.VarChar(36)
+  seller_id            String          @db.VarChar(36)
+  category             ListingCategory
+  marketplace_category String          @default("cargo") @db.VarChar(50)
+  title                String          @db.VarChar(255)
+  description          String          @db.Text
+  price_usd            Decimal         @db.Decimal(18, 2)
+  price_type           String          @default("fixed") @db.VarChar(20)
+  currency             String          @default("USD") @db.VarChar(10)
+  origin_port          String?         @db.VarChar(100)
+  destination_port     String?         @db.VarChar(100)
+  container_number     String?         @db.VarChar(50)
+  eta                  DateTime?
+  photos               Json?
+  certificates         Json?
+  images               Json?
+  location             Json?
+  specifications       Json?
+  condition            String          @default("good") @db.VarChar(20)
+  availability         String          @default("available") @db.VarChar(20)
+  bol_required         Boolean         @default(false)
+  bol_number           String?         @db.VarChar(100)
+  bol_image            String?         @db.LongText
+  bol_verified         Boolean         @default(false)
+  featured             Boolean         @default(false)
+  views                Int             @default(0)
+  inquiries            Int             @default(0)
+  seller_name          String?         @db.VarChar(255)
+  seller_rating        Decimal         @default(0) @db.Decimal(3, 1)
+  is_perishable        Boolean         @default(false)
+  is_dangerous         Boolean         @default(false)
+  is_high_value        Boolean         @default(false)
+  status               ListingStatus   @default(pending)
+  rejection_reason     String?         @db.Text
+  approved_by          String?         @db.VarChar(36)
+  approved_at          DateTime?
+  rejected_at          DateTime?
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+
+  seller             User              @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  transactions       Transaction[]
+  auctions           Auction[]
+  documents          Document[]
+  executive_corner   ExecutiveCorner[]
+  insurance_policies InsurancePolicy[]
+
+  @@index([seller_id])
+  @@index([status])
+  @@index([status, availability])   // marketplace: WHERE status='active' AND availability='available'
+  @@index([marketplace_category])   // category filter
+  @@index([is_high_value])
+  @@index([created_at])
+  @@map("listings")
+}
+
+model Transaction {
+  id                String          @id @default(uuid()) @db.VarChar(36)
+  buyer_id          String          @db.VarChar(36)
+  seller_id         String          @db.VarChar(36)
+  listing_id        String          @db.VarChar(36)
+  amount            Decimal         @db.Decimal(18, 2)
+  commission_amount Decimal         @db.Decimal(18, 2)
+  payment_reference String?         @db.VarChar(255)
+  payout_status     PayoutStatus    @default(pending)
+  transaction_type  TransactionType
+  payment_gateway   String?         @db.VarChar(50)
+  gateway_reference String?         @unique @db.VarChar(255)
+  paid_at           DateTime?
+  payment_status    String?         @default("pending") @db.VarChar(50)
+  buyer_email       String?         @db.VarChar(255)
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+
+  buyer             User              @relation("BuyerTransactions", fields: [buyer_id], references: [id], onDelete: Cascade)
+  seller            User              @relation("SellerTransactions", fields: [seller_id], references: [id], onDelete: Cascade)
+  listing           Listing           @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  documents         Document[]
+  arbitration_cases ArbitrationCase[]
+
+  @@index([buyer_id])
+  @@index([seller_id])
+  @@index([payout_status])
+  @@index([created_at])
+  @@map("transactions")
+}
+
+model Document {
+  id             String       @id @default(uuid()) @db.VarChar(36)
+  type           DocumentType
+  listing_id     String?      @db.VarChar(36)
+  transaction_id String?      @db.VarChar(36)
+  file_url       String       @db.VarChar(500)
+  qr_hash        String?      @db.VarChar(255)
+  is_revoked     Boolean      @default(false)
+  created_at     DateTime     @default(now())
+
+  listing     Listing?     @relation(fields: [listing_id], references: [id])
+  transaction Transaction? @relation(fields: [transaction_id], references: [id])
+
+  @@map("documents")
+}
+
+model Kyc {
+  id              String    @id @default(uuid()) @db.VarChar(36)
+  user_id         String    @db.VarChar(36)
+  bvn             String?   @db.VarChar(20)
+  id_type         String?   @db.VarChar(50)
+  id_number       String?   @db.VarChar(50)
+  id_document_url String?   @db.VarChar(500)
+  face_photo_url  String?   @db.VarChar(500)
+  status          KycStatus @default(pending)
+  admin_comment   String?   @db.Text
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("kyc")
+}
+
+model Auction {
+  id             String        @id @default(uuid()) @db.VarChar(36)
+  listing_id     String        @unique @db.VarChar(36)
+  starting_price Decimal       @db.Decimal(18, 2)
+  current_price  Decimal       @db.Decimal(18, 2)
+  reserve_price  Decimal?      @db.Decimal(18, 2)
+  status         AuctionStatus @default(active)
+  start_time     DateTime
+  end_time       DateTime
+  winner_id      String?       @db.VarChar(36)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+
+  listing Listing      @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  winner  User?        @relation("AuctionWinner", fields: [winner_id], references: [id], onDelete: SetNull)
+  bids    AuctionBid[]
+
+  @@index([status])
+  @@index([end_time])
+  @@index([winner_id])
+  @@map("auctions")
+}
+
+model AuctionBid {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  auction_id String   @db.VarChar(36)
+  bidder_id  String   @db.VarChar(36)
+  amount     Decimal  @db.Decimal(18, 2)
+  created_at DateTime @default(now())
+
+  auction Auction @relation(fields: [auction_id], references: [id])
+  bidder  User    @relation(fields: [bidder_id], references: [id])
+
+  @@map("auction_bids")
+}
+
+model ExecutiveCorner {
+  id               String                @id @default(uuid()) @db.VarChar(36)
+  listing_id       String                @unique @db.VarChar(36)
+  submitted_at     DateTime
+  deadline_at      DateTime
+  status           ExecutiveCornerStatus @default(pending)
+  decided_by       String?               @db.VarChar(36)
+  decided_at       DateTime?
+  decision_comment String?               @db.Text
+  logs             Json?
+  created_at       DateTime              @default(now())
+  updated_at       DateTime              @updatedAt
+
+  listing   Listing @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  decidedBy User?   @relation("ExecutiveDecisions", fields: [decided_by], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([deadline_at])
+  @@map("executive_corner")
+}
+
+model TrackingLog {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  container_number String   @db.VarChar(50)
+  vessel_imo       String?  @db.VarChar(20)
+  lat              Decimal  @db.Decimal(10, 6)
+  lng              Decimal  @db.Decimal(10, 6)
+  speed            Decimal? @db.Decimal(5, 2)
+  heading          String?  @db.VarChar(10)
+  timestamp        DateTime
+  created_at       DateTime @default(now())
+
+  @@index([container_number])
+  @@index([timestamp])
+  @@map("tracking_logs")
+}
+
+model Notification {
+  id         String             @id @default(uuid()) @db.VarChar(36)
+  user_id    String             @db.VarChar(36)
+  type       NotificationType
+  title      String             @db.VarChar(255)
+  body       String             @db.Text
+  status     NotificationStatus @default(pending)
+  created_at DateTime           @default(now())
+
+  @@index([user_id])
+  @@index([status])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  actor_id     String?  @db.VarChar(36)
+  actor_email  String?  @db.VarChar(255)
+  action       String   @db.VarChar(100)
+  module       String   @db.VarChar(50)
+  target_id    String?  @db.VarChar(36)
+  details      Json?
+  ip_address   String   @db.VarChar(45)
+  user_agent   String?  @db.Text
+  timestamp    DateTime @default(now())
+
+  @@index([actor_id])
+  @@index([actor_email])
+  @@index([module])
+  @@index([action])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model FraudFlag {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  user_id    String   @db.VarChar(36)
+  trigger    String   @db.VarChar(255)
+  severity   Int      @default(1)
+  metadata   Json?
+  created_at DateTime @default(now())
+
+  @@index([user_id])
+  @@index([severity])
+  @@index([created_at])
+  @@map("fraud_flags")
+}
+
+model Rating {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  user_id    String   @db.VarChar(36)
+  rater_id   String   @db.VarChar(36)
+  score      Int
+  comment    String?  @db.Text
+  created_at DateTime @default(now())
+
+  @@index([user_id])
+  @@index([rater_id])
+  @@index([created_at])
+  @@map("ratings")
+}
+
+model InsuranceProvider {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  name        String   @db.VarChar(255)
+  email       String   @unique @db.VarChar(255)
+  phone       String?  @db.VarChar(20)
+  website     String?  @db.VarChar(255)
+  is_verified Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  policies InsurancePolicy[]
+
+  @@map("insurance_providers")
+}
+
+model InsurancePolicy {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  buyer_id       String   @db.VarChar(36)
+  listing_id     String?  @db.VarChar(36)
+  provider_id    String   @db.VarChar(36)
+  policy_number  String   @unique @db.VarChar(100)
+  policy_pdf_url String   @db.VarChar(500)
+  status         String   @default("active") @db.VarChar(20)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  provider InsuranceProvider @relation(fields: [provider_id], references: [id])
+  listing  Listing?          @relation(fields: [listing_id], references: [id])
+
+  @@index([buyer_id])
+  @@index([provider_id])
+  @@map("insurance_policies")
+}
+
+model ArbitrationCase {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  transaction_id String   @db.VarChar(36)
+  complainant_id String   @db.VarChar(36)
+  defendant_id   String   @db.VarChar(36)
+  issue_summary  String   @db.Text
+  evidence_urls  Json?
+  status         String   @default("open") @db.VarChar(20)
+  resolution     String?  @db.Text
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  transaction Transaction @relation(fields: [transaction_id], references: [id])
+
+  @@index([transaction_id])
+  @@index([status])
+  @@map("arbitration_cases")
+}
+
+model BolUnlock {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  buyer_id    String   @db.VarChar(36)
+  listing_id  String   @db.VarChar(36)
+  unlocked_at DateTime @default(now())
+
+  @@index([buyer_id])
+  @@index([listing_id])
+  @@unique([buyer_id, listing_id])
+  @@map("bol_unlocks")
+}
+
+model ApiUsageLog {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  api_name    String   @db.VarChar(100)
+  request_url String   @db.VarChar(500)
+  cost        Decimal? @db.Decimal(10, 4)
+  returned    Boolean  @default(true)
+  timestamp   DateTime @default(now())
+
+  @@index([api_name])
+  @@index([timestamp])
+  @@map("api_usage_logs")
+}
+
+model StaffAccount {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  user_id      String   @db.VarChar(36)
+  account_type String   @default("hidden") @db.VarChar(20)
+  restrictions String?  @db.Text
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("staff_accounts")
+}
+
+model Subscription {
+  id           String    @id @default(uuid()) @db.VarChar(36)
+  user_id      String    @unique @db.VarChar(36)
+  tier         String    @default("free") @db.VarChar(20)
+  amount       Decimal?  @db.Decimal(10, 2)
+  currency     String    @default("NGN") @db.VarChar(3)
+  is_active    Boolean   @default(false)
+  started_at   DateTime?
+  expires_at   DateTime?
+  renewal_date DateTime?
+  payment_ref  String?   @db.VarChar(255)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@map("subscriptions")
+}
+
+model LoginAttempt {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  email      String   @db.VarChar(255)
+  success    Boolean
+  ip_address String   @db.VarChar(45)
+  timestamp  DateTime @default(now())
+
+  @@index([email])
+  @@index([success])
+  @@index([timestamp])
+  @@map("login_attempts")
+}
+
+model OtpToken {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  user_id    String   @db.VarChar(36)
+  email      String   @db.VarChar(255)
+  otp_code   String   @db.VarChar(255)
+  purpose    String   @db.VarChar(20)
+  is_used    Boolean  @default(false)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@index([email])
+  @@index([expires_at])
+  @@map("otp_tokens")
+}
+
+// Holds registration data while the user completes OTP verification.
+// Deleted and converted to a real User record on successful verification.
+model PendingRegistration {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  email            String   @unique @db.VarChar(255)
+  phone            String   @unique @db.VarChar(20)
+  password_hash    String   @db.VarChar(255)
+  role             String   @db.VarChar(20)
+  otp_code         String   @db.VarChar(10)
+  expires_at       DateTime
+  created_at       DateTime @default(now())
+  // Organization fields - null for buyer/seller registrations
+  company_name     String?  @db.VarChar(255)
+  business_address String?  @db.Text
+  website          String?  @db.VarChar(255)
+
+  @@index([email])
+  @@index([expires_at])
+  @@map("pending_registration")
+}
+
+model Vessel {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  imo         String   @db.VarChar(20)
+  mmsi        String   @db.VarChar(20)
+  name        String   @db.VarChar(100)
+  type        String   @db.VarChar(50)
+  flag        String   @db.VarChar(100)
+  destination String?  @db.VarChar(100)
+  eta         DateTime?
+  status      String   @db.VarChar(50)
+  lat         Decimal  @db.Decimal(10, 6)
+  lng         Decimal  @db.Decimal(10, 6)
+  speed       Decimal  @db.Decimal(5, 2)
+  heading     Int
+  course      Int
+  last_update DateTime
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@index([status])
+  @@map("vessel")
+}
+
+model BillOfLading {
+  id                  String   @id @default(uuid()) @db.VarChar(36)
+  bol_number          String   @unique @db.VarChar(100)
+  shipper             Json
+  consignee           Json
+  notify_party        Json?
+  vessel_name         String   @db.VarChar(100)
+  voyage_number       String   @db.VarChar(50)
+  port_of_loading     String   @db.VarChar(100)
+  port_of_discharge   String   @db.VarChar(100)
+  place_of_delivery   String?  @db.VarChar(100)
+  date_of_shipment    String   @db.VarChar(20)
+  cargo_description   String   @db.Text
+  gross_weight        Decimal  @db.Decimal(12, 2)
+  weight_unit         String   @db.VarChar(10)
+  number_of_packages  Int
+  package_type        String   @db.VarChar(50)
+  container_number    String?  @db.VarChar(50)
+  seal_number         String?  @db.VarChar(50)
+  freight_charges     Decimal  @db.Decimal(12, 2)
+  freight_payable_at  String   @db.VarChar(20)
+  declared_value      Decimal  @db.Decimal(14, 2)
+  blockchain_hash     String?  @db.VarChar(255)
+  status              String   @db.VarChar(20)
+  validation_status   String   @db.VarChar(20)
+  validation_notes    Json?
+  fee                 Decimal  @db.Decimal(10, 2) @default(50)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@index([status])
+  @@map("bill_of_lading")
+}
+
+model Dispute {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  case_number      String   @unique @db.VarChar(50)
+  type             String   @db.VarChar(50)
+  complainant_name String   @db.VarChar(255)
+  respondent_name  String   @db.VarChar(255)
+  bol_number       String?  @db.VarChar(100)
+  description      String   @db.Text
+  claim_amount     Decimal  @db.Decimal(14, 2)
+  evidence         Json?
+  status           String   @db.VarChar(30)
+  ai_analysis      Json?
+  resolution       Json?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([status])
+  @@map("dispute")
+}
+
+model SecurityReport {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  type             String   @db.VarChar(50)
+  urgency          String   @db.VarChar(20)
+  agency           String   @db.VarChar(50)
+  title            String   @db.VarChar(255)
+  description      String   @db.Text
+  location         String?  @db.VarChar(255)
+  coordinates      Json?
+  evidence         Json?
+  reporter_contact Json?
+  status           String   @db.VarChar(30)
+  case_number      String?  @db.VarChar(100)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([status])
+  @@map("security_report")
+}
+
+model SecurityContact {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  agency         String   @db.VarChar(255)
+  name           String   @db.VarChar(255)
+  phone          String   @db.VarChar(50)
+  email          String   @db.VarChar(255)
+  region         String   @db.VarChar(100)
+  available24x7  Boolean  @default(false)
+  created_at     DateTime @default(now())
+
+  @@map("security_contact")
+}
+
+model LegalConsultant {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  name           String   @db.VarChar(255)
+  title          String   @db.VarChar(255)
+  specialization Json
+  jurisdiction   Json
+  rating         Decimal  @db.Decimal(3, 1)
+  review_count   Int      @default(0)
+  hourly_rate    Decimal  @db.Decimal(10, 2)
+  available      Boolean  @default(true)
+  avatar         String?  @db.VarChar(500)
+  bio            String?  @db.Text
+  experience     Int      @default(0)
+  email          String   @db.VarChar(255)
+  phone          String?  @db.VarChar(50)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("legal_consultant")
+}
+
+model LegalTemplate {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  name         String   @db.VarChar(255)
+  category     String   @db.VarChar(50)
+  description  String   @db.Text
+  download_url String   @db.VarChar(500)
+  premium      Boolean  @default(false)
+  downloads    Int      @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("legal_template")
+}
+
+model LegalService {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  type        String   @db.VarChar(50)
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  duration    String   @db.VarChar(100)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("legal_service")
+}
+
+model LegalResource {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  title        String   @db.VarChar(255)
+  type         String   @db.VarChar(50)
+  category     String   @db.VarChar(100)
+  summary      String   @db.Text
+  url          String   @db.VarChar(500)
+  premium      Boolean  @default(false)
+  publish_date String   @db.VarChar(20)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("legal_resource")
+}
+
+model KnowledgeResource {
+  id              String   @id @default(uuid()) @db.VarChar(36)
+  title           String   @db.VarChar(255)
+  type            String   @db.VarChar(50)
+  category        String   @db.VarChar(100)
+  description     String   @db.Text
+  url             String   @db.VarChar(500)
+  file_size       String?  @db.VarChar(20)
+  pages           Int?
+  external_source String?  @db.VarChar(100)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("knowledge_resource")
+}
