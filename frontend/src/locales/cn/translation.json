@@ -424,7 +424,7 @@
       "buyNow": "立即购买",
       "redirecting": "正在跳转…"
     },
-    "loadMore": "加载更多（剩余 {{count}} 条）",
+    "loadMore": "加载更多",
     "loading": "加载中…"
   },
   "marketplace": {

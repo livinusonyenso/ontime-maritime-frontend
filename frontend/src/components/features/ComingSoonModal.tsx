@@ -21,29 +21,33 @@ export function ComingSoonModal({ open, onClose, featureName }: ComingSoonModalP
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose() }}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 shadow-2xl">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md p-0 overflow-hidden border-0 shadow-2xl rounded-2xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{t("comingSoonModal.srTitle")}</DialogTitle>
           <DialogDescription>{t("comingSoonModal.srDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-8 pt-10 pb-10 text-white overflow-hidden">
+        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 sm:px-8 pt-10 pb-8 text-white overflow-hidden">
           {/* Background blobs */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
           <Waves className="absolute bottom-3 right-4 h-24 w-24 text-white/5" />
 
-          {/* Icon */}
-          <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-cyan-500/30 mb-6">
-            <Clock className="h-8 w-8 text-white" />
+          {/* Icon — centered */}
+          <div className="relative z-10 flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-cyan-500/30">
+              <Clock className="h-8 w-8 text-white" />
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 space-y-3">
-            <Badge className="bg-white/10 text-cyan-400 border-0 text-xs px-3 py-1">
-              <Anchor className="h-3 w-3 mr-1.5" />
-              {t("comingSoonModal.badge")}
-            </Badge>
+          {/* Content — centered */}
+          <div className="relative z-10 space-y-3 text-center">
+            <div className="flex justify-center">
+              <Badge className="bg-white/10 text-cyan-400 border-0 text-xs px-3 py-1">
+                <Anchor className="h-3 w-3 mr-1.5" />
+                {t("comingSoonModal.badge")}
+              </Badge>
+            </div>
             <h2 className="text-2xl font-bold leading-tight">
               {featureName
                 ? t("comingSoonModal.titleWithFeature", { name: featureName })

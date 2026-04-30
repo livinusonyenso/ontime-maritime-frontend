@@ -424,7 +424,7 @@
       "buyNow": "Buy Now",
       "redirecting": "Redirecting…"
     },
-    "loadMore": "Load More ({{count}} remaining)",
+    "loadMore": "Load More",
     "loading": "Loading…"
   },
   "marketplace": {

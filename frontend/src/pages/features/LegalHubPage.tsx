@@ -51,7 +51,6 @@ import {
   Award,
   Quote,
   ChevronRight,
-  ChevronLeft,
   MapPin,
   Calendar,
   Waves,
@@ -94,9 +93,16 @@ export default function LegalHubPage() {
       c.specialization.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
-  const [templateSearch, setTemplateSearch] = useState("")
-  const [templatePage, setTemplatePage] = useState(1)
+  const whatsappNumber = "2349034018849" // 0808984499 with Nigeria country code
+
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent("Hello, I need assistance with a maritime issue.")
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
+  }
+
   const TEMPLATES_PER_PAGE = 6
+  const [templateSearch, setTemplateSearch] = useState("")
+  const [visibleTemplateCount, setVisibleTemplateCount] = useState(TEMPLATES_PER_PAGE)
 
   const filteredTemplates = templates.filter((tmpl) => {
     const matchesCategory = filterCategory === "all" || tmpl.category === filterCategory
@@ -105,21 +111,17 @@ export default function LegalHubPage() {
     return matchesCategory && matchesSearch
   })
 
-  const totalTemplatePages = Math.max(1, Math.ceil(filteredTemplates.length / TEMPLATES_PER_PAGE))
-  const pagedTemplates = filteredTemplates.slice(
-    (templatePage - 1) * TEMPLATES_PER_PAGE,
-    templatePage * TEMPLATES_PER_PAGE
-  )
+  const visibleTemplates = filteredTemplates.slice(0, visibleTemplateCount)
+  const hasMoreTemplates = visibleTemplateCount < filteredTemplates.length
 
 
-  // Handle consultation booking with payment
+  // Handle consultation booking via WhatsApp
   const handleBookConsultation = (consultant: typeof selectedConsultant) => {
     if (!consultant) return
-    openPayment({
-      amount: consultant.hourlyRate, // Amount in base currency (PaystackPayment handles conversion)
-      serviceName: `Legal Consultation - 1 Hour`,
-      consultantName: consultant.name,
-    })
+    const message = encodeURIComponent(
+      `Hello, I would like to book a legal consultation with ${consultant.name}. Please advise on availability and next steps.`
+    )
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank")
   }
 
   // Handle service purchase
@@ -538,11 +540,10 @@ export default function LegalHubPage() {
                           size="lg"
                           className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl px-8 shadow-lg shadow-cyan-500/30"
                           onClick={() => {
-                            openPayment({
-                              amount: 150,
-                              serviceName: "Legal Consultation - 1 Hour",
-                              consultantName: "Barr. Enemuo Chinedu Christopher",
-                            })
+                            const message = encodeURIComponent(
+                              "Hello, I would like to book a legal consultation with Barr. Enemuo Chinedu Christopher. Please advise on availability and next steps."
+                            )
+                            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank")
                           }}
                         >
                           {t("legalhub.dialog.bookConsultation")}
@@ -697,7 +698,7 @@ export default function LegalHubPage() {
                       <Input
                         placeholder={t("legalhub.templates.searchPlaceholder")}
                         value={templateSearch}
-                        onChange={(e) => { setTemplateSearch(e.target.value); setTemplatePage(1) }}
+                        onChange={(e) => { setTemplateSearch(e.target.value); setVisibleTemplateCount(TEMPLATES_PER_PAGE) }}
                         className="pl-11 h-11 rounded-xl border-slate-200"
                       />
                     </div>
@@ -722,7 +723,7 @@ export default function LegalHubPage() {
                     ].map(({ key, label, icon: Icon }) => (
                       <button
                         key={key}
-                        onClick={() => { dispatch(setFilterCategory(key)); setTemplatePage(1) }}
+                        onClick={() => { dispatch(setFilterCategory(key)); setVisibleTemplateCount(TEMPLATES_PER_PAGE) }}
                         className={[
                           "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all border",
                           filterCategory === key
@@ -753,7 +754,7 @@ export default function LegalHubPage() {
                     </div>
                     <p className="text-slate-700 font-semibold mb-1">{t("legalhub.templates.noResults")}</p>
                     <button
-                      onClick={() => { setTemplateSearch(""); dispatch(setFilterCategory("all")); setTemplatePage(1) }}
+                      onClick={() => { setTemplateSearch(""); dispatch(setFilterCategory("all")); setVisibleTemplateCount(TEMPLATES_PER_PAGE) }}
                       className="text-sm text-cyan-600 hover:underline mt-1"
                     >
                       {t("legalhub.templates.clearSearch")}
@@ -762,7 +763,7 @@ export default function LegalHubPage() {
                 ) : (
                   <>
                   <div className="grid gap-4">
-                    {pagedTemplates.map((template) => {
+                    {visibleTemplates.map((template) => {
                       const categoryColors: Record<string, string> = {
                         charterparty: "from-cyan-500 to-blue-600",
                         bol:          "from-blue-500 to-indigo-600",
@@ -847,51 +848,30 @@ export default function LegalHubPage() {
                     })}
                   </div>
 
-                  {/* Pagination */}
-                  {totalTemplatePages > 1 && (
-                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
-                      <p className="text-sm text-slate-500">
-                        Showing{" "}
-                        <span className="font-semibold text-slate-700">
-                          {(templatePage - 1) * TEMPLATES_PER_PAGE + 1}–{Math.min(templatePage * TEMPLATES_PER_PAGE, filteredTemplates.length)}
-                        </span>{" "}
-                        of <span className="font-semibold text-slate-700">{filteredTemplates.length}</span> templates
-                      </p>
-
-                      <div className="flex items-center gap-1">
-                        {/* Prev */}
-                        <button
-                          onClick={() => setTemplatePage((p) => Math.max(1, p - 1))}
-                          disabled={templatePage === 1}
-                          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-cyan-400 hover:text-cyan-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </button>
-
-                        {/* Page numbers */}
-                        {Array.from({ length: totalTemplatePages }, (_, i) => i + 1).map((page) => (
-                          <button
-                            key={page}
-                            onClick={() => setTemplatePage(page)}
-                            className={[
-                              "w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all border",
-                              page === templatePage
-                                ? "bg-cyan-500 text-white border-cyan-500 shadow-sm shadow-cyan-500/30"
-                                : "border-slate-200 text-slate-600 hover:border-cyan-400 hover:text-cyan-600",
-                            ].join(" ")}
+                  {/* Load More / Load Less */}
+                  {(hasMoreTemplates || visibleTemplateCount > TEMPLATES_PER_PAGE) && (
+                    <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col items-center gap-3">
+                     
+                      <div className="flex items-center gap-3">
+                        {visibleTemplateCount > TEMPLATES_PER_PAGE && (
+                          <Button
+                            variant="ghost"
+                            className="px-8 h-11 rounded-xl border-slate-200 text-slate-700 hover:border-slate-400 hover:text-slate-900 transition-colors"
+                            onClick={() => setVisibleTemplateCount((c) => Math.max(TEMPLATES_PER_PAGE, c - TEMPLATES_PER_PAGE))}
                           >
-                            {page}
-                          </button>
-                        ))}
-
-                        {/* Next */}
-                        <button
-                          onClick={() => setTemplatePage((p) => Math.min(totalTemplatePages, p + 1))}
-                          disabled={templatePage === totalTemplatePages}
-                          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-cyan-400 hover:text-cyan-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
+                            Load Less
+                          </Button>
+                        )}
+                        {hasMoreTemplates && (
+                          <Button
+                            variant="ghost"
+                            color="primary"
+                            className="px-8 h-11 rounded-xl border-slate-200 text-slate-700 hover:border-cyan-400 hover:text-cyan-600 transition-colors"
+                            onClick={() => setVisibleTemplateCount((c) => c + TEMPLATES_PER_PAGE)}
+                          >
+                            {t("marketplacepage.loadMore")}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   )}
@@ -958,7 +938,7 @@ export default function LegalHubPage() {
                       </Button>
                       <Button
                         size="lg"
-                        variant="outline"
+                        variant="ghost"
                         className="border-white/20 text-slate-200 hover:bg-white/10 rounded-xl px-8"
                         onClick={scrollToConsultants}
                       >
@@ -1027,14 +1007,14 @@ export default function LegalHubPage() {
                         <Bell className="mr-2 h-5 w-5" />
                         {t("legalhub.resources.comingSoonNotify")}
                       </Button>
-                      <Button
+                      {/* <Button
                         size="lg"
                         variant="outline"
                         className="rounded-xl px-8 border-slate-300 text-slate-600 hover:border-cyan-300 hover:text-cyan-600"
                       >
                         <Mail className="mr-2 h-5 w-5" />
                         {t("legalhub.resources.comingSoonContact")}
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </div>
@@ -1142,7 +1122,7 @@ export default function LegalHubPage() {
             <Button
               size="lg"
               className="bg-white text-cyan-600 hover:bg-white/90 px-8 py-6 text-lg rounded-xl shadow-lg"
-              onClick={() => setActiveTab("consultants")}
+              onClick={() => handleWhatsAppClick()}
             >
               <Users className="mr-2 h-5 w-5" />
               {t("legalhub.cta.findLawyer")}
@@ -1284,7 +1264,7 @@ export default function LegalHubPage() {
                     <Button 
                       size="lg" 
                       className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl px-8 shadow-lg shadow-cyan-500/30"
-                      onClick={() => handleBookConsultation(selectedConsultant)}
+                      onClick={() => handleWhatsAppClick()}
                     >
                       {t("legalhub.dialog.bookConsultation")}
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1316,7 +1296,7 @@ export default function LegalHubPage() {
         />
 
         {/* Paystack Payment Component */}
-        <PaystackPayment
+        {/* <PaystackPayment
           isOpen={isPaymentOpen}
           setIsOpen={(open) => {
             if (!open) {
@@ -1337,7 +1317,7 @@ export default function LegalHubPage() {
             console.log("Payment closed")
             closePayment()
           }}
-        />
+        /> */}
       </main>
 
       <Footer />
