@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { MessageCircle } from "lucide-react"
 
 export function StoreCTA() {
-  const whatsappNumber = "2348008984499"
+  const whatsappNumber = "2349034018849"
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent("Hello, I'm interested in your maritime products and services. I'd like to discuss custom orders or bulk purchases.")

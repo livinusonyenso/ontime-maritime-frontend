@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { QrCode } from "@/components/QrCode"
+import { PortsCoverage } from "@/components/PortsCoverage"
+import { CredentialsCertifications } from "@/components/CredentialsCertifications"
 import { Header } from "@/components/layout/header"
 import { ShippingActivityTicker } from "@/components/dashboard/ShippingActivityTicker"
 import { Footer } from "@/components/layout/footer"
@@ -76,13 +78,13 @@ export default function HomePage() {
       icon: Store,
       color: "bg-orange-500/10 text-orange-600",
     },
-    {
-      title: t("modules.store.title"),
-      description: t("modules.store.description"),
-      href: "/store",
-      icon: Store,
-      color: "bg-emerald-500/10 text-emerald-600",
-    },
+    // {
+    //   title: t("modules.store.title"),
+    //   description: t("modules.store.description"),
+    //   href: "/store",
+    //   icon: Store,
+    //   color: "bg-emerald-500/10 text-emerald-600",
+    // },
     {
       title: t("modules.knowledge.title"),
       description: t("modules.knowledge.description"),
@@ -184,103 +186,133 @@ export default function HomePage() {
         </section>
 
         {/* Industry Solutions */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <SectionHeader
-              title={t("industrySolutions.sectionTitle")}
-              description={t("industrySolutions.sectionDescription")}
-            />
+       {/* Industry Solutions */}
+<section className="py-20 bg-background">
+  <div className="container mx-auto px-4">
+    <SectionHeader
+      title={t("industrySolutions.sectionTitle")}
+      description={t("industrySolutions.sectionDescription")}
+    />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-primary/30">
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"
-                    alt="Freight forwarders"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
-                  <div className="bg-primary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Ship className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-bold">{t("industrySolutions.freightForwarders.title")}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {t("industrySolutions.freightForwarders.description")}
-                  </p>
-                  <ul className="space-y-2">
-                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                        <span className="text-sm">{t(`industrySolutions.freightForwarders.${f}`)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-secondary/30">
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800&q=80"
-                    alt="Shipping companies"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
-                  <div className="bg-secondary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Globe className="h-8 w-8 text-secondary" />
-                  </div>
-                  <h3 className="text-2xl font-bold">{t("industrySolutions.shippingCompanies.title")}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {t("industrySolutions.shippingCompanies.description")}
-                  </p>
-                  <ul className="space-y-2">
-                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
-                        <span className="text-sm">{t(`industrySolutions.shippingCompanies.${f}`)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-accent/30">
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src="https://plus.unsplash.com/premium_photo-1661963559074-9655a9404f1a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8aW1wb3J0JTIwYW5kJTIwZXhwb3J0fGVufDB8fDB8fHww"
-                    alt="Import/Export"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
-                </div>
-                <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
-                  <div className="bg-accent/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <BarChart3 className="h-8 w-8 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">{t("industrySolutions.importExport.title")}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {t("industrySolutions.importExport.description")}
-                  </p>
-                  <ul className="space-y-2">
-                    {(["feature1", "feature2", "feature3"] as const).map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
-                        <span className="text-sm">{t(`industrySolutions.importExport.${f}`)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-primary/30">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"
+            alt="Freight forwarders"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
+          <div className="bg-primary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Ship className="h-8 w-8 text-primary" />
           </div>
-        </section>
+          <h3 className="text-2xl font-bold">{t("industrySolutions.freightForwarders.title")}</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            {t("industrySolutions.freightForwarders.description")}
+          </p>
+          <ul className="space-y-2">
+            {(["feature1", "feature2", "feature3"] as const).map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <span className="text-sm">{t(`industrySolutions.freightForwarders.${f}`)}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-secondary/30">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800&q=80"
+            alt="Shipping companies"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
+          <div className="bg-secondary/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Globe className="h-8 w-8 text-secondary" />
+          </div>
+          <h3 className="text-2xl font-bold">{t("industrySolutions.shippingCompanies.title")}</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            {t("industrySolutions.shippingCompanies.description")}
+          </p>
+          <ul className="space-y-2">
+            {(["feature1", "feature2", "feature3"] as const).map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
+                <span className="text-sm">{t(`industrySolutions.shippingCompanies.${f}`)}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-accent/30">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1661963559074-9655a9404f1a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8aW1wb3J0JTIwYW5kJTIwZXhwb3J0fGVufDB8fDB8fHww"
+            alt="Import/Export"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
+          <div className="bg-accent/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <BarChart3 className="h-8 w-8 text-accent" />
+          </div>
+          <h3 className="text-2xl font-bold">{t("industrySolutions.importExport.title")}</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            {t("industrySolutions.importExport.description")}
+          </p>
+          <ul className="space-y-2">
+            {(["feature1", "feature2", "feature3"] as const).map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 shrink-0" />
+                <span className="text-sm">{t(`industrySolutions.importExport.${f}`)}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card className="glass overflow-hidden group hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-500/30">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80"
+            alt="High Seas Sale"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <CardContent className="p-6 space-y-4 -mt-20 relative z-10">
+          <div className="bg-emerald-500/10 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Gavel className="h-8 w-8 text-emerald-500" />
+          </div>
+          <h3 className="text-2xl font-bold">{t("industrySolutions.highSeasSale.title")}</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            {t("industrySolutions.highSeasSale.description")}
+          </p>
+          <ul className="space-y-2">
+            {(["feature1", "feature2", "feature3"] as const).map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
+                <span className="text-sm">{t(`industrySolutions.highSeasSale.${f}`)}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
 
         {/* API Integrations */}
         <section className="py-20 bg-muted/30">
@@ -462,6 +494,12 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
+      {/* Ports Coverage */}
+      <PortsCoverage />
+
+      {/* Credentials & Certifications */}
+      <CredentialsCertifications />
 
       {/* QR Code section */}
       <section className="py-14 bg-muted/40 border-t">

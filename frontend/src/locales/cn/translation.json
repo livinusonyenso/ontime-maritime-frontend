@@ -116,7 +116,14 @@
       "feature1": "清关追踪",
       "feature2": "货物保险报价",
       "feature3": "合规管理"
-    }
+    },
+    "highSeasSale": {
+  "title": "公海销售",
+  "description": "通过具有法律效力的数字文件和无缝所有权交接，促进航行途中的货物转让。",
+  "feature1": "航行中所有权转让",
+  "feature2": "提单数字背书",
+  "feature3": "实时货物状态更新"
+}
   },
   "integrations": {
     "sectionTitle": "由行业领先集成驱动",
@@ -664,6 +671,233 @@
     "Downloadpng": "下载PNG",
     "title": "扫描访问我们的网站",
     "description": "使用手机扫描二维码，立即访问OnTime Maritime平台。"
+  },
+  "ports": {
+    "nimasa": "NIMASA认证 · SA261009",
+    "title": "全面覆盖尼日利亚港口",
+    "subtitle": "从深水码头到内河水道和干港——准时资源有限公司覆盖尼日利亚每一个主要货物门户。",
+    "stats": { "seaports": "海港", "dryPorts": "干港", "inland": "内河水道", "states": "覆盖州数" },
+    "map": {
+      "title": "港口网络地图",
+      "subtitle": "点击任意标记查看港口详情",
+      "seaport": "海港", "dryPort": "干港", "inland": "内河水道",
+      "enquire": "通过WhatsApp咨询", "close": "关闭"
+    },
+    "typeLabel": { "seaport": "海港", "dry-port": "干港", "inland": "内河水道" },
+    "seaportsSection": {
+      "title": "7个主要海港",
+      "subtitle": "准时资源有限公司在尼日利亚所有持牌海港保持积极清关业务。"
+    },
+    "inlandSection": {
+      "title": "内河水道",
+      "subtitle": "基于河道的货物运输，连接沿海港口至尼日利亚东南腹地。",
+      "whyTitle": "为什么重要",
+      "whyText": "尼日尔河航线与纯公路运输相比，可为向东南方向运输的货物节省多达40%的运费。",
+      "whyDetail": "准时资源有限公司是少数几家提供内河水道协调服务的拉各斯清关代理之一——这对阿南布拉、恩努古、伊莫和阿比亚州的客户来说是关键优势。"
+    },
+    "dryPortsSection": {
+      "title": "我们的内陆港口网络",
+      "whatIs": "什么是干港？",
+      "explanation": "干港将尼日利亚的港口能力延伸到内陆深处。准时资源有限公司在尼日利亚所有主要干港提供清关和货运代理服务，使内陆州的进出口商无需前往海港即可清关货物。"
+    },
+    "capacity": {
+      "heading": "总网络容量",
+      "locations": "港口位置",
+      "seaports": "海港",
+      "dryPorts": "干港",
+      "inland": "内河水道",
+      "states": "覆盖州数",
+      "licence": "NIMASA许可证"
+    },
+    "cta": {
+      "title": "在未列出的港口运营？",
+      "description": "我们的网络持续扩张，我们的团队可根据客户需求协调在尼日利亚任何设施的海关清关。联系我们，我们会解决。",
+      "whatsapp": "WhatsApp咨询",
+      "slogan": "\"货物遇见科技\" · NIMASA许可证 SA261009 · 有效合规"
+    },
+    "card": { "enquireNow": "立即咨询" },
+    "data": {
+      "apapa": {
+        "name": "拉各斯港综合区（阿帕帕）", "shortName": "拉各斯港", "state": "拉各斯州",
+        "cargoSpeciality": "集装箱及普通货物",
+        "capability": "主要业务中心。全面海关清关、整箱和拼箱集装箱处理、滞期争议管理、M表格处理、目的地查验协调、PAAR、SON和NAFDAC豁免。尼日利亚最繁忙港口的最快周转。"
+      },
+      "tin-can": {
+        "name": "廷坎岛港", "shortName": "廷坎港", "state": "拉各斯州",
+        "cargoSpeciality": "集装箱码头",
+        "capability": "专用集装箱码头。消费品、车辆、机械和散货进口清关。车辆进口专家。整合拼箱货物管理，直连拉各斯工业走廊公路。"
+      },
+      "lekki": {
+        "name": "莱基深水港", "shortName": "莱基深水港", "state": "拉各斯州",
+        "cargoSpeciality": "深水码头",
+        "capability": "尼日利亚最大、最新的深水港。超大型船舶能力。项目货物、大批量整箱作业、重型工业设备进口。面向未来十年尼日利亚贸易增长定位。"
+      },
+      "onne": {
+        "name": "翁内港综合区", "shortName": "翁内港", "state": "河流州",
+        "cargoSpeciality": "油气专业",
+        "capability": "专业石油和天然气货物清关。危险材料文件、OPAL/OGSL处理、工业设备进口、项目物流协调。尼日尔三角洲能源领域的主要门户。"
+      },
+      "port-harcourt": {
+        "name": "哈科特港", "shortName": "哈科特港", "state": "河流州",
+        "cargoSpeciality": "普通货物",
+        "capability": "普通货物、农产品出口、石油产品文件、多用途货物处理。服务河流州、贝叶萨州及更广泛的尼日尔三角洲贸易走廊。"
+      },
+      "warri": {
+        "name": "瓦里港", "shortName": "瓦里港", "state": "三角洲州",
+        "cargoSpeciality": "散货及石油",
+        "capability": "散货、石油产品、农产品出口。三角洲州和埃多州收货人的门户。木材、可可和棕榈产品出口文件和协调。"
+      },
+      "calabar": {
+        "name": "卡拉巴尔港", "shortName": "卡拉巴尔港", "state": "克罗斯河州",
+        "cargoSpeciality": "农产品出口门户",
+        "capability": "尼日利亚首要农产品出口港。可可、芝麻、木材和商品出口文件。植物检疫证书、NEPC注册、原产地证书。通往东南和南南尼日利亚的门户。"
+      },
+      "onitsha": {
+        "name": "奥尼查内陆港", "shortName": "奥尼查内陆港", "state": "阿南布拉州",
+        "cargoSpeciality": "尼日尔河——内河水道",
+        "capability": "尼日尔河货运路线，连接拉各斯至东南尼日利亚。经济实惠的散货运输替代公路运输。服务阿南布拉、恩努古、伊莫和阿比亚州。大多数拉各斯清关代理未提供的独特能力。"
+      },
+      "kano-dry-port": {
+        "name": "卡诺干港（内陆集装箱堆场）", "shortName": "卡诺干港", "state": "卡诺州",
+        "cargoSpeciality": "内陆集装箱堆场——西北走廊",
+        "capability": "从拉各斯和阿帕帕通过铁路或公路转运货物的海关清关。集装箱检验、关税评估和最终放行协调。覆盖北尼日利亚的制成品、机械、原材料和农业投入品。"
+      },
+      "kaduna-dry-port": {
+        "name": "卡杜纳干港", "shortName": "卡杜纳干港", "state": "卡杜纳州",
+        "cargoSpeciality": "铁路联运码头——中北部",
+        "capability": "从拉各斯港铁路转运集装箱的清关。前往中北部尼日利亚的工业设备、机械和制成品。与NRC（尼日利亚铁路公司）物流的全面协调。"
+      },
+      "maiduguri-dry-port": {
+        "name": "迈杜古里干港", "shortName": "迈杜古里干港", "state": "博尔诺州",
+        "cargoSpeciality": "东北贸易门户",
+        "capability": "人道主义货物、农业投入品、制成品及与喀麦隆、乍得和尼日尔的贸易清关和货运代理。东北尼日利亚主要内陆清关设施。"
+      },
+      "funtua-dry-port": {
+        "name": "丰图阿干港", "shortName": "丰图阿干港", "state": "卡齐纳州",
+        "cargoSpeciality": "棉花和农业中心——西北",
+        "capability": "农产品出口文件、棉花和商品清关、农业投入品进口。西北农业贸易走廊文件专家。服务卡齐纳、凯比、索科托和赞法拉州。"
+      },
+      "heipang-dry-port": {
+        "name": "黑彭干港", "shortName": "黑彭干港", "state": "高原州",
+        "cargoSpeciality": "中北部门户——固体矿产",
+        "capability": "固体矿产出口、农业商品、普通货物。锡、铌铁矿和乔斯高原矿产贸易出口文件。服务高原、纳萨拉瓦、贝努埃和塔拉巴州。"
+      },
+      "ibadan-dry-port": {
+        "name": "伊巴丹干港（内陆集装箱堆场）", "shortName": "伊巴丹干港", "state": "奥约州",
+        "cargoSpeciality": "西南内陆码头",
+        "capability": "拉各斯港货物溢出。纺织品和制造业进口、农产品出口、消费品。通过高速公路和规划中的铁路走廊直连拉各斯港综合区。服务奥约、奥苏恩、埃基提和夸拉州。"
+      }
+    }
+  },
+  "credentials": {
+    "badge": "政府认证 · 国际资质",
+    "title": "认证证书与职业资格",
+    "subtitle": "准时资源有限公司在政府认证许可、国际认可学术资质和完整合规监管下运营——这些资质是大多数尼日利亚清关代理所不具备的。",
+    "trustStatement": "以下所有证书均为现行有效且可核实。",
+    "trustLink": "NIMASA许可证SA261009可直接在www.nimasa.gov.ng进行验证",
+    "hero": {
+      "primaryLabel": "主要证书",
+      "title": "NIMASA注册许可证",
+      "issuer": "尼日利亚海事管理与安全局",
+      "verifiedBadge": "已验证有效",
+      "licenceNumber": "许可证编号",
+      "category": "类别",
+      "categoryValue": "注册航运代理",
+      "status": "状态",
+      "statusValue": "有效",
+      "issuingBody": "发证机构",
+      "authority": "依据2007年尼日利亚海事管理与安全局法案及2007年商船法签发。",
+      "verifyBtn": "在线验证",
+      "downloadBtn": "下载证书副本"
+    },
+    "widget": {
+      "active": "有效",
+      "licenceNo": "许可证编号",
+      "issuingBody": "发证机构",
+      "category": "类别",
+      "categoryValue": "注册航运代理",
+      "verifyAt": "验证网址",
+      "verify": "验证"
+    },
+    "qualifications": {
+      "sectionTitle": "学术与职业资质",
+      "sectionSubtitle": "我们的领导团队将国际海事法律专业知识与港口运营实践经验相结合——这一组合直接保障我们管理的每项客户指令。",
+      "whyMatters": "这对您的货物意味着什么",
+      "llm-maritime-law": {
+        "tag": "研究生学位 · 英国",
+        "title": "国际商业与海事法律法学硕士",
+        "institution": "英国斯旺西大学",
+        "meta": "2010年授予 · 法学院",
+        "subjects": ["国际航运法","租船合同","货物索赔","海事合同","贸易融资法","提单","国际贸易术语","海事仲裁"],
+        "relevance": "准时资源有限公司的每项货物指令均由具备海事律师资质的团队负责人管理。这意味着您的合同将得到专业审查，您的索赔将获得妥善处理，您的权益在每个环节都将受到保护——依据尼日利亚及国际海事法律。"
+      },
+      "cma-conference": {
+        "tag": "国际会议 · 美国",
+        "title": "CMA航运会议出席证书",
+        "institution": "CMA航运会议，美国康涅狄格州斯坦福德",
+        "meta": "2009年 · 全球最具声望的年度航运活动之一",
+        "relevance": "CMA航运会议每年汇聚全球航运高管、船东、金融家和物流领袖。出席证明在最高层次积极参与国际航运业——而不仅仅是本地市场知识。"
+      }
+    },
+    "registration": {
+      "sectionTitle": "企业注册与法律地位",
+      "cac": {
+        "tag": "企业注册", "title": "注册成立证书",
+        "issuer": "尼日利亚联邦共和国企业事务委员会",
+        "companyName": "公司名称", "regNumber": "注册编号",
+        "registeredUnder": "注册依据", "registeredUnderValue": "CAMA——公司及相关事务法",
+        "status": "状态", "statusValue": "有效",
+        "jurisdiction": "司法管辖区", "jurisdictionValue": "尼日利亚联邦共和国"
+      },
+      "ncs": {
+        "tag": "法规合规", "title": "尼日利亚海关服务合规",
+        "issuer": "尼日利亚海关服务",
+        "status": "状态", "statusValue": "认可清关代理",
+        "statement": "准时资源有限公司是经认可的海关清关代理，在尼日利亚所有入境口岸完全遵守尼日利亚海关服务法规、关税分类和目的地查验程序。"
+      }
+    },
+    "badges": {
+      "sectionTitle": "行业许可证与职业认证",
+      "statusActive": "有效", "statusInProgress": "注册中", "statusPending": "待审核",
+      "nimasa":          { "name": "NIMASA航运代理许可证SA261009",      "authority": "NIMASA" },
+      "nimasaAct":       { "name": "NIMASA法案2007合规",                "authority": "尼日利亚联邦政府" },
+      "merchantShipping":{ "name": "商船法2007注册",                    "authority": "尼日利亚海事法" },
+      "ncs":             { "name": "尼日利亚海关服务认可代理",          "authority": "尼日利亚海关服务" },
+      "nepc":            { "name": "NEPC注册出口促进机构",              "authority": "尼日利亚NEPC" },
+      "llm":             { "name": "法学硕士海事法律资质领导层",        "authority": "英国斯旺西大学" },
+      "cma":             { "name": "CMA航运会议校友",                   "authority": "美国CMA航运，2009年" },
+      "canton":          { "name": "2026年广交会注册买家及代表",        "authority": "中国进出口商品交易会" }
+    },
+    "benefits": {
+      "sectionTitle": "我们的资质对您意味着什么",
+      "legalProtection": {
+        "title": "您的货物受法律保护",
+        "text": "我们的NIMASA许可证和海事法律法学硕士学位意味着每项货物指令均在完全法律合规下管理。如与码头运营商、航运公司或海关官员发生纠纷，我们具备资质的领导层确切了解如何依据尼日利亚及国际海事法律维护您的权益。"
+      },
+      "verifiedAgent": {
+        "title": "您正在与认证代理合作",
+        "text": "NIMASA许可证SA261009可在www.nimasa.gov.ng公开核实。您无需仅凭我们的口头承诺——可在委托我们处理任何集装箱之前，立即实时查验我们的许可证状态。大多数尼日利亚清关代理无法提供这一保障。"
+      },
+      "international": {
+        "title": "国际标准运营",
+        "text": "我们董事总经理在英国大学获得的法学硕士学位及参加美国CMA航运会议的经历，意味着我们的运营以国际标准为基准，而非仅依据本地做法。您将获得与在伦敦、新加坡或上海的清关代理相同的专业服务水准。"
+      }
+    },
+    "transparency": {
+      "title": "核实与透明度声明",
+      "text": "我们相信透明度是每段持久商业关系的基础。因此，本页显示的每项证书均真实、现行且可独立核实。我们不展示已过期的许可证，不夸大我们的资质，不提出无法证实的主张。",
+      "facts": "我们的法学硕士由英国斯旺西大学于2010年授予。我们的公司在尼日利亚企业事务委员会注册，注册号为RC 7543149。这些都是事实，可供核实。",
+      "verifyBtn": "立即验证NIMASA许可证"
+    },
+    "downloads": {
+      "sectionTitle": "下载我们的证书",
+      "sectionSubtitle": "可供下载的官方公司文件。",
+      "downloadBtn": "下载",
+      "profile":    { "name": "公司简介",                         "filename": "Ontime_Resources_Limited_Profile_2026.pdf" },
+      "nimasa":     { "name": "NIMASA许可证副本（脱敏版）",        "filename": "NIMASA_Licence_SA261009_Redacted.pdf" },
+      "capability": { "name": "能力说明书",                        "filename": "Ontime_Capability_Statement_2026.pdf" },
+      "rateCard":   { "name": "收费表——港口费用及清关费",          "filename": "Ontime_Rate_Card_2026.pdf" }
+    }
   }
 
 }

@@ -60,6 +60,7 @@ import {
   Lock,
 } from "lucide-react"
 
+import { QrCode } from "@/components/QrCode"
 export default function LegalHubPage() {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -1120,43 +1121,61 @@ export default function LegalHubPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="relative overflow-hidden bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 rounded-3xl p-12 md:p-16">
-              {/* Background Elements */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-              <Compass className="absolute top-10 right-10 h-32 w-32 text-white/10" />
+        {/* CTA Section */}
+<section className="py-20 bg-white">
+  <div className="container mx-auto px-4">
+    <div className="relative overflow-hidden bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 rounded-3xl p-12 md:p-16">
+      {/* ...existing background elements... */}
 
-              <div className="relative z-10 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  {t("legalhub.cta.title")}
-                </h2>
-                <p className="text-xl text-white/80 mb-8">
-                  {t("legalhub.cta.description")}
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-white text-cyan-600 hover:bg-white/90 px-8 py-6 text-lg rounded-xl shadow-lg"
-                    onClick={() => setActiveTab("consultants")}
-                  >
-                    <Users className="mr-2 h-5 w-5" />
-                    {t("legalhub.cta.findLawyer")}
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white/30 text-cyan-600 hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
-                  >
-                    <Phone className="mr-2 h-5 w-5" />
-                    {t("legalhub.cta.call")}
-                  </Button>
-                </div>
-              </div>
-            </div>
+      {/* Change grid to accommodate QR code */}
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+        
+        {/* Existing text content */}
+        <div className="max-w-2xl">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            {t("legalhub.cta.title")}
+          </h2>
+          <p className="text-xl text-white/80 mb-8">
+            {t("legalhub.cta.description")}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Button
+              size="lg"
+              className="bg-white text-cyan-600 hover:bg-white/90 px-8 py-6 text-lg rounded-xl shadow-lg"
+              onClick={() => setActiveTab("consultants")}
+            >
+              <Users className="mr-2 h-5 w-5" />
+              {t("legalhub.cta.findLawyer")}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white/30 text-cyan-600 hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
+            >
+              <Phone className="mr-2 h-5 w-5" />
+              {t("legalhub.cta.call")}
+            </Button>
           </div>
-        </section>
+        </div>
+
+        {/* QR Code — scan to visit the site */}
+        <div className="flex-shrink-0">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
+            <QrCode
+             value="https://ontimemaritime.com/legal-hub"
+              size={160}
+              logoSrc="/logo.png" // optional — remove if you don't have one
+            />
+          </div>
+          <p className="text-white/60 text-xs text-center mt-2">
+            Scan to visit on mobile
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
 
         {/* Consultant Detail Dialog */}
         {selectedConsultant && (

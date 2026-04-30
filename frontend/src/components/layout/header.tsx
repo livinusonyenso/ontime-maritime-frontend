@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -95,24 +95,26 @@ export function Header() {
 
             {/* Desktop Navigation - Center/Right */}
             <nav className="hidden lg:flex items-center gap-1">
-              <Link to="/">
-                <Button variant="ghost" size="sm">{t("nav.home")}</Button>
-              </Link>
-              <Link to="/about">
-                <Button variant="ghost" size="sm">{t("nav.about")}</Button>
-              </Link>
-              <Link to="/services">
-                <Button variant="ghost" size="sm">{t("nav.services")}</Button>
-              </Link>
-              <Link to="/marketplace">
-                <Button variant="ghost" size="sm">{t("nav.marketplace")}</Button>
-              </Link>
-              <Link to="/legal-hub">
-                <Button variant="ghost" size="sm">{t("nav.legalHub")}</Button>
-              </Link>
-              <Link to="/security-hotline">
-                <Button variant="ghost" size="sm">{t("nav.securityHotline")}</Button>
-              </Link>
+              {[
+                { to: "/", label: t("nav.home"), end: true },
+                { to: "/about", label: t("nav.about") },
+                { to: "/services", label: t("nav.services") },
+                { to: "/marketplace", label: t("nav.marketplace") },
+                { to: "/legal-hub", label: t("nav.legalHub") },
+                { to: "/security-hotline", label: t("nav.securityHotline") },
+              ].map((item) => (
+                <NavLink key={item.to} to={item.to} end={item.end}>
+                  {({ isActive }) => (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={isActive ? "underline underline-offset-4 decoration-2" : ""}
+                    >
+                      {item.label}
+                    </Button>
+                  )}
+                </NavLink>
+              ))}
             </nav>
 
             {/* Right side actions */}
@@ -228,13 +230,16 @@ export function Header() {
                 { to: "/security-hotline", label: t("nav.securityHotline") },
               ].map((item) => (
                 <li key={item.to}>
-                  <Link
+                  <NavLink
                     to={item.to}
+                    end={item.to === "/"}
                     onClick={closeMenu}
-                    className="flex items-center w-full px-4 py-3 text-base font-medium rounded-lg hover:bg-accent hover:text-accent-foreground active:scale-[0.98] transition-all"
+                    className={({ isActive }) =>
+                      `flex items-center w-full px-4 py-3 text-base font-medium rounded-lg hover:bg-accent hover:text-accent-foreground active:scale-[0.98] transition-all${isActive ? " underline underline-offset-4 decoration-2" : ""}`
+                    }
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 export function FloatingChatButton() {
   const { t } = useTranslation()
   // WhatsApp contact number
-  const whatsappNumber = "2348008984499" // 0808984499 with Nigeria country code
+  const whatsappNumber = "2349034018849" // 0808984499 with Nigeria country code
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent("Hello, I need assistance with a maritime issue.")
