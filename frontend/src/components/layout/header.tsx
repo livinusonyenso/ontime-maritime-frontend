@@ -80,7 +80,8 @@ export function Header() {
               <img
                 src="/logo.png"
                 alt="Ontime Maritime Logo"
-                className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+                className="h-16 sm:h-20 w-auto object-contain brightness-105 contrast-105 drop-shadow-md antialiased"
+               
               />
               <div className="hidden sm:flex flex-col">
                 <span className="font-bold text-base md:text-lg leading-none">
@@ -196,7 +197,7 @@ export function Header() {
               <img
                 src="/logo.png"
                 alt="Ontime Maritime"
-                className="h-10 w-auto object-contain"
+                className="h-14 w-auto object-contain brightness-110 drop-shadow-md"
               />
               <div className="flex flex-col">
                 <span className="font-bold text-sm leading-tight">{t("nav.brand")}</span>
@@ -239,10 +240,10 @@ export function Header() {
             </ul>
 
             {/* Language switcher in mobile sidebar */}
-            <div className="mt-4 px-2">
+            {/* <div className="mt-4 px-2">
               <p className="text-xs text-muted-foreground px-2 mb-2 uppercase tracking-wider">Language</p>
               <LanguageSwitcher />
-            </div>
+            </div> */}
           </nav>
 
           {/* Footer Actions */}

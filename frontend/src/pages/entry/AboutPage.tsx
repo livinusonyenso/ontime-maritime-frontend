@@ -119,7 +119,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               <Card className="border-2 transition-all hover:border-primary/40">
                 <CardContent className="p-8 text-center space-y-2">
-                  <div className="text-4xl font-bold text-primary">150+</div>
+                  <div className="text-4xl font-bold text-primary">195+</div>
                   <h3 className="font-semibold">{t("about.impact.stat1Title")}</h3>
                   <p className="text-sm text-muted-foreground">{t("about.impact.stat1Desc")}</p>
                 </CardContent>
@@ -127,7 +127,7 @@ export default function AboutPage() {
 
               <Card className="border-2 transition-all hover:border-secondary/40">
                 <CardContent className="p-8 text-center space-y-2">
-                  <div className="text-4xl font-bold text-secondary">5K+</div>
+                  <div className="text-4xl font-bold text-secondary">195+</div>
                   <h3 className="font-semibold">{t("about.impact.stat2Title")}</h3>
                   <p className="text-sm text-muted-foreground">{t("about.impact.stat2Desc")}</p>
                 </CardContent>
@@ -135,7 +135,7 @@ export default function AboutPage() {
 
               <Card className="border-2 transition-all hover:border-accent/40">
                 <CardContent className="p-8 text-center space-y-2">
-                  <div className="text-4xl font-bold text-accent">2M+</div>
+                  <div className="text-4xl font-bold text-accent">176M+</div>
                   <h3 className="font-semibold">{t("about.impact.stat3Title")}</h3>
                   <p className="text-sm text-muted-foreground">{t("about.impact.stat3Desc")}</p>
                 </CardContent>

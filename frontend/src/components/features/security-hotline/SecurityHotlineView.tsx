@@ -160,7 +160,7 @@ export function SecurityHotlineView() {
               <Siren className="h-5 w-5 text-red-500" />
               <span className="text-sm font-medium text-red-600">{t("securityhotline.hero.badge")}</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
               {t("securityhotline.hero.title")}
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
@@ -202,15 +202,18 @@ export function SecurityHotlineView() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-8">
-              <TabsTrigger value="report" className="gap-2">
-                <AlertTriangle className="h-4 w-4" /> {t("securityhotline.tabs.report")}
+            <TabsList className="mb-8 w-full h-auto">
+              <TabsTrigger value="report" className="flex-1 flex-col sm:flex-row gap-1 sm:gap-2 py-2 sm:py-1.5 h-auto">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="text-xs sm:text-sm leading-tight">{t("securityhotline.tabs.report")}</span>
               </TabsTrigger>
-              <TabsTrigger value="my-reports" className="gap-2">
-                <Eye className="h-4 w-4" /> {t("securityhotline.tabs.myReports")}
+              <TabsTrigger value="my-reports" className="flex-1 flex-col sm:flex-row gap-1 sm:gap-2 py-2 sm:py-1.5 h-auto">
+                <Eye className="h-4 w-4" />
+                <span className="text-xs sm:text-sm leading-tight">{t("securityhotline.tabs.myReports")}</span>
               </TabsTrigger>
-              <TabsTrigger value="contacts" className="gap-2">
-                <Phone className="h-4 w-4" /> {t("securityhotline.tabs.contacts")}
+              <TabsTrigger value="contacts" className="flex-1 flex-col sm:flex-row gap-1 sm:gap-2 py-2 sm:py-1.5 h-auto">
+                <Phone className="h-4 w-4" />
+                <span className="text-xs sm:text-sm leading-tight">{t("securityhotline.tabs.contacts")}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -246,7 +249,7 @@ export function SecurityHotlineView() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Incident Type & Urgency */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label>{t("securityhotline.form.incidentType")}</Label>
                         <Select
@@ -481,13 +484,13 @@ export function SecurityHotlineView() {
                 {reports.map((report) => (
                   <Card key={report.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                          <div className="bg-red-100 dark:bg-red-950/30 p-3 rounded-lg text-red-600">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div className="flex items-start gap-4 min-w-0">
+                          <div className="bg-red-100 dark:bg-red-950/30 p-3 rounded-lg text-red-600 shrink-0">
                             {getTypeIcon(report.type)}
                           </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
                               <h3 className="font-semibold">{report.title}</h3>
                               <Badge className={`${getStatusColor(report.status)} text-white capitalize`}>
                                 {report.status}
@@ -502,7 +505,7 @@ export function SecurityHotlineView() {
                             <p className="text-sm text-muted-foreground line-clamp-2">
                               {report.description}
                             </p>
-                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
                               <span className="flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />
                                 {report.location}
@@ -517,6 +520,7 @@ export function SecurityHotlineView() {
                         <Button
                           variant="outline"
                           size="sm"
+                          className="w-full sm:w-auto shrink-0"
                           onClick={() => dispatch(selectReport(report.id))}
                         >
                           <Eye className="h-4 w-4 mr-1" />
@@ -630,7 +634,7 @@ export function SecurityHotlineView() {
                 <p className="text-muted-foreground">{selectedReport.description}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold mb-1">{t("securityhotline.dialog.location")}</h4>
                   <p className="text-muted-foreground">{selectedReport.location}</p>
@@ -643,7 +647,7 @@ export function SecurityHotlineView() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-muted-foreground">{t("securityhotline.dialog.submitted")}</span>{" "}
                   {new Date(selectedReport.createdAt).toLocaleString()}

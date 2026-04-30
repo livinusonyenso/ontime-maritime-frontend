@@ -365,37 +365,41 @@ export default function LegalHubPage() {
         <section id="consultants-section" className="py-20 bg-slate-50 scroll-mt-20">
           <div className="container mx-auto px-4">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
-                <div>
+                <div className="mb-8 text-center">
                   <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
                     {t("legalhub.tabs.sectionTitle")}
                   </h2>
                   <p className="text-slate-600">{t("legalhub.tabs.sectionDesc")}</p>
                 </div>
-                <TabsList className="bg-white shadow-md p-1.5 rounded-xl">
-                  <TabsTrigger 
-                    value="consultants" 
-                    className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
+                <TabsList className="bg-white shadow-md p-1.5 rounded-xl w-full grid grid-cols-4 h-auto">
+                  <TabsTrigger
+                    value="consultants"
+                    className="flex flex-col items-center gap-1 px-1 py-2.5 sm:flex-row sm:gap-2 sm:px-5 sm:py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <Users className="h-4 w-4" /> {t("legalhub.tabs.lawyers")}
+                    <Users className="h-4 w-4 shrink-0" />
+                    <span className="text-[10px] sm:text-sm font-medium leading-tight">{t("legalhub.tabs.lawyers")}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="templates"
-                    className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
+                    className="flex flex-col items-center gap-1 px-1 py-2.5 sm:flex-row sm:gap-2 sm:px-5 sm:py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <FileText className="h-4 w-4" /> {t("legalhub.tabs.templates")}
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <span className="text-[10px] sm:text-sm font-medium leading-tight">{t("legalhub.tabs.templates")}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="services"
-                    className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
+                    className="flex flex-col items-center gap-1 px-1 py-2.5 sm:flex-row sm:gap-2 sm:px-5 sm:py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <Briefcase className="h-4 w-4" /> {t("legalhub.tabs.services")}
+                    <Briefcase className="h-4 w-4 shrink-0" />
+                    <span className="text-[10px] sm:text-sm font-medium leading-tight">{t("legalhub.tabs.services")}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="resources"
-                    className="gap-2 px-6 py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
+                    className="flex flex-col items-center gap-1 px-1 py-2.5 sm:flex-row sm:gap-2 sm:px-5 sm:py-3 rounded-lg data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
                   >
-                    <BookOpen className="h-4 w-4" /> {t("legalhub.tabs.resources")}
+                    <BookOpen className="h-4 w-4 shrink-0" />
+                    <span className="text-[10px] sm:text-sm font-medium leading-tight">{t("legalhub.tabs.resources")}</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
