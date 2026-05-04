@@ -1,0 +1,903 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "services": "服务",
+    "marketplace": "市场",
+    "legalHub": "海事科技律师",
+    "securityHotline": "安全热线",
+    "login": "登录",
+    "register": "注册",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "tagline": "货物遇见科技",
+    "brand": "海事平台"
+  },
+  "hero": {
+    "slide1": {
+      "title": "货物遇见科技",
+      "subtitle": "革命性海事平台",
+      "description": "为全球航运提供实时追踪、自动化文档和数字市场"
+    },
+    "slide2": {
+      "title": "追踪每一批货物",
+      "subtitle": "实时可见性",
+      "description": "通过GPS追踪和自动状态更新，跨洋监控您的货物"
+    },
+    "slide3": {
+      "title": "数字市场",
+      "subtitle": "拍卖与保险",
+      "description": "通过我们的综合平台竞标集装箱舱位并获取货物保险"
+    },
+    "getStarted": "立即开始",
+    "trackShipment": "追踪货物",
+    "uptime": "99.9% 正常运行时间",
+    "countries": "150+ 个国家",
+    "support": "全天候支持",
+    "scroll": "向下滚动"
+  },
+  "features": {
+    "sectionTitle": "全面的海事解决方案",
+    "sectionDescription": "高效管理您货运业务所需的一切",
+    "realTimeTracking": {
+      "title": "实时追踪",
+      "description": "通过GPS追踪和自动状态更新实时监控您的货物"
+    },
+    "digitalDocuments": {
+      "title": "数字文档",
+      "description": "数字化管理提单、发票和租船合同"
+    },
+    "cargoAuctions": {
+      "title": "货物拍卖",
+      "description": "通过我们的数字市场竞标集装箱舱位和租用船舶"
+    },
+    "analyticsInsights": {
+      "title": "分析与洞察",
+      "description": "通过全面的航运分析做出数据驱动的决策"
+    }
+  },
+  "modules": {
+    "sectionTitle": "完整海事平台",
+    "sectionDescription": "七个集成模块涵盖海事运营的每个方面",
+    "explore": "探索",
+    "vesselTracking": {
+      "title": "船舶追踪",
+      "description": "通过MarineTraffic和VesselFinder AIS数据进行实时船舶追踪"
+    },
+    "digitalBOL": {
+      "title": "数字提单",
+      "description": "区块链验证的电子提单系统，自动验证，每份提单50美元"
+    },
+    "legalHub": {
+      "title": "法律与合规中心",
+      "description": "获取经验证的海事律师、模板和合规咨询"
+    },
+    "securityHotline": {
+      "title": "安全热线",
+      "description": "举报欺诈、海盗、货物丢失和海事犯罪"
+    },
+    "arbitration": {
+      "title": "海事仲裁",
+      "description": "航运合同、租船协议和货物索赔的纠纷解决"
+    },
+    "marketplace": {
+      "title": "设备市场",
+      "description": "买卖集装箱、起重机、仓库、备件和保险"
+    },
+    "store": {
+      "title": "OnTime 商店",
+      "description": "进口海事设备、发电机、雷达系统和液压零件"
+    },
+    "knowledge": {
+      "title": "知识中心",
+      "description": "PDF指南、培训材料、IMO标准和海关资源"
+    }
+  },
+  "industrySolutions": {
+    "sectionTitle": "满足每种海事需求",
+    "sectionDescription": "为货运代理、航运公司和进出口企业量身定制的解决方案",
+    "freightForwarders": {
+      "title": "货运代理",
+      "description": "通过自动化文档、实时追踪和集成支付处理简化运营。",
+      "feature1": "多货物管理",
+      "feature2": "客户门户访问",
+      "feature3": "自动开票"
+    },
+    "shippingCompanies": {
+      "title": "航运公司",
+      "description": "通过我们的拍卖市场优化船舶利用率并数字化管理租船协议。",
+      "feature1": "船队管理仪表板",
+      "feature2": "数字租船合同",
+      "feature3": "容量优化"
+    },
+    "importExport": {
+      "title": "进出口",
+      "description": "通过端到端可见性、自动化海关和集成保险简化国际贸易。",
+      "feature1": "清关追踪",
+      "feature2": "货物保险报价",
+      "feature3": "合规管理"
+    },
+    "highSeasSale": {
+  "title": "公海销售",
+  "description": "通过具有法律效力的数字文件和无缝所有权交接，促进航行途中的货物转让。",
+  "feature1": "航行中所有权转让",
+  "feature2": "提单数字背书",
+  "feature3": "实时货物状态更新"
+}
+  },
+  "integrations": {
+    "sectionTitle": "由行业领先集成驱动",
+    "sectionDescription": "与世界顶级海事和物流平台无缝连接",
+    "marineTraffic": {
+      "title": "MarineTraffic",
+      "description": "具有全球AIS数据覆盖的实时船舶追踪"
+    },
+    "alibabaTrade": {
+      "title": "阿里巴巴贸易",
+      "description": "与全球B2B市场的直接集成"
+    },
+    "paystack": {
+      "title": "Paystack",
+      "description": "所有交易的安全支付处理"
+    }
+  },
+  "whyChooseUs": {
+    "sectionTitle": "为什么选择Ontime Maritime",
+    "sectionDescription": "行业中最全面、最安全的海事平台",
+    "security": {
+      "title": "银行级安全",
+      "description": "256位加密和区块链验证，保障所有交易和关键任务文档。"
+    },
+    "reliability": {
+      "title": "全天候可靠性",
+      "description": "99.9%正常运行时间SLA，由全天候监控和技术支持保障。"
+    },
+    "globalReach": {
+      "title": "全球覆盖",
+      "description": "活跃于150多个国家，提供多语言支持和区域合规管理。"
+    }
+  },
+  "testimonials": {
+    "sectionTitle": "受行业领导者信任",
+    "sectionDescription": "听听我们的客户如何评价我们的平台",
+    "testimonial1": {
+      "quote": "Ontime Maritime彻底改变了我们管理全球货物的方式。实时追踪为我们节省了无数小时。",
+      "name": "Chukwuemeka Okafor",
+      "role": "CEO，全球货运有限公司"
+    },
+    "testimonial2": {
+      "quote": "拍卖市场帮助我们将船舶容量利用率提高了40%。杰出的平台，出色的支持。",
+      "name": "Amina Bello",
+      "role": "总监，太平洋航运公司"
+    },
+    "testimonial3": {
+      "quote": "我们用过的最好的海事平台。分析仪表板为我们提供了前所未有的洞察。强烈推荐！",
+      "name": "Oluwaseun Adeyemi",
+      "role": "经理，拉各斯贸易中心"
+    }
+  },
+  "cta": {
+    "title": "准备好转变您的海事运营了吗？",
+    "description": "加入已在使用Ontime Maritime的数千家公司",
+    "startFreeTrial": "开始免费试用",
+    "learnMore": "了解更多"
+  },
+  "securityhotline": {
+    "chatbuttontooltip": "需要帮助？与我们聊天！",
+    "hero": {
+      "badge": "安全与执法热线",
+      "title": "举报海事犯罪",
+      "description": "快速响应热线，用于举报与海事相关的犯罪，包括欺诈、海盗、货物丢失、假文件和海事诈骗。",
+      "emergencyTitle": "紧急联系方式",
+      "maritimePolice": "海事警察",
+      "efcc": "经济和金融犯罪委员会",
+      "coastGuard": "海岸警卫队"
+    },
+    "tabs": {
+      "report": "举报事件",
+      "myReports": "我的举报",
+      "contacts": "机构联系方式"
+    },
+    "form": {
+      "successTitle": "举报提交成功",
+      "successDesc": "您的举报已提交。您将通过电子邮件收到案件编号。",
+      "dismiss": "关闭",
+      "cardTitle": "提交举报",
+      "cardDesc": "请提供您要举报的海事事件详情。所有举报均保密处理。",
+      "incidentType": "事件类型 *",
+      "selectType": "选择类型",
+      "fraud": "欺诈",
+      "piracy": "海盗",
+      "missingShipment": "货物丢失",
+      "fakeDocuments": "假文件",
+      "maritimeScam": "海事诈骗",
+      "other": "其他",
+      "urgencyLevel": "紧急程度",
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "critical": "紧急 - 需立即处理",
+      "reportTo": "举报至 *",
+      "nigerianPolice": "尼日利亚海事警察",
+      "efccUnit": "经济犯罪委员会海事欺诈部门",
+      "navyCoastGuard": "尼日利亚海军海岸警卫队",
+      "incidentTitle": "事件标题 *",
+      "titlePlaceholder": "简要描述事件的标题",
+      "description": "描述 *",
+      "descPlaceholder": "请提供事件的详细信息...",
+      "location": "地点",
+      "locationPlaceholder": "事件发生在哪里？",
+      "contactInfo": "您的联系方式",
+      "anonymous": "匿名提交",
+      "name": "姓名",
+      "namePlaceholder": "您的姓名",
+      "email": "电子邮件",
+      "phone": "电话",
+      "submit": "提交举报"
+    },
+    "reports": {
+      "caseNo": "案件编号：",
+      "view": "查看",
+      "noReports": "暂无举报",
+      "noReportsDesc": "您尚未提交任何举报。",
+      "fileReport": "提交举报"
+    },
+    "dialog": {
+      "urgency": "紧急程度",
+      "description": "描述",
+      "location": "地点",
+      "reportedTo": "举报至",
+      "submitted": "提交时间：",
+      "lastUpdated": "最后更新："
+    },
+    "contacts": {
+      "callNow": "立即拨打"
+    }
+  },
+  "legalhub": {
+    "hero": {
+      "badge": "海事法律中心",
+      "est": "• 成立于2015年",
+      "title": "海事法律专业知识",
+      "titleHighlight": "值得信赖",
+      "description": "专业提供航运、海上作业、货物索赔及国际海事纠纷的法律咨询。",
+      "cta": "咨询海事律师",
+      "searchTitle": "立即获取法律帮助",
+      "searchPlaceholder": "搜索航运法、货物索赔、P&I保险…",
+      "searchBtn": "搜索律师"
+    },
+    "stats": {
+      "lawyers": "认证海事律师",
+      "templates": "法律模板",
+      "jurisdictions": "全球司法管辖区",
+      "support": "紧急支持"
+    },
+    "practiceAreas": {
+      "badge": "我们的专业领域",
+      "title": "海事法律实践领域",
+      "description": "涵盖海事和航运法律各方面的全面法律支持",
+      "learnMore": "了解更多",
+      "shipping": { "title": "航运与租船合同", "desc": "航次租船、定期租船和光船租赁协议" },
+      "cargo": { "title": "货物与贸易", "desc": "提单、货物索赔和贸易融资" },
+      "insurance": { "title": "海上保险", "desc": "P&I保险、船体险和理赔处理" },
+      "disputes": { "title": "海事纠纷", "desc": "仲裁、诉讼和纠纷解决" }
+    },
+    "tabs": {
+      "sectionTitle": "法律资源与服务",
+      "sectionDesc": "满足海事法律合规所需的一切",
+      "lawyers": "律师",
+      "templates": "模板",
+      "services": "服务",
+      "resources": "资源"
+    },
+    "consultants": {
+      "title": "专业海事律师",
+      "description": "专注海事法律的认证法律专业人士",
+      "searchPlaceholder": "按姓名或专业搜索律师...",
+      "available": "可预约",
+      "busy": "忙碌中",
+      "specializations": "专业领域",
+      "jurisdictions": "司法管辖区",
+      "experience": "经验",
+      "years": "年",
+      "hourlyRate": "小时费率",
+      "viewProfile": "查看完整简介",
+      "noFound": "未找到律师",
+      "noFoundDesc": "未找到与「{{query}}」匹配的海事律师。请尝试其他搜索词或联系我们的代表获取个性化帮助。",
+      "clearSearch": "清除搜索",
+      "callUs": "致电我们：",
+      "reviews": "条评价",
+      "featured": "特色律师",
+      "featuredLawyer": "首席海事律师",
+      "topRated": "最高评分"
+    },
+    "templates": {
+      "all": "所有模板",
+      "charterparty": "租船合同",
+      "bol": "提单",
+      "nvocc": "无船承运人",
+      "compliance": "合规",
+      "contract": "船舶合同",
+      "premium": "高级版",
+      "downloads": "次下载",
+      "download": "下载",
+      "searchPlaceholder": "按名称或类别搜索模板...",
+      "noResults": "没有匹配的模板。",
+      "clearSearch": "清除搜索"
+    },
+    "services": {
+      "duration": "时长：",
+      "request": "申请服务",
+      "comingSoonBadge": "法律服务",
+      "comingSoonTitle": "专业法律服务 — 即将推出",
+      "comingSoonDesc": "我们正在与认可的海事律师事务所建立合作，提供合同审查、争议解决和合规咨询服务。",
+      "comingSoonNotify": "上线时通知我",
+      "comingSoonContact": "联系我们的法律团队",
+      "preview1": "合同审查与起草",
+      "preview2": "海事争议解决",
+      "preview3": "合规与监管咨询",
+      "preview4": "船舶融资与抵押"
+    },
+    "resources": {
+      "access": "访问",
+      "premium": "高级版",
+      "comingSoonBadge": "知识库",
+      "comingSoonTitle": "海事法律资源 — 即将推出",
+      "comingSoonDesc": "我们的法律编辑团队正在整理来自执业海事律师的专家文章、合规清单和司法管辖区指南。",
+      "comingSoonNotify": "上线时通知我",
+      "comingSoonContact": "建议资源",
+      "preview1": "港口国监督指南",
+      "preview2": "司法管辖区对比图",
+      "preview3": "货物索赔清单",
+      "preview4": "仲裁程序框架"
+    },
+    "testimonials": {
+      "badge": "客户评价",
+      "title": "受行业领袖信赖",
+      "description": "听听我们的客户对与海事法律中心合作经历的评价",
+      "t1quote": "他们在租船合同纠纷方面的专业知识为我们公司节省了数百万。卓越的法律咨询。",
+      "t1author": "詹姆斯·莫里森",
+      "t1role": "CEO，大西洋航运有限公司",
+      "t2quote": "团队以专业精神处理了我们复杂的P&I索赔，并达成了出色的和解。",
+      "t2author": "陈莎拉",
+      "t2role": "总监，太平洋海事",
+      "t3quote": "我们合作过的最好的海事律师事务所。他们对国际法规的了解无与伦比。",
+      "t3author": "迈克尔·奥孔奎",
+      "t3role": "船队经理，全球承运公司"
+    },
+    "cta": {
+      "title": "准备好应对您的法律挑战了吗？",
+      "description": "立即与我们的海事法律专家预约咨询。获取保护您权益所需的法律指导。",
+      "findLawyer": "寻找律师",
+      "call": "致电：+234 808984499"
+    },
+    "dialog": {
+      "title": "顾问简介",
+      "desc": "海事法律专家简介",
+      "availableNow": "现在可约",
+      "currentlyBusy": "当前忙碌",
+      "yearsExp": "年经验",
+      "about": "关于",
+      "specializations": "专业领域",
+      "jurisdictions": "司法管辖区",
+      "consultationRate": "咨询费率",
+      "perHour": "/小时",
+      "bookConsultation": "预约咨询"
+    }
+  },
+  "marketplacepage": {
+    "hero": {
+      "badge": "海事市场",
+      "title": "设备与仓库市场",
+      "description": "浏览经过验证的海事设备、仓库、集装箱、起重机、备件等——无需注册账号。"
+    },
+    "categories": {
+      "all": "所有类别",
+      "equipment": "设备",
+      "vessel": "船舶",
+      "container": "集装箱",
+      "crane": "起重机",
+      "spare_parts": "备件",
+      "repairs": "维修",
+      "insurance": "保险",
+      "warehouse": "仓库"
+    },
+    "sort": {
+      "newest": "最新优先",
+      "price_asc": "价格：从低到高",
+      "price_desc": "价格：从高到低",
+      "featured": "精选"
+    },
+    "filters": {
+      "searchPlaceholder": "搜索列表…"
+    },
+    "results": {
+      "found_one": "找到 {{count}} 条列表",
+      "found_other": "找到 {{count}} 条列表",
+      "noResults": "未找到列表",
+      "noResultsDesc": "请尝试调整搜索或类别筛选条件。"
+    },
+    "card": {
+      "featured": "精选",
+      "bolVerified": "提单已验证",
+      "by": "卖家：",
+      "buyNow": "立即购买",
+      "redirecting": "正在跳转…"
+    },
+    "loadMore": "加载更多",
+    "loading": "加载中…"
+  },
+  "marketplace": {
+    "hero": {
+      "badge": "海事市场",
+      "title": "设备与仓库市场",
+      "description": "买卖海事设备、仓库空间、集装箱、起重机、备件和维修服务。",
+      "becomeSeller": "成为卖家",
+      "postListing": "发布列表",
+      "searchPlaceholder": "搜索设备、仓库、集装箱...",
+      "categoryPlaceholder": "类别"
+    },
+    "categories": {
+      "popular": "热门：",
+      "all": "所有类别",
+      "equipment": "设备",
+      "warehouse": "仓库",
+      "container": "集装箱",
+      "crane": "起重机",
+      "spare_parts": "备件",
+      "repairs": "维修",
+      "insurance": "保险"
+    },
+    "listings": {
+      "title": "浏览列表",
+      "available": "{{count}} 个列表",
+      "sortPlaceholder": "排序方式",
+      "newest": "最新优先",
+      "priceLow": "价格：从低到高",
+      "priceHigh": "价格：从高到低",
+      "highestRated": "评分最高",
+      "featured": "精选",
+      "bolVerified": "提单已验证",
+      "noResults": "未找到列表",
+      "noResultsDesc": "请尝试调整搜索或筛选条件。",
+      "contact": "联系"
+    },
+    "purchase": {
+      "title": "验证并购买",
+      "description": "AI/Grok验证提单详情和货物信息。",
+      "bolLabel": "提单号",
+      "bolPlaceholder": "输入提单号",
+      "messageLabel": "留言",
+      "messagePlaceholder": "给卖家的任何留言...",
+      "verifying": "正在AI验证...",
+      "runVerification": "运行AI验证",
+      "verifyPay": "验证并支付",
+      "verificationComplete": "验证完成",
+      "bolValid": "提单有效",
+      "ownershipVerified": "所有权已验证",
+      "originVerified": "产地已验证",
+      "destinationVerified": "目的地已验证",
+      "proceedPayment": "进行支付",
+      "paymentSuccess": "支付成功！",
+      "transactionId": "交易ID",
+      "done": "完成"
+    },
+    "seller": {
+      "title": "成为卖家",
+      "description": "简单入驻，立即开始发布商品。",
+      "businessName": "企业名称",
+      "email": "电子邮件",
+      "phone": "电话",
+      "country": "国家",
+      "register": "注册",
+      "cancel": "取消"
+    },
+    "createListing": {
+      "title": "创建新列表",
+      "categoryLabel": "类别",
+      "categoryPlaceholder": "选择类别",
+      "titleLabel": "标题",
+      "descriptionLabel": "描述",
+      "priceLabel": "价格",
+      "locationLabel": "所在国家",
+      "create": "创建列表",
+      "cancel": "取消"
+    }
+  },
+  "services": {
+    "hero": {
+      "badge": "我们的服务",
+      "title": "完整的海事解决方案",
+      "description": "从港口到港口，管理货运操作所需的一切"
+    },
+    "tracking": {
+      "title": "实时货物追踪",
+      "description": "通过实时GPS追踪和自动状态更新，随时随地监控您的货物",
+      "f1": "通过MarineTraffic集成实时追踪船舶位置",
+      "f2": "自动里程碑通知（出发、转运、到达）",
+      "f3": "结合天气和港口拥堵分析的预计到达时间预测",
+      "f4": "支持自定义视图的多货物仪表板",
+      "cta": "追踪您的货物"
+    },
+    "documents": {
+      "title": "数字文档管理",
+      "description": "通过安全的数字提单、发票和租船合同消除纸质文档",
+      "f1": "区块链验证的提单和证书",
+      "f2": "自动生成海关文件",
+      "f3": "数字签名和审批工作流",
+      "f4": "带版本控制的安全云存储",
+      "cta": "管理文档"
+    },
+    "auctions": {
+      "title": "货物拍卖市场",
+      "description": "在我们透明的数字市场中竞标集装箱舱位和租用船舶",
+      "f1": "实时竞标可用货舱空间",
+      "f2": "散货整船租船拍卖",
+      "f3": "中标后自动生成合同",
+      "f4": "通过Paystack安全支付托管",
+      "cta": "浏览拍卖"
+    },
+    "insurance": {
+      "title": "货物保险市场",
+      "description": "即时报价，比较并购买顶级供应商的货物保险",
+      "f1": "来自20多家保险公司的即时报价",
+      "f2": "覆盖所有货物类型和航线",
+      "f3": "数字文档简化理赔流程",
+      "f4": "自动保单绑定和证书生成",
+      "cta": "获取保险报价"
+    },
+    "analytics": {
+      "title": "分析与商业智能",
+      "description": "通过全面的航运分析和洞察做出数据驱动的决策",
+      "f1": "带KPI追踪的实时仪表板",
+      "f2": "航线优化和成本分析",
+      "f3": "承运商绩效基准对比",
+      "f4": "自定义报告和数据导出"
+    },
+    "charterparty": {
+      "title": "租船合同管理",
+      "description": "通过数字合同和自动化工作流简化船舶租赁",
+      "f1": "标准租船合同模板（Gencon、NYPE等）",
+      "f2": "数字谈判和修订追踪",
+      "f3": "自动计算装卸时间和滞期费",
+      "f4": "多方签署，具有法律效力"
+    },
+    "comingSoon": "即将推出",
+    "why": {
+      "sectionTitle": "为什么选择我们的服务",
+      "sectionDescription": "引领行业的特色功能，让我们与众不同",
+      "support": "全天候支持",
+      "supportDesc": "全天候技术协助",
+      "pricing": "透明定价",
+      "pricingDesc": "无隐藏费用或意外收费",
+      "security": "银行级安全",
+      "securityDesc": "所有数据256位加密",
+      "coverage": "全球覆盖",
+      "coverageDesc": "覆盖150多个国家"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "关于我们",
+      "title": "革命性全球海事贸易",
+      "description": "准时资源有限公司处于海事技术前沿，通过创新货运解决方案连接世界。"
+    },
+    "story": {
+      "sectionTitle": "我们是谁",
+      "sectionDescription": "Ontime Maritime的故事及我们推动全球航运现代化的使命",
+      "label": "我们的故事",
+      "title": "构建现代海事物流的数字骨干",
+      "p1": "Ontime Maritime成立于2020年，源于一个简单的观察：海事行业在数字化转型方面落后了数十年。当其他行业拥抱技术时，货运仍然困于繁文缛节和低效率中。",
+      "p2": "我们的创始人——全球航运和硅谷的资深人士——看到了弥合这一差距的机会。他们汇聚了海事专家、软件工程师和物流专业人士，共同完成一个使命：现代化全球货物运输方式。",
+      "p3": "如今，Ontime Maritime在150多个国家支持超过5,000家公司，每年处理数百万个集装箱，为全球关键供应链提供动力。"
+    },
+    "impact": {
+      "sectionTitle": "Ontime Maritime的数字成就",
+      "sectionDescription": "对全球海事运营的可量化影响",
+      "stat1Title": "覆盖国家",
+      "stat1Desc": "在全球主要港口积极布局",
+      "stat2Title": "活跃企业",
+      "stat2Desc": "物流公司、货主和运营商",
+      "stat3Title": "追踪货物",
+      "stat3Desc": "数字化监控全程",
+      "stat4Title": "平台正常运行时间",
+      "stat4Desc": "企业级可靠性和可用性"
+    },
+    "purpose": {
+      "sectionTitle": "我们的目标",
+      "sectionDescription": "指导Ontime Maritime对全球贸易影响的使命与愿景",
+      "missionTitle": "我们的使命",
+      "missionDesc": "通过提供尖端技术，使航运更快、更透明、更高效，让各规模企业都能平等获取全球海事贸易机会。我们相信每家公司都应享有企业级物流能力。",
+      "mission1": "简化复杂的海事运营",
+      "mission2": "无缝连接全球贸易伙伴",
+      "mission3": "推动可持续航运实践",
+      "visionTitle": "我们的愿景",
+      "visionDesc": "成为全球最受信赖的海事技术平台，每批货物都被追踪，每份文件都数字化，每笔交易都无缝完成。我们憧憬一个全球贸易对所有人开放的未来。",
+      "vision1": "2030年实现海事行业无纸化",
+      "vision2": "平台覆盖全球每个主要港口",
+      "vision3": "海事技术的行业标准"
+    },
+    "values": {
+      "sectionTitle": "我们的核心价值观",
+      "sectionDescription": "指导我们一切工作的原则",
+      "excellence": "卓越",
+      "excellenceDesc": "我们在每个功能、每次互动和每个客户体验中追求卓越。",
+      "collaboration": "协作",
+      "collaborationDesc": "我们相信伙伴关系的力量，在海事生态系统中建立连接。",
+      "innovation": "创新",
+      "innovationDesc": "我们不断突破边界，为现代海事挑战提供尖端解决方案。",
+      "integrity": "诚信",
+      "integrityDesc": "我们以透明、诚实和负责任的态度处理所有业务往来。"
+    },
+    "team": {
+      "sectionTitle": "领导团队",
+      "sectionDescription": "认识推动海事创新的专家们",
+      "ceoRole": "首席执行官兼创始人",
+      "ctoRole": "首席技术官兼联合创始人",
+      "opsRole": "运营总监",
+      "csRole": "客户成功总监"
+    }
+  },
+  "footer": {
+    "brand": "海事平台",
+    "tagline": "货物遇见科技",
+    "about": "革命性海事货运平台，连接全球货主、承运人和物流服务商。",
+    "quickLinks": "快速链接",
+    "links": {
+      "aboutUs": "关于我们",
+      "services": "服务",
+      "tracking": "货物追踪",
+      "auctions": "拍卖",
+      "insurance": "保险"
+    },
+    "contactUs": "联系我们",
+    "address": "尼日利亚拉各斯海事广场123号",
+    "followUs": "关注我们",
+    "socialTagline": "获取最新的海事技术创新和货运解决方案资讯。",
+    "copyright": "© {{year}} 准时资源有限公司. 版权所有。"
+  },
+  "comingSoonModal": {
+    "srTitle": "即将推出",
+    "srDescription": "此功能暂不可用。",
+    "badge": "开发中",
+    "titleWithFeature": "「{{name}}」即将推出",
+    "titleGeneric": "此功能即将推出",
+    "description": "我们正在积极开发中，请稍后再来查看。",
+    "cta": "知道了"
+  },
+  "qrcode": {
+    "quickacess": "快速访问",
+    "Preparing" : "正在准备您的二维码...",
+    "Downloadpng": "下载PNG",
+    "title": "扫描访问我们的网站",
+    "description": "使用手机扫描二维码，立即访问OnTime Maritime平台。"
+  },
+  "ports": {
+    "nimasa": "NIMASA认证 · SA261009",
+    "title": "全面覆盖尼日利亚港口",
+    "subtitle": "从深水码头到内河水道和干港——准时资源有限公司覆盖尼日利亚每一个主要货物门户。",
+    "stats": { "seaports": "海港", "dryPorts": "干港", "inland": "内河水道", "states": "覆盖州数" },
+    "map": {
+      "title": "港口网络地图",
+      "subtitle": "点击任意标记查看港口详情",
+      "seaport": "海港", "dryPort": "干港", "inland": "内河水道",
+      "enquire": "通过WhatsApp咨询", "close": "关闭"
+    },
+    "typeLabel": { "seaport": "海港", "dry-port": "干港", "inland": "内河水道" },
+    "seaportsSection": {
+      "title": "7个主要海港",
+      "subtitle": "准时资源有限公司在尼日利亚所有持牌海港保持积极清关业务。"
+    },
+    "inlandSection": {
+      "title": "内河水道",
+      "subtitle": "基于河道的货物运输，连接沿海港口至尼日利亚东南腹地。",
+      "whyTitle": "为什么重要",
+      "whyText": "尼日尔河航线与纯公路运输相比，可为向东南方向运输的货物节省多达40%的运费。",
+      "whyDetail": "准时资源有限公司是少数几家提供内河水道协调服务的拉各斯清关代理之一——这对阿南布拉、恩努古、伊莫和阿比亚州的客户来说是关键优势。"
+    },
+    "dryPortsSection": {
+      "title": "我们的内陆港口网络",
+      "whatIs": "什么是干港？",
+      "explanation": "干港将尼日利亚的港口能力延伸到内陆深处。准时资源有限公司在尼日利亚所有主要干港提供清关和货运代理服务，使内陆州的进出口商无需前往海港即可清关货物。"
+    },
+    "capacity": {
+      "heading": "总网络容量",
+      "locations": "港口位置",
+      "seaports": "海港",
+      "dryPorts": "干港",
+      "inland": "内河水道",
+      "states": "覆盖州数",
+      "licence": "NIMASA许可证"
+    },
+    "cta": {
+      "title": "在未列出的港口运营？",
+      "description": "我们的网络持续扩张，我们的团队可根据客户需求协调在尼日利亚任何设施的海关清关。联系我们，我们会解决。",
+      "whatsapp": "WhatsApp咨询",
+      "slogan": "\"货物遇见科技\" · NIMASA许可证 SA261009 · 有效合规"
+    },
+    "card": { "enquireNow": "立即咨询" },
+    "data": {
+      "apapa": {
+        "name": "拉各斯港综合区（阿帕帕）", "shortName": "拉各斯港", "state": "拉各斯州",
+        "cargoSpeciality": "集装箱及普通货物",
+        "capability": "主要业务中心。全面海关清关、整箱和拼箱集装箱处理、滞期争议管理、M表格处理、目的地查验协调、PAAR、SON和NAFDAC豁免。尼日利亚最繁忙港口的最快周转。"
+      },
+      "tin-can": {
+        "name": "廷坎岛港", "shortName": "廷坎港", "state": "拉各斯州",
+        "cargoSpeciality": "集装箱码头",
+        "capability": "专用集装箱码头。消费品、车辆、机械和散货进口清关。车辆进口专家。整合拼箱货物管理，直连拉各斯工业走廊公路。"
+      },
+      "lekki": {
+        "name": "莱基深水港", "shortName": "莱基深水港", "state": "拉各斯州",
+        "cargoSpeciality": "深水码头",
+        "capability": "尼日利亚最大、最新的深水港。超大型船舶能力。项目货物、大批量整箱作业、重型工业设备进口。面向未来十年尼日利亚贸易增长定位。"
+      },
+      "onne": {
+        "name": "翁内港综合区", "shortName": "翁内港", "state": "河流州",
+        "cargoSpeciality": "油气专业",
+        "capability": "专业石油和天然气货物清关。危险材料文件、OPAL/OGSL处理、工业设备进口、项目物流协调。尼日尔三角洲能源领域的主要门户。"
+      },
+      "port-harcourt": {
+        "name": "哈科特港", "shortName": "哈科特港", "state": "河流州",
+        "cargoSpeciality": "普通货物",
+        "capability": "普通货物、农产品出口、石油产品文件、多用途货物处理。服务河流州、贝叶萨州及更广泛的尼日尔三角洲贸易走廊。"
+      },
+      "warri": {
+        "name": "瓦里港", "shortName": "瓦里港", "state": "三角洲州",
+        "cargoSpeciality": "散货及石油",
+        "capability": "散货、石油产品、农产品出口。三角洲州和埃多州收货人的门户。木材、可可和棕榈产品出口文件和协调。"
+      },
+      "calabar": {
+        "name": "卡拉巴尔港", "shortName": "卡拉巴尔港", "state": "克罗斯河州",
+        "cargoSpeciality": "农产品出口门户",
+        "capability": "尼日利亚首要农产品出口港。可可、芝麻、木材和商品出口文件。植物检疫证书、NEPC注册、原产地证书。通往东南和南南尼日利亚的门户。"
+      },
+      "onitsha": {
+        "name": "奥尼查内陆港", "shortName": "奥尼查内陆港", "state": "阿南布拉州",
+        "cargoSpeciality": "尼日尔河——内河水道",
+        "capability": "尼日尔河货运路线，连接拉各斯至东南尼日利亚。经济实惠的散货运输替代公路运输。服务阿南布拉、恩努古、伊莫和阿比亚州。大多数拉各斯清关代理未提供的独特能力。"
+      },
+      "kano-dry-port": {
+        "name": "卡诺干港（内陆集装箱堆场）", "shortName": "卡诺干港", "state": "卡诺州",
+        "cargoSpeciality": "内陆集装箱堆场——西北走廊",
+        "capability": "从拉各斯和阿帕帕通过铁路或公路转运货物的海关清关。集装箱检验、关税评估和最终放行协调。覆盖北尼日利亚的制成品、机械、原材料和农业投入品。"
+      },
+      "kaduna-dry-port": {
+        "name": "卡杜纳干港", "shortName": "卡杜纳干港", "state": "卡杜纳州",
+        "cargoSpeciality": "铁路联运码头——中北部",
+        "capability": "从拉各斯港铁路转运集装箱的清关。前往中北部尼日利亚的工业设备、机械和制成品。与NRC（尼日利亚铁路公司）物流的全面协调。"
+      },
+      "maiduguri-dry-port": {
+        "name": "迈杜古里干港", "shortName": "迈杜古里干港", "state": "博尔诺州",
+        "cargoSpeciality": "东北贸易门户",
+        "capability": "人道主义货物、农业投入品、制成品及与喀麦隆、乍得和尼日尔的贸易清关和货运代理。东北尼日利亚主要内陆清关设施。"
+      },
+      "funtua-dry-port": {
+        "name": "丰图阿干港", "shortName": "丰图阿干港", "state": "卡齐纳州",
+        "cargoSpeciality": "棉花和农业中心——西北",
+        "capability": "农产品出口文件、棉花和商品清关、农业投入品进口。西北农业贸易走廊文件专家。服务卡齐纳、凯比、索科托和赞法拉州。"
+      },
+      "heipang-dry-port": {
+        "name": "黑彭干港", "shortName": "黑彭干港", "state": "高原州",
+        "cargoSpeciality": "中北部门户——固体矿产",
+        "capability": "固体矿产出口、农业商品、普通货物。锡、铌铁矿和乔斯高原矿产贸易出口文件。服务高原、纳萨拉瓦、贝努埃和塔拉巴州。"
+      },
+      "ibadan-dry-port": {
+        "name": "伊巴丹干港（内陆集装箱堆场）", "shortName": "伊巴丹干港", "state": "奥约州",
+        "cargoSpeciality": "西南内陆码头",
+        "capability": "拉各斯港货物溢出。纺织品和制造业进口、农产品出口、消费品。通过高速公路和规划中的铁路走廊直连拉各斯港综合区。服务奥约、奥苏恩、埃基提和夸拉州。"
+      }
+    }
+  },
+  "credentials": {
+    "badge": "政府认证 · 国际资质",
+    "title": "认证证书与职业资格",
+    "subtitle": "准时资源有限公司在政府认证许可、国际认可学术资质和完整合规监管下运营——这些资质是大多数尼日利亚清关代理所不具备的。",
+    "trustStatement": "以下所有证书均为现行有效且可核实。",
+    "trustLink": "NIMASA许可证SA261009可直接在www.nimasa.gov.ng进行验证",
+    "hero": {
+      "primaryLabel": "主要证书",
+      "title": "NIMASA注册许可证",
+      "issuer": "尼日利亚海事管理与安全局",
+      "verifiedBadge": "已验证有效",
+      "licenceNumber": "许可证编号",
+      "category": "类别",
+      "categoryValue": "注册航运代理",
+      "status": "状态",
+      "statusValue": "有效",
+      "issuingBody": "发证机构",
+      "authority": "依据2007年尼日利亚海事管理与安全局法案及2007年商船法签发。",
+      "verifyBtn": "在线验证",
+      "downloadBtn": "下载证书副本"
+    },
+    "widget": {
+      "active": "有效",
+      "licenceNo": "许可证编号",
+      "issuingBody": "发证机构",
+      "category": "类别",
+      "categoryValue": "注册航运代理",
+      "verifyAt": "验证网址",
+      "verify": "验证"
+    },
+    "qualifications": {
+      "sectionTitle": "学术与职业资质",
+      "sectionSubtitle": "我们的领导团队将国际海事法律专业知识与港口运营实践经验相结合——这一组合直接保障我们管理的每项客户指令。",
+      "whyMatters": "这对您的货物意味着什么",
+      "llm-maritime-law": {
+        "tag": "研究生学位 · 英国",
+        "title": "国际商业与海事法律法学硕士",
+        "institution": "英国斯旺西大学",
+        "meta": "2010年授予 · 法学院",
+        "subjects": ["国际航运法","租船合同","货物索赔","海事合同","贸易融资法","提单","国际贸易术语","海事仲裁"],
+        "relevance": "准时资源有限公司的每项货物指令均由具备海事律师资质的团队负责人管理。这意味着您的合同将得到专业审查，您的索赔将获得妥善处理，您的权益在每个环节都将受到保护——依据尼日利亚及国际海事法律。"
+      },
+      "cma-conference": {
+        "tag": "国际会议 · 美国",
+        "title": "CMA航运会议出席证书",
+        "institution": "CMA航运会议，美国康涅狄格州斯坦福德",
+        "meta": "2009年 · 全球最具声望的年度航运活动之一",
+        "relevance": "CMA航运会议每年汇聚全球航运高管、船东、金融家和物流领袖。出席证明在最高层次积极参与国际航运业——而不仅仅是本地市场知识。"
+      }
+    },
+    "registration": {
+      "sectionTitle": "企业注册与法律地位",
+      "cac": {
+        "tag": "企业注册", "title": "注册成立证书",
+        "issuer": "尼日利亚联邦共和国企业事务委员会",
+        "companyName": "公司名称", "regNumber": "注册编号",
+        "registeredUnder": "注册依据", "registeredUnderValue": "CAMA——公司及相关事务法",
+        "status": "状态", "statusValue": "有效",
+        "jurisdiction": "司法管辖区", "jurisdictionValue": "尼日利亚联邦共和国"
+      },
+      "ncs": {
+        "tag": "法规合规", "title": "尼日利亚海关服务合规",
+        "issuer": "尼日利亚海关服务",
+        "status": "状态", "statusValue": "认可清关代理",
+        "statement": "准时资源有限公司是经认可的海关清关代理，在尼日利亚所有入境口岸完全遵守尼日利亚海关服务法规、关税分类和目的地查验程序。"
+      }
+    },
+    "badges": {
+      "sectionTitle": "行业许可证与职业认证",
+      "statusActive": "有效", "statusInProgress": "注册中", "statusPending": "待审核",
+      "nimasa":          { "name": "NIMASA航运代理许可证SA261009",      "authority": "NIMASA" },
+      "nimasaAct":       { "name": "NIMASA法案2007合规",                "authority": "尼日利亚联邦政府" },
+      "merchantShipping":{ "name": "商船法2007注册",                    "authority": "尼日利亚海事法" },
+      "ncs":             { "name": "尼日利亚海关服务认可代理",          "authority": "尼日利亚海关服务" },
+      "nepc":            { "name": "NEPC注册出口促进机构",              "authority": "尼日利亚NEPC" },
+      "llm":             { "name": "法学硕士海事法律资质领导层",        "authority": "英国斯旺西大学" },
+      "cma":             { "name": "CMA航运会议校友",                   "authority": "美国CMA航运，2009年" },
+      "canton":          { "name": "2026年广交会注册买家及代表",        "authority": "中国进出口商品交易会" }
+    },
+    "benefits": {
+      "sectionTitle": "我们的资质对您意味着什么",
+      "legalProtection": {
+        "title": "您的货物受法律保护",
+        "text": "我们的NIMASA许可证和海事法律法学硕士学位意味着每项货物指令均在完全法律合规下管理。如与码头运营商、航运公司或海关官员发生纠纷，我们具备资质的领导层确切了解如何依据尼日利亚及国际海事法律维护您的权益。"
+      },
+      "verifiedAgent": {
+        "title": "您正在与认证代理合作",
+        "text": "NIMASA许可证SA261009可在www.nimasa.gov.ng公开核实。您无需仅凭我们的口头承诺——可在委托我们处理任何集装箱之前，立即实时查验我们的许可证状态。大多数尼日利亚清关代理无法提供这一保障。"
+      },
+      "international": {
+        "title": "国际标准运营",
+        "text": "我们董事总经理在英国大学获得的法学硕士学位及参加美国CMA航运会议的经历，意味着我们的运营以国际标准为基准，而非仅依据本地做法。您将获得与在伦敦、新加坡或上海的清关代理相同的专业服务水准。"
+      }
+    },
+    "transparency": {
+      "title": "核实与透明度声明",
+      "text": "我们相信透明度是每段持久商业关系的基础。因此，本页显示的每项证书均真实、现行且可独立核实。我们不展示已过期的许可证，不夸大我们的资质，不提出无法证实的主张。",
+      "facts": "我们的法学硕士由英国斯旺西大学于2010年授予。我们的公司在尼日利亚企业事务委员会注册，注册号为RC 7543149。这些都是事实，可供核实。",
+      "verifyBtn": "立即验证NIMASA许可证"
+    },
+    "downloads": {
+      "sectionTitle": "下载我们的证书",
+      "sectionSubtitle": "可供下载的官方公司文件。",
+      "downloadBtn": "下载",
+      "profile":    { "name": "公司简介",                         "filename": "Ontime_Resources_Limited_Profile_2026.pdf" },
+      "nimasa":     { "name": "NIMASA许可证副本（脱敏版）",        "filename": "NIMASA_Licence_SA261009_Redacted.pdf" },
+      "capability": { "name": "能力说明书",                        "filename": "Ontime_Capability_Statement_2026.pdf" },
+      "rateCard":   { "name": "收费表——港口费用及清关费",          "filename": "Ontime_Rate_Card_2026.pdf" }
+    }
+  }
+
+}

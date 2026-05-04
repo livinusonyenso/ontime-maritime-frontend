@@ -1,0 +1,1 @@
+export default function SellerListingsPage(){return (<div>seller Listings Placeholder</div>);}
